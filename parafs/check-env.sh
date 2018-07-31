@@ -27,20 +27,26 @@ function check_config() {
 ####### 根据配置文件network检查ip连通状况
 ####+++ return : 检查失败输出到屏幕，并且停止进行
 function check_ips() {
-#    local filename=$NETWORK_CONFIG_FILE
-#    IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
-#    unconnected_exist=false
-#    for ip in $IPS; do
-#        is_conn $ip
-#        if [ $? = "0" ] ; then
-#            echo -e "\033[31m\t\t$ip connection error\033[0m"
-#            unconnected_exist=true
-#        fi
-#    done
-#    if [ x${unconnected_exist} = x"true" ]; then
-#        echo -e "\033[31m\t\tmake sure that have fixed the network or modified the config file\033[0m"
-#        exit 1
-#    fi
+    local filename=$NETWORK_CONFIG_FILE
+    
+    local fault_ips="" 
+    local IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
+    for ip in $IPS; do
+        if [ "x${ip}" = "x" ] ; then 
+            break;
+        fi
+        is_conn $ip
+        if [ $? -eq 0 ] ; then
+            echo -e "\033[31m\t\t$ip connection error\033[0m"
+            fault_ips="$ip $fault_ips"
+            # break;
+        fi
+    done
+
+    if [ ! -z "$fault_ips" ]; then
+        echo -e "\033[31m\t\tmake sure that have fixed the network or modified the config file\033[0m"
+        exit 1
+    fi
     echo -e "\t\t check_ips end"
 }
 
@@ -48,18 +54,29 @@ function check_ips() {
 ####+++ return : 
 function cluster_check_root_passwd() {
     local filename=$PASSWD_CONFIG_FILE
-    cat $filename | grep -v '^#' | while read readline
-    do
-        ip=`echo "$readline" |awk '{print $1 }'`
-        passwd=`echo "$readline" |awk '{print $2 }'`
+    
+    fault_ips=""
+    flag=""
+    local IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
+    for ip in $IPS; do
+        if [ "x${ip}" = "x" ] ; then 
+            break;
+        fi
+        passwd=`grep ${ip} $filename |awk '{print $2 }'`
         user='root'
         user_home='/root'
-#        echo "ip=$ip passwd=$passwd"
-#        $SSH_EXP_LOGIN $ip $user $passwd $user_home |grep "$user login $ip successfully"
-#        if [ $? != "0" ]; then
-#            echo -e "\033[31m\t\tconfig_file=$PASSWD_CONFIG_FILE not exists\033[0m"
-#        fi 
+        $SSH_EXP_LOGIN $ip $user $passwd $user_home | grep "login $ip successfully"  >/dev/null
+        if [ $? -ne 0 ]; then
+            fault_ips="$ip $fault_ips"
+            echo -e "\033[31m\t\t $ip $user passwd error\033[0m"
+            # break;
+        fi 
     done
+
+    if [ ! -z "$fault_ips" ] ; then
+        echo -e "\033[31m\t\tmake sure the passwd file\033[0m"
+        exit 1;
+    fi
     echo -e "\t\t cluster_check_root_passwd end"
 }
 
