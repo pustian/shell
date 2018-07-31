@@ -1,0 +1,117 @@
+#!/usr/bin/expect 
+###########################################################################
+###  用法
+###      ./ssh_login.exp ${current_ip} ${current_user} ${current_passwd} ${current_home} \
+###           ${remote_ip} ${remote_user} ${remote_passwd} ${remote_home}        
+###  功能：
+###      当前机器$current_ip 可以免密登陆到remote_ip的机器上去
+###  参数：
+###         current_ip      
+###         current_user    
+###         current_passwd  
+###         current_home    
+###         remote_ip      
+###         remote_user    
+###         remote_passwd  
+###         remote_home    
+###  使用示例
+###        ./ssh_login.exp 192.168.138.70 'root' '888888' '/root' \
+###             192.168.138.71 'root' '888888' '/root'
+###        ./ssh_login.exp ht1.r1.n70 'parause' 'ParaUse@123&' '/home/parauser' \
+###             ht1.r1.n70 'parause' 'ParaUse@123&' '/home/parauser'
+###########################################################################
+###  1 登陆同ssh_login.sh 代码
+###  2 生成 ssh-keygen，如果存在则有问题。给出错误提示
+###  3 ssh-copy-id 当前机器到指定的ip 实现当前机器免密登陆到指定ip
+# set current_ip      [lindex $argv 0]  
+# set current_user    [lindex $argv 1]  
+# set current_passwd  [lindex $argv 2]
+# set current_home    [lindex $argv 3]
+# set remote_ip      [lindex $argv 0]  
+# set remote_user    [lindex $argv 1]  
+# set remote_passwd  [lindex $argv 2]
+# set remote_home    [lindex $argv 3]
+set current_ip     "192.168.138.71" 
+set current_user   "root"
+set current_passwd "Tianpusen@1"
+set current_home   "/root"
+set ssh_port       "22"
+set remote_ip     "192.168.138.72" 
+set remote_user   "root"
+set remote_passwd "Tianpusen@1"
+set remote_home   "/root"
+set ssh_port       "22"
+set timeout -1
+
+puts "----------+---------- begin ----------+----------"
+###############################################################################
+### ssh 192.168.138.70 -l root -p 22
+spawn ssh ${current_ip} -l ${current_user} -p ${ssh_port}
+# set spawn_id $spawn_id
+expect {
+    #first connect, no public key in ~/.ssh/known_hosts
+    "Are you sure you want to continue connecting (yes/no)?" {
+        exp_send "yes\r"
+        expect "password:" {
+            exp_send "$current_passwd\r"
+            ### 登录成功后响应
+            expect "Last login*" {
+                puts "++++++ $current_user login $current_ip successfully with spawn_id=$spawn_id"
+            }
+        }
+    }
+    #already has public key in ~/.ssh/known_hosts
+    "password:" {
+        exp_send "$current_passwd\r"
+        ### 登录成功后响应
+        expect "Last login*" {
+            puts "++++++ $current_user login $current_ip successfully with spawn_id=$spawn_id"
+        }
+    }
+    # has do authorize 直接成功登录
+    "Last login*" {
+        puts "++++++ $current_user login $current_ip successfully with spawn_id=$spawn_id"
+    }
+}
+sleep 1
+# sh脚本保证本机已经生成过了
+###############################################################################
+### ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
+exp_send "ssh-keygen -t rsa -P '' -f $current_home/.ssh/id_rsa\r"
+expect {
+    "The key's randomart image is:" {
+        puts "++++++ It is successful to do ssh-keygen at $current_ip"
+    }
+    "Overwrite (y/n)?" {
+        exp_send "n\r"
+    }
+}
+sleep 1
+###############################################################################
+
+### 192.168.138.70 ssh免密登陆 192.168.138.71
+### ssh-copy-id -i /root/.ssh/id_rsa.pub root@192.168.138.71
+exp_send "ssh-copy-id -i ${remote_home}/.ssh/id_rsa.pub $remote_user@$remote_ip\r"
+expect {
+    #first connect, no public key in ~/.ssh/known_hosts
+    "Are you sure you want to continue connecting (yes/no)?" {
+        exp_send "yes\r"
+        expect "password:" {
+            exp_send "$remote_passwd\r"
+        }
+    }
+    #already has public key in ~/.ssh/known_hosts
+    "password:" {
+        exp_send "$remote_passwd\r"
+    }
+    "*WARNING: All keys were skipped because they already exist on the remote system*" {
+        #it has authorized, do nothing!
+    }
+}
+sleep 1
+######------------------------------------------------------------------------
+
+### 退出进程登录
+exp_send "exit\r"
+puts "----------+----------  end  ----------+----------"
+

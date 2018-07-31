@@ -1,0 +1,79 @@
+#!/usr/bin/expect 
+###########################################################################
+###  用法
+###      ./ssh_login.exp ${current_ip} ${current_user} ${current_passwd} ${current_home} ${command}
+###  功能：
+###     模拟远程登录机器，并执行命令command
+###  参数：
+###         current_ip      
+###         current_user    
+###         current_passwd  
+###         current_home    
+###  使用示例
+###        ./ssh_remote_exec.exp 'ht1.r1.n70'     'parause' 'ParaUse@123&' '/home/parauser' 'ls -l'
+###        ./ssh_remote_exec.exp '192.168.138.70' 'root' 'ParaUse@123&' '/root' 'ls -l'
+###########################################################################
+###  1, 登录 同 ssh_login.sh 代码
+###  2, 执行命令(非交互式命令)
+###########################################################################
+# set current_ip      [lindex $argv 0]
+# set current_user    [lindex $argv 1]  
+# set current_passwd  [lindex $argv 2]
+# set current_home    [lindex $argv 3]
+# set command         [lindex $argv 4]
+set current_ip     "192.168.138.73" 
+set current_user   "root"
+set current_passwd "Tianpusen@1"
+set current_home   "/root"
+set command        "ls -l"
+set ssh_port        "22"
+set timeout 30
+
+puts "----------+---------- begin ----------+----------"
+###############################################################################
+### 登录
+spawn ssh ${current_ip} -l ${current_user} -p ${ssh_port}
+set ssh_current_fd $spawn_id
+expect {
+    #first connect, no public key in ~/.ssh/known_hosts
+    "Are you sure you want to continue connecting (yes/no)?" {
+        exp_send "yes\r"
+        expect "password:" {
+            exp_send "$current_passwd\r"
+            ### 登录成功后响应
+            expect "Last login*" {
+                puts "++++++ $current_user login $current_ip successfully with spawn_id=$spawn_id"
+            }
+        }
+    }
+    #already has public key in ~/.ssh/known_hosts
+    "password:" {
+        exp_send "$current_passwd\r"
+        ### 登录成功后响应
+        expect "Last login*" {
+            puts "++++++ $current_user login $current_ip successfully with spawn_id=$spawn_id"
+        }
+    }
+    ### do authorize 登录成功后响应
+    "Last login*" {
+        puts "++++++ $current_user login $current_ip successfully with spawn_id=$spawn_id"
+    }
+#    "*WARNING: All keys were skipped because they already exist on the remote system*" {
+#        #it has authorized, do nothing!
+#    }
+}
+
+### exec $command
+exp_send "$command\r"
+exp_send "echo $?"
+expect {
+    "0" {
+        puts "\nIt is successful to do command='$command' "
+    }
+}
+exp_send "exit\r"
+
+### 以下两句同时生效也可以
+# exp_send "exit\r"
+# expect eof
+puts "----------+----------  end  ----------+----------"
