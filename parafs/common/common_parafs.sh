@@ -85,6 +85,10 @@ function __cluster_config_sudoers() {
     echo -e "\t\t __cluster_config_sudoers end"
 }
 
+###### 免密后以免密用户分发文件
+### filename
+### remote ip
+### remote_
 ###===========================================================================
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 COMMON_BASH_NAME=common_parafs.h
@@ -97,5 +101,5 @@ fi
 # ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
 # __cluster_check_user parafs
 #__cluster_create_user  "parauser" "YdwAWdHXqldYI" "/home/parauser"  "/bin/bash"
-# __cluster_config_sudoers parauser
+ __cluster_config_sudoers parauser
 # ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

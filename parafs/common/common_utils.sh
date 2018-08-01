@@ -44,34 +44,50 @@ function is_same_arr() {
     return 1
 }
 
-####### 检查/opt/wotung/node/0 目录已被ext4文件挂在并且大小>30G
+####### 检查/opt/wotung/node/0 目录已被ext4文件挂在并且大小>=30G
 ####+++ return : 1通过成功 0 失败
-function is_parafs_node_OK() {
+function is_local_parafs_node_OK() {
     local node_dir="/opt/wotung/node/0"
     local format="ext4"
-    # local _30G=30831524
-    local _30G=30831525
-    echo "do is_parafs_node_OK"
+    local _30G=30831523
+    # local _30G=30831525
+    echo "do is_local_parafs_node_OK "
     capcity=`df -T |grep ${node_dir} |grep ${format} |awk '{print $3}' `
     if [ ! -z ${capcity} ] && [ $((capcity)) -gt  $((_30G)) ] ; then
         return 1
     else
         return 0
-#         echo -e "\033[31m\t\t\tcheck that mount /dev/XXX /opt/wotung/node/0 with ext4 format\033[0m"
-#         return 1
-#     else
-#         if [ $((capcity)) -lt  $((_30G)) ] ; then
-#             echo -e "\033[31m\t\t\tcheck that the capcity of /opt/wotung/node/0 must be more than 30G\033[0m"
-#        fi
     fi
 }
+####+++ return : 1通过成功 0 失败
+function is_parafs_node_ok() {
+    local ip=$1
+    local user=$2
+    local passwd=$3
+    local dfnode="df -T"
+    local temp_file="/tmp/parafs_node_check$ip"
+    local node_dir="/opt/wotung/node/0"
+    local format="ext4"
+    local _30G=30831523
 
+    echo "do is_parafs_node_ok at $ip"
+    $SSH_REMOTE_EXEC "$ip" "$user" "$passwd" "$dfnode" >$temp_file
+    
+    capcity=`cat $temp_file |grep ${node_dir} |grep ${format} |awk '{print $3}' `
+    # echo "[ ! -z ${capcity} ] && [ $((capcity)) -gt  $((_30G)) ] "
+    if [ ! -z ${capcity} ] && [ $((capcity)) -gt  $((_30G)) ] ; then
+        return 1
+    else
+        return 0
+    fi
+}
 ####### 检查 parafs-hadoop.tar.gz 文件是否存在, 并且md5sum 正确。
 ####+++ parater: md5sum_filepath
 ####+++ return : 不存在直接退出,并给出提示信息。否则无返回信息
 function is_parafs_hadoop_eixst {
     echo $0
 }
+
 ###===========================================================================
 ###### 远程判断是否存在用户
 ### ip $1 远程ip
@@ -174,7 +190,7 @@ function ssh_user_authorize() {
     local remote_user=$6
     local remote_passwd=$7
     local remote_userhome=$8
-    echo "do ssh_user_authorize at $current_ip"
+    echo "do ssh_user_authorize at $current_ip to $remote_ip"
     $SSH_EXP_AUTHORIZE ${current_ip} ${current_user} ${current_passwd} ${current_userhome} \
         ${remote_ip} ${remote_user} ${remote_passwd} ${remote_userhome} >/dev/null
 }
@@ -195,9 +211,9 @@ function zip_dir() {
     cd $dirname
     sudo zip -q -r $zipfile $basename
     sudo sh -c " md5sum $zipfile > $md5file "
-    cd $current_pwd
     sudo mv $dirname/$zipfile $current_pwd 
     sudo mv $dirname/$md5file $current_pwd 
+    cd $current_pwd
 }
 ###===========================================================================
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
@@ -207,7 +223,11 @@ if [ -z "$VARIABLE_BASH_NAME" ] ; then
 fi
 # ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
 # is_conn "ht1.r1.n72"
-# is_parafs_node_OK
+# is_local_parafs_node_OK 
+# echo $?
+# is_parafs_node_ok 192.168.138.71 "root" "Tianpusen@1" 
+# echo $?
+# is_parafs_node_ok 192.168.138.70 "parafs" "tianpusen" 
 # echo $?
 ###########
 # is_no_parauser 192.168.138.70 "root" "Tianpusen@1" "parauser" 

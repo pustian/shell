@@ -6,18 +6,19 @@
 function prepare_usage() {
     echo "cluster-create-user"
     echo "cluster-user-authorize"
-    echo "cluster-script-dist"
+    echo "script-zip"
+    echo "cluster-yum-pip"
     # echo "cluster-check-nodes"
 
-    echo "cluster-config-hostname"
-    echo "cluster-config-hosts"
-    echo "cluster-install-package-dist"
+#    echo "cluster-config-hostname"
+#    echo "cluster-config-hosts"
+#    echo "cluster-install-package-dist"
 #    echo "cluster-check-install-package"
-    echo "cluster-unzip-install-package"
+#    echo "cluster-unzip-install-package"
 #    echo "cluster-yum-source"
-    echo "cluster-yum-install"
+#    echo "cluster-yum-install"
 #    echo "cluster-pip-source"
-    echo "cluster-pip-install"
+#    echo "cluster-pip-install"
 }
 
 ####### 根据配置文件PASSWD_CONFIG_FILE ip,在机器上创建新用户parauser 
@@ -84,7 +85,8 @@ function cluster_user_authorize() {
 ####+++ parater: network_config
 ####+++ 
 function cluster_script_dist() {
-    local filename=$PASSWD_CONFIG_FILE
+    local filename=$NETWORK_CONFIG_FILE
+    local IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
     echo -e "\t\t cluster_script_dist begin"
     # 考虑到通用性使用zip 打包 unzip 解压
     zip_dir $BASE_DIR
@@ -92,35 +94,13 @@ function cluster_script_dist() {
     echo $?
 }
 
-####### 根据配置文件network所有本机到所有机器 root免密登陆
-####+++ return : 检查失败输出到屏幕，并且停止进行
-function cluster_check_nodes() {
-    echo -e "\t\t cluster_check_nodes begin"
-    local filename=$NETWORK_CONFIG_FILE
-    local IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
-    for ip in $IPS; do
-        if [ "x${outer_ip}" = "x" ] ; then
-            break;
-        fi
-#        is_parafs_node_OK 
-#        $SSH_EXP_LOGIN $ip $user $passwd $user_home | grep "login $ip successfully"  >/dev/null
-        if [ $? -ne 0 ] ; then
-            fault_ips="$ip $fault_ips"
-            echo -e "\033[31m\t\t $ip /opt/wotung/note/0 fstat error \033[0m"
-            # break;
-        fi 
-    done
-    if [ ! -z "$fault_ips" ] ; then
-        echo -e "\033[31m\t\tmake sure the node config\033[0m"
-        exit 1;
-    fi
-    echo -e "\t\t cluster_check_nodes end"
-}
-
 ####### 根据配置文件network修改hostname
 ####+++ 
 function cluster_config_hostname() {
-    local filename=$PASSWD_CONFIG_FILE
+    local filename=$NETWORK_CONFIG_FILE
+    local IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
+#    for ip in $IPS; do
+#    done
     echo -e "\t\t cluster_config_hostname end"
     echo $?
 }
@@ -178,5 +158,6 @@ fi
 # install_usage
 # cluster_create_user
 # cluster_user_authorize
+#cluster_script_dist
 # cluster_check_nodes
 # ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

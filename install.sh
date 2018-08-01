@@ -53,10 +53,11 @@ while [ x"${input}" != x"E" ]; do
     case ${input} in
         P|p) 
             echo -e "\033[40;34m\tpre-check begin\033[0m"
-            check_config 
+#            check_config 
 #            check_ips
-            cluster_check_root_passwd
+#            cluster_check_root_passwd
             cluster_check_nodes
+            
             echo -e "\033[40;32m\tpre-check done \033[0m"
             ;;
         R|r) 
@@ -66,7 +67,9 @@ while [ x"${input}" != x"E" ]; do
     #        cluster_user_authorize
             # 删除 passwd user_passwd 文件
 
-    #        cluster_script_dist
+            ### 打包script
+            zip_dir $BASE_DIR
+            # cluster_script_dist
             # cluster_config_hostname
             # cluster_config_hosts
             # cluster_install_package_dist
@@ -77,20 +80,25 @@ while [ x"${input}" != x"E" ]; do
             # cluster_yum_install
             # cluster_pip_install
             echo -e "\033[40;32m\tpre-installation done \033[0m"
+            echo "Run install with parauser, if you want do pre-check or pre-install input [e|E|q|Q]"
+            su - parauser -s /bin/bash $BASE_DIR/install.sh
             ;;
         I|i)
+            id 
             echo -e "\033[40;34m\tinstallation begin\033[0m"
-            cluster_parafs
-            cluster_parafs_client
-            cluster_llog
-            cluster_hadoop
+            # cluster_parafs
+            # cluster_parafs_client
+            # cluster_llog
+            # cluster_hadoop
             echo -e "\033[40;32m\tinstallation done \033[0m"
             ;;
         A|a) 
+            id
             echo -e "\033[40;34m\tafter-check begin\033[0m"
             echo -e "\033[40;32m\tafter-check done \033[0m"
             ;;
         E|e|Q|q) echo "exit"
+            id
             exit 0
             ;;
     esac

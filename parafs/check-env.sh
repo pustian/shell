@@ -7,6 +7,9 @@ function env_usage() {
     echo "check-config"
     echo "check-ips"
     echo "cluster-check-root-passwd"
+    echo "cluster-check-nodes"
+#    echo "cluster-config-hostname"
+#    echo "cluster-config-hosts"
 }
 
 ####### 检查配置文件 passwd network 是否存在并且network ip相同
@@ -56,7 +59,6 @@ function cluster_check_root_passwd() {
     local filename=$PASSWD_CONFIG_FILE
     
     fault_ips=""
-    flag=""
     local IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
     for ip in $IPS; do
         if [ "x${ip}" = "x" ] ; then 
@@ -80,6 +82,39 @@ function cluster_check_root_passwd() {
     echo -e "\t\t cluster_check_root_passwd end"
 }
 
+######
+###
+####### 根据配置文件network所有本机到所有机器 root免密登陆
+####+++ return : 检查失败输出到屏幕，并且停止进行
+
+function cluster_check_nodes() {
+    echo -e "\t\t cluster_check_nodes begin"
+    local filename=$PASSWD_CONFIG_FILE
+    
+    fault_ips=""
+    local IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
+    for ip in $IPS; do
+        if [ "x${ip}" = "x" ] ; then 
+            break;
+        fi
+        passwd=`grep ${ip} $filename |awk '{print $2 }'`
+        user='root'
+
+        is_parafs_node_ok $ip $user $passwd
+        if [ $? -eq 0 ]; then
+            fault_ips="$ip $fault_ips"
+            echo -e "\033[31m\t\t $ip /opt/wotung/node/0 error\033[0m"
+            # break;
+        fi 
+    done
+
+    if [ ! -z "$fault_ips" ] ; then
+        echo -e "\033[31m\t\tmake sure /opt/wotung/node/0 \033[0m"
+        exit 1;
+    fi
+    echo -e "\t\t cluster_check_nodes end"
+}
+
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 CHECK_ENV_BASH_NAME=check-env.sh
 if [ -z ${VARIABLE_BASH_NAME} ] ; then 
@@ -93,4 +128,5 @@ fi
 # ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
 # check_ips
 # cluster_check_root_passwd
+# cluster_check_nodes
 # ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###
