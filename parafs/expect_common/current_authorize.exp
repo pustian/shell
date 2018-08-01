@@ -40,7 +40,7 @@ set remote_home    [lindex $argv 7]
 # set remote_passwd "Tianpusen@1"
 # set remote_home   "/root"
 set ssh_port       "22"
-set timeout 1
+set timeout 15
 
 puts "----------+---------- begin ----------+----------"
 ###############################################################################
@@ -107,7 +107,7 @@ expect {
         #it has authorized, do nothing!
     }
 }
-# sleep 1
+sleep 1
 ######------------------------------------------------------------------------
 
 ### 退出进程登录

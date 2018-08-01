@@ -40,6 +40,11 @@ if [ $? -ne 0 ] ; then
     echo -e "\033[40;31m\texpect must support, please run 'yum install expect'\033[0m"
     exit 1
 fi
+ZIP=`which zip`
+if [ $? -ne 0 ] ; then
+    echo -e "\033[40;31m\tzip must support, please run 'yum install zip'\033[0m"
+    exit 1
+fi
 
 input="?"
 while [ x"${input}" != x"E" ]; do 
@@ -49,21 +54,24 @@ while [ x"${input}" != x"E" ]; do
         P|p) 
             echo -e "\033[40;34m\tpre-check begin\033[0m"
             check_config 
-            check_ips
+#            check_ips
             cluster_check_root_passwd
+            cluster_check_nodes
             echo -e "\033[40;32m\tpre-check done \033[0m"
             ;;
         R|r) 
             echo -e "\033[40;34m\tpre-installation begin\033[0m"
-            cluster_create_user
-            cluster_parauser_authorize
-            cluster_script_dist
-            cluster_config_hostname
-            cluster_config_hosts
-            cluster_check_node
-            cluster_install_package_dist
-            cluster_check_install_package
-            cluster_unzip_install_package
+
+    #        cluster_create_user
+    #        cluster_user_authorize
+            # 删除 passwd user_passwd 文件
+
+    #        cluster_script_dist
+            # cluster_config_hostname
+            # cluster_config_hosts
+            # cluster_install_package_dist
+            # cluster_check_install_package
+            # cluster_unzip_install_package
             # cluster_yum_source
             # cluster_pip_source
             # cluster_yum_install

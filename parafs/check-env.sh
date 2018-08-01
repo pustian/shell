@@ -80,7 +80,6 @@ function cluster_check_root_passwd() {
     echo -e "\t\t cluster_check_root_passwd end"
 }
 
-
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 CHECK_ENV_BASH_NAME=check-env.sh
 if [ -z ${VARIABLE_BASH_NAME} ] ; then 

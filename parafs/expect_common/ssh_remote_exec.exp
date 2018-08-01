@@ -24,7 +24,7 @@ set command         [lindex $argv 3]
 # set current_passwd "Tianpusen@1"
 # set command        "ls -l"
 set ssh_port        "22"
-set timeout 1
+set timeout 4
 
 # puts "command"
 puts "----------+---------- begin ----------+----------"

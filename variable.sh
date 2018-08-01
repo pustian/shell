@@ -2,7 +2,7 @@
 ###++++++++++++++++++++++++      const variable   ++++++++++++++++++++++++++###
 # BASE_DIR=/opt/wotung/parafs-install
 VARIABLE_BASH_NAME=variable.sh
-BASE_DIR=/home/parafs/parafs-install
+BASE_DIR=/opt/wotung/parafs-install
 INSTALL_PACAKGE_FILE=${BASE_DIR}/parafs.tar.gz
 INSTALL_PACAKGE_MD5=${BASE_DIR}/parafs.md5sum
 PASSWD_CONFIG_FILE=${BASE_DIR}/conf/passwd
