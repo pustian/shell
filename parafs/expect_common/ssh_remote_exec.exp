@@ -1,34 +1,32 @@
 #!/usr/bin/expect 
 ###########################################################################
 ###  用法
-###      ./ssh_login.exp ${current_ip} ${current_user} ${current_passwd} ${current_home} ${command}
+###      ./ssh_remote_exec.exp ${current_ip} ${current_user} ${current_passwd} ${command}
 ###  功能：
 ###     模拟远程登录机器，并执行命令command
 ###  参数：
 ###         current_ip      
 ###         current_user    
 ###         current_passwd  
-###         current_home    
 ###  使用示例
-###        ./ssh_remote_exec.exp 'ht1.r1.n70'     'parause' 'ParaUse@123&' '/home/parauser' 'ls -l'
-###        ./ssh_remote_exec.exp '192.168.138.70' 'root' 'ParaUse@123&' '/root' 'ls -l'
+###        ./ssh_remote_exec.exp 'ht1.r1.n70'     'parause' 'ParaUse@123&'  'ls -l'
+###        ./ssh_remote_exec.exp '192.168.138.70' 'root' 'ParaUse@123&' 'ls -l'
 ###########################################################################
 ###  1, 登录 同 ssh_login.sh 代码
 ###  2, 执行命令(非交互式命令)
 ###########################################################################
-# set current_ip      [lindex $argv 0]
-# set current_user    [lindex $argv 1]  
-# set current_passwd  [lindex $argv 2]
-# set current_home    [lindex $argv 3]
-# set command         [lindex $argv 4]
-set current_ip     "192.168.138.73" 
-set current_user   "root"
-set current_passwd "Tianpusen@1"
-set current_home   "/root"
-set command        "ls -l"
+set current_ip      [lindex $argv 0]
+set current_user    [lindex $argv 1]  
+set current_passwd  [lindex $argv 2]
+set command         [lindex $argv 3]
+# set current_ip     "192.168.138.73" 
+# set current_user   "root"
+# set current_passwd "Tianpusen@1"
+# set command        "ls -l"
 set ssh_port        "22"
-set timeout 30
+set timeout 2
 
+# puts "command"
 puts "----------+---------- begin ----------+----------"
 ###############################################################################
 ### 登录
@@ -65,10 +63,9 @@ expect {
 
 ### exec $command
 exp_send "$command\r"
-exp_send "echo $?"
+### 打印结果
 expect {
-    "0" {
-        puts "\nIt is successful to do command='$command' "
+    eof {
     }
 }
 exp_send "exit\r"

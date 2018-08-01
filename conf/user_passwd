@@ -1,0 +1,10 @@
+# run openssl passwd  
+# [parafs@ht1.r1.n70 expect_common]$ openssl passwd -stdin
+# hello@PASSWD
+# 6615c5JbMtuqM
+# [parafs@ht1.r1.n70 expect_common]$ sudo useradd -p "6615c5JbMtuqM"
+user=parauser
+passwd=hello@PASSWD
+passwd_ssl=6615c5JbMtuqM
+home=/home/parauser
+shell=/bin/bash
