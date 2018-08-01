@@ -24,7 +24,7 @@ set command         [lindex $argv 3]
 # set current_passwd "Tianpusen@1"
 # set command        "ls -l"
 set ssh_port        "22"
-set timeout 2
+set timeout 1
 
 # puts "command"
 puts "----------+---------- begin ----------+----------"
@@ -73,4 +73,4 @@ exp_send "exit\r"
 ### 以下两句同时生效也可以
 # exp_send "exit\r"
 # expect eof
-puts "----------+----------  end  ----------+----------"
+puts "\n----------+----------  end  ----------+----------"

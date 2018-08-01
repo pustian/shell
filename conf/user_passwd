@@ -1,10 +1,13 @@
-# run openssl passwd  
-# [parafs@ht1.r1.n70 expect_common]$ openssl passwd -stdin
-# hello@PASSWD
-# 6615c5JbMtuqM
-# [parafs@ht1.r1.n70 expect_common]$ sudo useradd -p "6615c5JbMtuqM"
-user=parauser
-passwd=hello@PASSWD
-passwd_ssl=6615c5JbMtuqM
-home=/home/parauser
-shell=/bin/bash
+# [root@ht1.r1.n71 ~]# openssl passwd -stdin
+# hetong@2015
+# kUfr3NG6/i9vI
+# [root@ht1.r1.n71 ~]# useradd -d /home/parauser -m -U -p 'YdwAWdHXqldYI' -s '/bin/bash'  parauser
+# [root@ht1.r1.n71 ~]# userdel -r parauser
+# user=parauser
+passwd_plain=hetong@2015
+passwd_ssl=YdwAWdHXqldYI
+#home=/home/parauser
+#shell=/bin/bash
+### uid git 暂时不起作用
+# uid=999
+# git=999

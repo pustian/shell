@@ -14,7 +14,9 @@
 #  ./ssh_remote_exec.exp "192.168.1.99" "parafs" "tianpusen" "grep parauser /etc/passwd"
 
 # ### current_authorize.exp
-./current_authorize.exp "192.168.138.71" 'parauser' "12345678" "/home/parauser"  \
-    "192.168.138.72" "parauser" "abcdefgh" "/home/parauser"
+./current_authorize.exp "192.168.138.71" 'parauser' "hetong@2015" "/home/parauser"  \
+    "192.168.138.71" "parauser" "hetong@2015" "/home/parauser"
+./current_authorize.exp "192.168.138.71" 'parauser' "hetong@2015" "/home/parauser"  \
+    "192.168.138.72" "parauser" "hetong@2015" "/home/parauser"
 # /opt/wotung/parafs-install/ssh_authorize/ssh_remote_exec.sh "192.168.1.99" "parafs" "tianpusen" "/home/parafs" "ls -d"
 # ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

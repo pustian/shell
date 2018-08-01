@@ -6,7 +6,6 @@
 function prepare_usage() {
     echo "cluster-create-user"
     echo "cluster-user-authorize"
-#    echo "cluster-delete-user"
     echo "cluster-check-nodes"
 
     echo "cluster-config-hostname"
@@ -28,21 +27,30 @@ function cluster_create_user() {
     local username=`grep user $user_passwd_file | grep -v '^#' | awk -F "=" '{print $2}'`
     local userpasswd_ssl=`grep passwd_ssl $user_passwd_file | grep -v '^#' | awk -F "=" '{print $2}'`
     local userhome=`grep home $user_passwd_file | grep -v '^#' | awk -F "=" '{print $2}'`
+    local usershell=`grep shell $user_passwd_file | grep -v '^#' | awk -F "=" '{print $2}'`
+    local userpasswd=`grep passwd_plain $user_passwd_file | grep -v '^#' | awk -F "=" '{print $2}'`
 
-    __cluster_check_user $username $userhome
+    if [ -z $userpasswd_ssl ] || [ -z $userpasswd ] ; then
+        echo "please generate a encrpt passwd config the conf/user_passwd"
+        exit 1
+    fi
+    test -z "$username"  &&  username="parauser" 
+    test -z "$userhome"  &&  userhome="/home/$username"
+    test -z "$usershell" &&  usershell="/bin/bash"  
 
-    __cluster_create_user $username $userpasswd_ssl $username
+    #__cluster_check_user $username $userhome
+    __cluster_check_user $username 
+
+    __cluster_create_user $username $userpasswd_ssl $userhome $usershell
 
     __cluster_config_suders $username
 
     echo -e "\t\t cluster_create_user end"
-    echo $?
 }
 
 ###### 检查user是否已经存在，现在只检查了用户名。uid gid home未作检查
 ### grep parauser /etc/passwd
 function __cluster_check_user() {
-    local filename=$PASSWD_CONFIG_FILE
     local username=$1
 #    local userhome=$2
 #    local git=$3
@@ -51,6 +59,7 @@ function __cluster_check_user() {
 #    local group_file="cat /etc/group"
 
     local fault_ips=""
+    local filename=$PASSWD_CONFIG_FILE
     local IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
     for ip in $IPS; do
         if [ "x${ip}" = "x" ] ; then
@@ -93,14 +102,17 @@ function __cluster_check_user() {
 
 ###### 创建用户
 ### 注意此处 -p 后面参数需要使用openssl passwd 生成
-### useradd -m -U -p "xxxxx" parauser 
+### useradd -d /home/parauser -m -U -p 'YdwAWdHXqldYI' -s '/bin/bash'  parauser
 function __cluster_create_user() {
-    local filename=$PASSWD_CONFIG_FILE
     local username=$1
     local userpasswd_ssl=$2
-    local create_user="useradd  -m -U -p $userpasswd_ssl $username"
+    local userhome=$3
+    local usershell=$4
+    
+    local create_user="useradd -d $userhome -m -U -p $userpasswd_ssl -s $usershell $username"
 
     local fault_ips=""
+    local filename=$PASSWD_CONFIG_FILE
     local IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
     for ip in $IPS; do
         if [ "x${ip}" = "x" ] ; then
@@ -119,10 +131,11 @@ function __cluster_create_user() {
 ###### sudo 执行免密
 #####  echo "parauser ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 function __cluster_config_suders() {
-    local filename=$PASSWD_CONFIG_FILE
     local username=$1
     local user_sudoer="echo '$username ALL=(ALL) NOPASSWD: ALL' >>/etc/sudoers"
+
     local fault_ips=""
+    local filename=$PASSWD_CONFIG_FILE
     local IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
     for ip in $IPS; do
         if [ "x${ip}" = "x" ] ; then
@@ -137,43 +150,18 @@ function __cluster_config_suders() {
     
     echo -e "\t\t __cluster_config_suders end"
 }
-### userdel -r parauser
-### sed -i '/parauser/'d /etc/sudoers
-function __cluster_delete_user() {
-    local filename=$PASSWD_CONFIG_FILE
-    local username=$1
-    local delete_user="userdel -r $1"
-    local config_sudoer="sed -i '/$username/'d /etc/sudoers "
-
-    local fault_ips=""
-    local IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
-    for ip in $IPS; do
-        if [ "x${ip}" = "x" ] ; then
-            break;
-        fi
-         
-        passwd=`grep ${ip} $filename |awk '{print $2 }'`
-        user='root'
-        
-        $SSH_REMOTE_EXEC "$ip" "$user" "$passwd" "$delete_user" >/dev/null
-        $SSH_REMOTE_EXEC "$ip" "$user" "$passwd" "$config_sudoer" >/dev/null
-
-    done
-    
-    echo -e "\t\t __cluster_create_user end"
-    
-}
 
 ###### cluster_user
 ######
 function cluster_user_authorize() {
     local user_passwd_file=${USER_PASSWD}
-    # local username=`grep user $user_passwd_file | grep -v '^#' | awk -F "=" '{print $2}'`
-    # local user_ssl_passwd=`grep passwd $user_passwd_file | grep -v '^#' | awk -F "=" '{print $2}'`
     local username=`grep user $user_passwd_file | grep -v '^#' | awk -F "=" '{print $2}'`
-    local userpasswd=`grep passwd $user_passwd_file | grep -v '^#' | awk -F "=" '{print $2}'`
+    local userpasswd=`grep passwd_plain $user_passwd_file | grep -v '^#' | awk -F "=" '{print $2}'`
     local userhome=`grep home $user_passwd_file | grep -v '^#' | awk -F "=" '{print $2}'`
-
+    test -z "$username"  &&  username="parauser" 
+    test -z "$userhome"  &&  userhome="/home/$username"
+    test -z "$usershell" &&  usershell="/bin/bash"  
+    
     local filename=$PASSWD_CONFIG_FILE
     local IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
     for outer_ip in $IPS; do
@@ -185,8 +173,9 @@ function cluster_user_authorize() {
                 break;
             fi
 #            echo "outer_ip=$outer_ip inner_ip=$inner_ip"
-            $SSH_EXP_AUTHORIZE ${outer_ip} ${username} ${user_paaswd} ${userhome} \
-                ${inner_ip} ${username} ${user_paaswd} ${userhome}
+            echo "${outer_ip} ${username} ${userpasswd} ${userhome} ${inner_ip} ${username} ${userpasswd} ${userhome}"
+            $SSH_EXP_AUTHORIZE ${outer_ip} ${username} ${userpasswd} ${userhome} \
+                ${inner_ip} ${username} ${userpasswd} ${userhome}
         done
     done
 
@@ -278,9 +267,8 @@ fi
 # ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
 # install_usage
 cluster_create_user
-# __cluster_check_user  parauser # "192.168.138.71" # "/root" "23" "1000"
-# __cluster_create_user parauser "6615c5JbMtuqM"
-# __cluster_config_suders parauser
-# __cluster_delete_user parauser
-# cluster_user_authorize
+# #     __cluster_check_user  parauser
+# #     __cluster_create_user parauser "6615c5JbMtuqM"
+# #     __cluster_config_suders parauser
+cluster_user_authorize
 # ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

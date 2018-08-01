@@ -23,7 +23,7 @@ set current_home    [lindex $argv 3]
 # set current_home   "/root"
 set ssh_port       "22"
 ###  密码不对超时退出
-set timeout 3
+set timeout 1
 
 puts "----------+---------- begin ----------+----------"
 ###############################################################################
@@ -53,10 +53,10 @@ expect {
     # has do authorize 直接成功登录
     "Last login" { puts "$current_user login $current_ip successfully" }
 }
-sleep 1
+# sleep 1
 
 ### 退出进程登录
 exp_send "exit\r"
 # exp_send "exit\r"
 # expect eof
-puts "----------+----------  end  ----------+----------"
+puts "\n----------+----------  end  ----------+----------"
