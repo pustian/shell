@@ -11,8 +11,9 @@ function usage() {
     echo -e "\033[40;37mpre-installation-------------------------------------------------------[R]\033[0m" ;
     echo -e "\033[40;37minstallation---------------------------------------------------------- [I]\033[0m" ;
     echo -e "\033[40;37mafter-check------------------------------------------------------------[A]\033[0m" ;
-#    echo -e "\033[40;37mupgrade ---------------------------------------------------------------[U]\033[0m" ;
-#    echo -e "\033[40;37mtools------------------------------------------------------------------[T]\033[0m" ;
+    echo -e "\033[40;37mSynchronizeInstall-----------------------------------------------------[S]\033[0m" ;
+    echo -e "\033[40;37mUpgradeParafs----------------------------------------------------------[U]\033[0m" ;
+	  echo -e "\033[40;37mTest------------------------------------------------------------------ [T]\033[0m" ;
     echo -e "\033[40;37mExit ------------------------------------------------------------------[E]\033[0m" ;
 }
 
@@ -23,18 +24,19 @@ if [ -z $VARIABLE_BASH_NAME ] ; then
     . /opt/wotung/parafs-install/variable.sh
 fi
 if [ -z ${CHECK_ENV_BASH_NAME} ] ; then
-    . /opt/wotung/parafs-install/parafs/check-env.sh
+    . $BASE_DIR/parafs/check-env.sh
 fi
 if [ -z ${PREPARE_BASH_NAME} ] ; then
-    . /opt/wotung/parafs-install/parafs/parafs_prepare.sh 
+    . $BASE_DIR/parafs/parafs_prepare.sh 
 fi
 if [ -z ${INSTALL_BASH_NAME} ] ; then
-    . /opt/wotung/parafs-install/parafs/parafs_install.sh
+    . $BASE_DIR/parafs/parafs_install.sh
 fi
 if [ -z ${CHECK_BASH_NAME} ] ; then
-    . /opt/wotung/parafs-install/parafs/parafs_check.sh
+    . $BASE_DIR/parafs/parafs_check.sh
 fi
 #. /opt/wotung/parafs-install/install.sh
+
 EXPECT=`which expect`
 if [ $? -ne 0 ] ; then
     echo -e "\033[40;31m\texpect must support, please run 'yum install expect'\033[0m"
@@ -57,7 +59,6 @@ while [ x"${input}" != x"E" ]; do
 #            check_ips
 #            cluster_check_root_passwd
             cluster_check_nodes
-            
             echo -e "\033[40;32m\tpre-check done \033[0m"
             ;;
         R|r) 
@@ -84,21 +85,31 @@ while [ x"${input}" != x"E" ]; do
             su - parauser -s /bin/bash $BASE_DIR/install.sh
             ;;
         I|i)
-            id 
             echo -e "\033[40;34m\tinstallation begin\033[0m"
-            # cluster_parafs
-            # cluster_parafs_client
-            # cluster_llog
-            # cluster_hadoop
+            cluster_ParafsInstallation
+            cluster_SourceBashrc
+            cluster_ChangeConfigurationFile
             echo -e "\033[40;32m\tinstallation done \033[0m"
             ;;
         A|a) 
-            id
             echo -e "\033[40;34m\tafter-check begin\033[0m"
+            
             echo -e "\033[40;32m\tafter-check done \033[0m"
             ;;
+        S|s) 
+            echo -e "\033[40;34m\SynchronizeInstall begin\033[0m"
+            source $BASE_DIR/parafs/SynchronizeFolder.sh
+            echo -e "\033[40;32m\SynchronizeInstall done\033[0m"
+            ;;
+        U|u) 
+            echo -e "\033[40;34m\UpgradeParafs begin\033[0m"
+            source $BASE_DIR/parafs/InstallALLParafs.sh
+            echo -e "\033[40;32m\UpgradeParafs done\033[0m"
+            ;;
+        T|t) 
+            echo $BASE_DIR
+            ;;
         E|e|Q|q) echo "exit"
-            id
             exit 0
             ;;
     esac

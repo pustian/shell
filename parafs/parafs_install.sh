@@ -3,55 +3,49 @@
 #-*- coding: utf-8 -*-
 # Copyright (C) 2015-2050 Wotung.com.
 ###############################################################################
-INSTALL_BASH_NAME=parafs_install.sh
+
+
 function install_usage() {
-#    echo "cluster-parafs"
-    echo "cluster-parafs-client"
-    echo "cluster-llog"
+    echo "cluster_ParafsInstallation：parafs的安装，需要使用networks"
     echo "cluster-hadoop"
 }
 
-####### 检查配置文件 network 是否存在并且network ip相同
-####+++ return : 不存在直接退出,并给出提示信息。否则无返回信息
-function cluster_parafs() {
-    local ip_filename=
-    local install_filename=
-    # IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
-    ### 检查ips相同
+####### ParafsInstallation 
+####+++ 逐台安装parafs和日志
+function cluster_ParafsInstallation() {
+   	echo -e "\t\t cluster_ParafsInstallation start"
+		 source $BASE_DIR/parafs/InstallALLParafs.sh
     echo -e "\t\t cluster_parafs done"
 }
 
-####### 检查配置文件 network 是否存在并且network ip相同
-####+++ return : 不存在直接退出,并给出提示信息。否则无返回信息
-function cluster_llog() {
-    local ip_filename=
-    local install_filename=
-    # IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
-    ### 检查ips相同
-    echo -e "\t\t cluster_llog done"
+####### cluster_SourceBashrc
+####+++  设置环境变量
+function cluster_SourceBashrc() {
+	  echo -e "\t\t cluster_SourceBashrc start"
+	  	source $BASE_DIR/parafs/InstallAllSourceBashrc.sh 
+    echo -e "\t\t cluster_SourceBashrc done"
 }
 
-####### 检查配置文件 network 是否存在并且network ip相同
-####+++ return : 不存在直接退出,并给出提示信息。否则无返回信息
-function cluster_parafs_client() {
-    local ip_filename=
-    local install_filename=
-    # IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
-    ### 检查ips相同
-    echo -e "\t\t cluster_parafs_client done"
+####### cluster_ChangeConfigurationFile
+####+++ 修改xml文件
+function cluster_ChangeConfigurationFile() {
+    echo -e "\t\t cluster_ChangeConfigurationFile start"
+	  	source $BASE_DIR/parafs/InstallAllChangeParaCfg.sh  
+    echo -e "\t\t cluster_ChangeConfigurationFile done"
 }
 
-function cluster_hadoop() {
-    echo -e "\t\t cluster_hadoop done"
-}
+
+
+
+
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 INSTALL_BASH_NAME=parafs_install.sh
 if [ -z ${VARIABLE_BASH_NAME} ] ; then 
     . /opt/wotung/parafs-install/variable.sh
 fi
-if [ -z ${UTILS_BASH_NAME} ] ; then 
-    . /opt/wotung/parafs-install/common/common_utils.sh
-fi
+#if [ -z ${UTILS_BASH_NAME} ] ; then 
+#    . /opt/wotung/parafs-install/common/common_utils.sh
+#fi
 
 
 ###++++++++++++++++++++++++      main end         ++++++++++++++++++++++++++###
