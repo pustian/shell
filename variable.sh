@@ -12,8 +12,13 @@ function IsLocalIP()
 }
 
 VARIABLE_BASH_NAME=variable.sh
-BASE_DIR=/opt/wotung/parafs-install
 
+###### 安装相关文件
+INSTALL_DIR=/opt/wotung
+SCRIPT_FILE=parafs-install.tar.gz
+SCRIPT_MD5_FILE=parafs-install.md5sum
+
+BASE_DIR=/opt/wotung/parafs-install
 ###### 相关配置文件
 PASSWD_CONFIG_FILE=${BASE_DIR}/conf/passwd
 NETWORK_CONFIG_FILE=${BASE_DIR}/conf/networks

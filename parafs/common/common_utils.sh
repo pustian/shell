@@ -73,13 +73,29 @@ function is_parafs_node_ok() {
     fi
 }
 
-# ###### 修改/opt/wotung的所有者为parauser
-# function chown_wotung() {
-#     username=$1
-#     filepath=$2
-#     sudo chown -R parauser:parauser /opt/wotung
-# }
-#  
+###### 远程修改目录的所有者
+### remote_ip $1 远程ip
+### remote_user $2 远程机器用户
+### remote_passwd $3 远程机器用户密码
+### dirpath $4 需要变更目录
+### username $5 变更后所有者
+### groupname $6 变更后所有这
+###### 
+function dirpath_chown() {
+    local remote_ip=$1
+    local remote_user=$2
+    local remote_passwd=$3
+    local dirpath=$4
+    local username=$5
+    local groupname=$6
+
+    # sudo chown -R parauser:parauser /opt/wotung
+    local temp_file="/tmp/parafs_create_user$remote_ip"
+    local remote_chown="sudo chown -R $username:$groupname $dirpath"
+    echo "do dirpath_chown at $remote_ip"
+    $SSH_REMOTE_EXEC "$remote_ip" "$remote_user" "$remote_passwd" "$remote_chown" >$temp_file
+}
+ 
 #  ###### 以指定用户执行命令
 #  ### su - parauser -c "ssh parauser@192.168.138.71 'sudo ls -l /opt' "
 #  ### user 当前用户执行
@@ -147,4 +163,7 @@ fi
 #  #     "192.168.138.71" "parauser" "hetong@2015" "/home/parauser"
 #  # root用户执行
 #  # zip_dir /opt/wotung/parafs-install
+#  #######
+# dirpath_chown 192.168.138.72 root Tianpusen@1 /opt/wotung parauser parauser
+# dirpath_chown 192.168.1.99 parafs tianpusen /opt/wotung parafs parafs
 #  # ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

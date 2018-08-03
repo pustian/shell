@@ -50,32 +50,26 @@ while [ x"${input}" != x"E" ]; do
     case ${input} in
         P|p) 
             echo -e "\033[40;34m\tpre-check begin\033[0m"
-            check_config 
-            check_ips
-            cluster_check_passwd
-            cluster_check_nodes
+#            check_config 
+#            check_ips
+#            cluster_check_passwd
+#            cluster_check_nodes
             echo -e "\033[40;32m\tpre-check done \033[0m"
             ;;
         R|r) 
             echo -e "\033[40;34m\tpre-installation begin\033[0m"
-        #    cluster_create_user
-            cluster_user_authorize
-        #    # 删除 passwd user_passwd 文件
-
-        #    ### 打包script
-        #    zip_dir $BASE_DIR
-        #    cluster_script_dist
+#            cluster_create_user
+#            cluster_user_authorize
+#            cluster_wotung_chown
+#            cluster_script_dist
+            # 删除 passwd user_passwd 文件
             # cluster_config_hostname
             # cluster_config_hosts
-            # cluster_install_package_dist
-            # cluster_check_install_package
-            # cluster_unzip_install_package
             # cluster_yum_source
             # cluster_pip_source
             # cluster_yum_install
             # cluster_pip_install
             echo -e "\033[40;32m\tpre-installation done \033[0m"
-            echo "Run install with parauser, if you want do pre-check or pre-install input [e|E|q|Q]"
             ;;
         I|i)
             echo -e "\033[40;34m\tinstallation begin\033[0m"

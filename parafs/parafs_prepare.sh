@@ -6,9 +6,8 @@
 function prepare_usage() {
     echo "cluster-create-user"
     echo "cluster-user-authorize"
-    echo "script-zip"
-    echo "cluster-yum-pip"
-    # echo "cluster-check-nodes"
+    echo "cluster-wotung-chown"
+    echo "cluster-script-dist"
 
 #    echo "cluster-config-hostname"
 #    echo "cluster-config-hosts"
@@ -54,30 +53,33 @@ function cluster_user_authorize() {
     echo -e "\t\t cluster_user_authorize end"
 }
 # 
-# ###### cluster_wotung_chown
-# function cluster_wotung_chown() {
-#     echo -e "\t\t cluster_wotung_chown begin"
-#     for ip in $CLUSTER_IPS; do
-#         
-#     done
-#     echo -e "\t\t cluster_wotung_chown end"
-# 
-# }
-# ####### 根据配置文件network修改hostname
-# ####+++ parater: network_config
-# ####+++ 
-# function cluster_script_dist() {
-#     scipt_zip_file=$1
-#     echo -e "\t\t cluster_script_dist begin"
-#     # 考虑到通用性使用zip 打包 unzip 解压
-#     zip_dir $BASE_DIR
-#     for ip in $CLUSTER_IPS ; do
-#         __cluster_file_dist $scipt_zip_file $BASE_DIR
-#     done
-# 
-#     echo -e "\t\t cluster_script_dist end"
-#     echo $?
-# }
+###### 修改/opt/wotung 所有者为parauser
+function cluster_wotung_chown() {
+     echo -e "\t\t cluster_wotung_chown begin"
+     local filename=$PASSWD_CONFIG_FILE
+
+     for ip in $CLUSTER_IPS; do
+        passwd=`grep ${ip} $filename |awk '{print $2 }'`
+        
+        dirpath_chown $ip $DEFAULT_USER $passwd $INSTALL_DIR $USER_NAME $USER_NAME
+        # dirpath_chown 192.168.1.99 parafs tianpusen /opt/wotung parafs parafs
+     done
+     echo -e "\t\t cluster_wotung_chown end" 
+}
+
+####### 分发配置文件到各机器上,方便配置文件同步
+function cluster_script_dist() {
+    echo -e "\t\t cluster_script_dist begin"
+    local script_zip_file=parafs-install.tar.gz
+    local script_zip_md5_file=parafs-install.md5sum
+    
+    __cluster_file_dist $INSTALL_DIR $script_zip_file $INSTALL_DIR
+
+    __cluster_zipfile_check $script_zip_md5_file $script_zip_file $INSTALL_DIR
+
+    __cluster_unzipfile $script_zip_file $INSTALL_DIR
+    echo -e "\t\t cluster_script_dist end"
+}
 # 
 # ####### 根据配置文件network修改hostname
 # ####+++ 
@@ -145,6 +147,7 @@ fi
 # ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
 # install_usage
 # cluster_create_user
-cluster_user_authorize
-#cluster_script_dist
+# cluster_user_authorize
+# cluster_wotung_chown
+# cluster_script_dist
 # ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###
