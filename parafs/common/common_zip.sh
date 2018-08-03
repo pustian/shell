@@ -100,9 +100,6 @@ function unzip_file() {
 ###===========================================================================
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 ZIP_BASH_NAME=common_zip.sh
-if [ -z "$VARIABLE_BASH_NAME" ] ; then 
-    . /opt/wotung/parafs-install/variable.sh
-fi
 ##################
 ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
 # zip_dir /opt/wotung/parafs-install /opt/wotung

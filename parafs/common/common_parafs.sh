@@ -90,6 +90,9 @@ function __cluster_file_dist() {
 
     local fault_ips=""
     for ip in $CLUSTER_IPS; do
+        if [ ${ip} = ${CLUSTER_LOCAL_IP}  ] ;
+            continue
+        fi
 #        echo "file_dist $dist_file_path $dist_zip_file $USER_NAME ${ip} ${USER_NAME}  $remote_path"
         file_dist $dist_file_path $dist_zip_file $USER_NAME ${ip} ${USER_NAME}  $remote_path
         if [ $? -ne 0 ] ; then 
@@ -120,6 +123,9 @@ function __cluster_zipfile_check() {
     local md5=`cat ${zip_file_dir}/$zip_md5_file |awk '{print $1}'`
     local fault_ips=""
     for ip in $CLUSTER_IPS; do
+        if [ ${ip} = ${CLUSTER_LOCAL_IP}  ] ;
+            continue
+        fi
  #       echo "is_zip_file_ok $md5 $zip_file_dir $zip_file ${USER_NAME} $ip ${USER_NAME}"
         is_zip_file_ok $md5 $zip_file_dir $zip_file ${USER_NAME} $ip ${USER_NAME}
         if [ $? -ne 0 ] ; then
@@ -148,6 +154,9 @@ function __cluster_unzipfile() {
 
     local fault_ips=""
     for ip in $CLUSTER_IPS; do
+        if [ ${ip} = ${CLUSTER_LOCAL_IP}  ] ;
+            continue
+        fi
         # echo "unzip_file $zip_file_dir $zip_file $USER_NAME $ip $USER_NAME"
         unzip_file $zip_file_dir $zip_file $USER_NAME $ip $USER_NAME
         if [ $? -ne 0 ] ; then
@@ -163,6 +172,33 @@ function __cluster_unzipfile() {
     fi
     echo -e "\t\t __cluster_unzipfile end"
 }
+
+###### 免密后配置文件hostname 
+function __cluster_config_hostname() {
+    echo -e "\t\t __cluster_config_hostname begin"
+    local fault_ips=""
+    for ip in $CLUSTER_IPS; do
+        if [ ${ip} = ${CLUSTER_LOCAL_IP}  ] ;
+            continue
+        fi
+    done
+    if [] ; then
+    fi
+    echo -e "\t\t __cluster_config_hostname end"
+}
+###### 免密后配置文件hosts
+function __cluster_config_hosts() {
+    echo -e "\t\t __cluster_config_hostname begin"
+    local fault_ips=""
+    for ip in $CLUSTER_IPS; do
+        if [ ${ip} = ${CLUSTER_LOCAL_IP}  ] ;
+            continue
+        fi
+    done
+    if [] ; then
+    fi
+    echo -e "\t\t __cluster_config_hostname end"
+}
 ###===========================================================================
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 COMMON_BASH_NAME=common_parafs.h
@@ -177,6 +213,9 @@ if [ -z "$USER_BASH_NAME" ]; then
 fi
 if [ -z "$ZIP_BASH_NAME" ]; then
     . ${BASE_DIR}/parafs/common/common_zip.sh
+fi
+if [ -z "$CONFIG_BASH_NAME"]; then
+    . ${BASE_DIR}/parafs/common/common_config.sh
 fi
 # ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
 # __cluster_check_user parauser false

@@ -9,11 +9,7 @@ function prepare_usage() {
     echo "cluster-wotung-chown"
     echo "cluster-script-dist"
 
-#    echo "cluster-config-hostname"
-#    echo "cluster-config-hosts"
-#    echo "cluster-install-package-dist"
-#    echo "cluster-check-install-package"
-#    echo "cluster-unzip-install-package"
+    echo "cluster-config-network"
 #    echo "cluster-yum-source"
 #    echo "cluster-yum-install"
 #    echo "cluster-pip-source"
@@ -79,6 +75,17 @@ function cluster_script_dist() {
 
     __cluster_unzipfile $script_zip_file $INSTALL_DIR
     echo -e "\t\t cluster_script_dist end"
+}
+
+####### 各机器上配置文件,/etc/hosts /etc/hostname
+function cluster_config_network() {
+    echo -e "\t\t cluster_config_network begin"
+
+    __cluster_config_hostname
+    
+    __cluster_config_hosts
+
+    echo -e "\t\t cluster_config_network end"
 }
 # 
 # ####### 根据配置文件network修改hostname

@@ -62,6 +62,25 @@ test -z "$DEFAULT_USER_HOME" && DEFAULT_USER_HOME=/root
 # echo $CLUSTER_IPS
 # echo $DEFAULT_USER
 # echo $DEFAULT_USER_HOME
+
+###### ipv4
+CLUSTER_LOCAL_IP=
+for local_ip in `ip addr |grep inet |awk '{print $2}' |awk -F '/' '{print $1}' |grep -e '^[1|2][0-9]' `; do
+    CLUSTER_LOCAL_IP=`grep $local_ip $NETWORK_CONFIG_FILE | awk '{print $1}'`
+    if [ ! -z "$CLUSTER_LOCAL_IP" ]; then
+        break;
+    fi
+done
+# echo $CLUSTER_LOCAL_IP
+
+
+
+
+
+
+
+
+
 #以下变量请不要赋值变更
 # ip数组
 IP_ARRAY=`cat ${NETWORK_CONFIG_FILE} |grep -v "^#" | awk -F " " '{print $1}'`    
