@@ -14,28 +14,9 @@ function is_conn() {
     test x = x"$ret" && return 0 || return 1
 }
 
-####### hostname修改 /etc/hostname
-####+++ parater: ip 
-####+++ parater: hostname 
-####+++ return : 1成功 0 失败
-function set_hostname() {
-    local ip=$1
-    local hostname=$2
-
-}
-
-####### hostname修改 /etc/hosts
-####+++ parater: ip
-####+++ parater: hostname 机器hostname
-####+++ parater: alias 机器短名
-####+++ return : 1成功 0 失败
-function set_hosts() {
-    local ip=$1
-    local hostname=$2
-    local alias=$3
-
-}
-
+####### 检查该conf/passwd中配置的操作用户 密码正确性,
+####### 操作用户可以设置在 conf/user_passwd
+####### 操作用户只能是root 或是 sudo可以免密执行的用户
 function is_passwd_ok() {
     local ip=$1
     local username=$2
@@ -58,7 +39,7 @@ function is_local_parafs_node_OK() {
     local _30G=30831523
     # local _30G=30831525
     echo "do is_local_parafs_node_OK "
-    capcity=`df -T |grep ${node_dir} |grep ${format} |awk '{print $3}' `
+    local capcity=`df -T |grep ${node_dir} |grep ${format} |awk '{print $3}' `
     if [ ! -z ${capcity} ] && [ $((capcity)) -gt  $((_30G)) ] ; then
         return 1
     else
@@ -81,7 +62,7 @@ function is_parafs_node_ok() {
     echo "do is_parafs_node_ok at $ip"
     $SSH_REMOTE_EXEC "$ip" "$user" "$passwd" "$dfnode" >$temp_file
     
-    capcity=`cat $temp_file |grep ${node_dir} |grep ${format} |awk '{print $3}' `
+    local capcity=`cat $temp_file |grep ${node_dir} |grep ${format} |awk '{print $3}' `
     # echo "[ ! -z ${capcity} ] && [ $((capcity)) -gt  $((_30G)) ] "
     if [ ! -z ${capcity} ] && [ $((capcity)) -gt  $((_30G)) ] ; then
         return 1
@@ -293,6 +274,27 @@ function is_parafs_node_ok() {
 #      local run_command=$4
 #      su - $user -c "sudo ssh '$authorize_user@$authoriz_ip' '$run_command'"
 #      return $?
+#  }
+#  ####### hostname修改 /etc/hostname
+#  ####+++ parater: ip 
+#  ####+++ parater: hostname 
+#  ####+++ return : 1成功 0 失败
+#  function set_hostname() {
+#      local ip=$1
+#      local hostname=$2
+#  
+#  }
+#  
+#  ####### hostname修改 /etc/hosts
+#  ####+++ parater: ip
+#  ####+++ parater: hostname 机器hostname
+#  ####+++ parater: alias 机器短名
+#  ####+++ return : 1成功 0 失败
+#  function set_hosts() {
+#      local ip=$1
+#      local hostname=$2
+#      local alias=$3
+#  
 #  }
 #  ###===========================================================================
 #  ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
