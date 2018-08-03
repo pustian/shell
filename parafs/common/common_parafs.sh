@@ -16,17 +16,17 @@ function __cluster_check_user() {
     for ip in $IPS; do
         if [ "x${ip}" = "x" ] ; then
              break;
-         fi
-         
-         passwd=`grep ${ip} $filename |awk '{print $2 }'`
-         user='root'
+        fi
         
-         is_no_parauser "$ip" "$user" "$passwd" ${username}
-         if [ $? -eq 0 ] ; then
-             echo -e "\033[31m\t\tuser=$username exist at $ip \033[0m"
-             fault_ips="$ip $fault_ips"
-             # break;
-         fi
+        passwd=`grep ${ip} $filename |awk '{print $2 }'`
+        user='root'
+        
+        is_no_parauser "$ip" "$user" "$passwd" ${username}
+        if [ $? -eq 0 ] ; then
+            echo -e "\033[31m\t\tuser=$username exist at $ip \033[0m"
+            fault_ips="$ip $fault_ips"
+            # break;
+        fi
     done
    
     if [ ! -z "$fault_ips" ]; then
@@ -86,9 +86,86 @@ function __cluster_config_sudoers() {
 }
 
 ###### 免密后以免密用户分发文件
-### filename
-### remote ip
-### remote_
+### dist_filename
+### remote path
+function __cluster_file_dist() {
+    echo -e "\t\t __cluster_config_sudoers begin"
+    local dist_filename=$1
+    local remote_path=$2
+    local filename=$PASSWD_CONFIG_FILE
+    local IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
+    for ip in $IPS; do
+        if [ "x${ip}" = "x" ] ; then
+            break;
+        fi
+         
+        passwd=`grep ${ip} $filename |awk '{print $2 }'`
+        user='root'
+        file_dist $dist_filename $ip $user $passwd $remote_path
+    done
+}
+
+###### 检查分发文件的md5
+### zip_file
+### zip_md5_file
+function __cluster_zipfile_check() {
+    local zip_file=$1
+    local zip_md5_file=$2
+
+    local fault_ips=""
+    local filename=$PASSWD_CONFIG_FILE
+    local IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
+    for ip in $IPS; do
+        if [ "x${ip}" = "x" ] ; then
+            break;
+        fi
+         
+        passwd=`grep ${ip} $filename |awk '{print $2 }'`
+        user='root'
+
+        is_zip_file_ok $zip_md5_file $zip_file $ip $user $passwd
+        if [ $? -eq 0 ] ; then
+            echo -e "\033[31m\t\tzip_file=$zip_file is damage at $ip \033[0m"
+            fault_ips="$ip $fault_ips"
+            # break;
+        fi
+        #file_dist $dist_filename $ip $user $passwd $remote_path
+    done
+    if [ ! -z "$fault_ips" ]; then
+        echo -e "\033[31m\t\tmake sure the user\033[0m"
+        exit 1
+    fi
+    echo "__cluster_zipfile_check end"
+}
+
+###### 
+###
+###
+function __cluster_unzipfile() {
+    local zip_file=$1
+
+    local fault_ips=""
+    local filename=$PASSWD_CONFIG_FILE
+    local IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
+    for ip in $IPS; do
+        if [ "x${ip}" = "x" ] ; then
+            break;
+        fi
+         
+        passwd=`grep ${ip} $filename |awk '{print $2 }'`
+        user='root'
+
+        unzip_file $zip_file $ip $user $passwd
+        if [ $? -eq 0 ] ; then
+            echo -e "\033[31m\t\tfailed to unzip $zip_file at $ip \033[0m"
+            fault_ips="$ip $fault_ips"
+            # break;
+        fi
+        #file_dist $dist_filename $ip $user $passwd $remote_path
+    done
+    echo "__cluster_unzipfile end"
+    
+}
 ###===========================================================================
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 COMMON_BASH_NAME=common_parafs.h
@@ -101,5 +178,6 @@ fi
 # ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
 # __cluster_check_user parafs
 #__cluster_create_user  "parauser" "YdwAWdHXqldYI" "/home/parauser"  "/bin/bash"
- __cluster_config_sudoers parauser
+# __cluster_config_sudoers parauser
+#__cluster_file_dist  /opt/wotung/parafs-install.zip /opt/wotung
 # ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

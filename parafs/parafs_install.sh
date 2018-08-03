@@ -34,10 +34,6 @@ function cluster_ChangeConfigurationFile() {
     echo -e "\t\t cluster_ChangeConfigurationFile done"
 }
 
-
-
-
-
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 INSTALL_BASH_NAME=parafs_install.sh
 if [ -z ${VARIABLE_BASH_NAME} ] ; then 

@@ -16,7 +16,7 @@ if [ -z ${VARIABLE_BASH_NAME} ] ; then
     . /opt/wotung/parafs-install/variable.sh
 fi
 if [ -z ${UTILS_BASH_NAME} ] ; then 
-    . /opt/wotung/parafs-install/common/utils.sh
+    . $BASE_DIR/parafs/common/common_utils.sh
 fi
 
 ###++++++++++++++++++++++++      main end         ++++++++++++++++++++++++++###

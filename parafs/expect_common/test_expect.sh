@@ -18,4 +18,8 @@
 # ./current_authorize.exp "192.168.138.71" 'parauser' "hetong@2015" "/home/parauser"  \
 #     "192.168.138.72" "parauser" "hetong@2015" "/home/parauser"
 # /opt/wotung/parafs-install/ssh_authorize/ssh_remote_exec.sh "192.168.1.99" "parafs" "tianpusen" "/home/parafs" "ls -d"
+# ### ssh_copy.exp
+# ./ssh_copy.exp "/opt/4G.data" "192.168.1.99" 'root' 'hetong@2018' '/tmp'
+ ./ssh_copy.exp "$0" "192.168.1.99" 'parafs' 'tianpusen' '/opt'
+ echo $?
 # ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

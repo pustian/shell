@@ -25,27 +25,13 @@ function prepare_usage() {
 ####+++ return : 
 function cluster_create_user() {
     echo -e "\t\t cluster_create_user begin"
-    local user_passwd_file=${USER_PASSWD}
-    local username=`grep user $user_passwd_file | grep -v '^#' | awk -F "=" '{print $2}'`
-    local userpasswd_ssl=`grep passwd_ssl $user_passwd_file | grep -v '^#' | awk -F "=" '{print $2}'`
-    local userhome=`grep home $user_passwd_file | grep -v '^#' | awk -F "=" '{print $2}'`
-    local usershell=`grep shell $user_passwd_file | grep -v '^#' | awk -F "=" '{print $2}'`
-    local userpasswd=`grep passwd_plain $user_passwd_file | grep -v '^#' | awk -F "=" '{print $2}'`
-
-    if [ -z $userpasswd_ssl ] || [ -z $userpasswd ] ; then
-        echo "please generate a encrpt passwd config the conf/user_passwd"
-        exit 1
-    fi
-    test -z "$username"  &&  username="parauser" 
-    test -z "$userhome"  &&  userhome="/home/$username"
-    test -z "$usershell" &&  usershell="/bin/bash"  
 
     #__cluster_check_user $username $userhome
-    __cluster_check_user $username 
+    __cluster_check_user $USER_NAME
 
-    __cluster_create_user $username $userpasswd_ssl $userhome $usershell
+    __cluster_create_user $USER_NAME $USER_PASSWD_SSL $USER_HOME $USER_SHELL
 
-    __cluster_config_sudoers $username
+    __cluster_config_sudoers $USER_NAME
 
     echo -e "\t\t cluster_create_user end"
 }
@@ -55,26 +41,17 @@ function cluster_create_user() {
 ######
 function cluster_user_authorize() {
     echo -e "\t\t cluster_user_authorize begin"
-    local user_passwd_file=${USER_PASSWD}
-    local username=`grep user $user_passwd_file | grep -v '^#' | awk -F "=" '{print $2}'`
-    local userpasswd=`grep passwd_plain $user_passwd_file | grep -v '^#' | awk -F "=" '{print $2}'`
-    local userhome=`grep home $user_passwd_file | grep -v '^#' | awk -F "=" '{print $2}'`
-    test -z "$username"  &&  username="parauser" 
-    test -z "$userhome"  &&  userhome="/home/$username"
-    test -z "$usershell" &&  usershell="/bin/bash"  
     
-    local filename=$PASSWD_CONFIG_FILE
-    local IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
-    for outer_ip in $IPS; do
+    for outer_ip in $CLUSTER_IPS; do
         if [ "x${outer_ip}" = "x" ] ; then
             break;
         fi
-        for inner_ip in $IPS; do
+        for inner_ip in $CLUSTER_IPS; do
             if [ "x${inner_ip}" = "x" ] ; then
                 break;
             fi
-            ssh_user_authorize ${outer_ip} ${username} ${userpasswd} ${userhome} \
-                ${inner_ip} ${username} ${userpasswd} ${userhome}
+            ssh_user_authorize ${outer_ip} ${USER_NAME} ${USER_PASSWD} ${USER_HOME} \
+                ${inner_ip} ${USER_NAME} ${USER_PASSWD} ${USER_HOME}
         done
     done
 
@@ -85,11 +62,14 @@ function cluster_user_authorize() {
 ####+++ parater: network_config
 ####+++ 
 function cluster_script_dist() {
-    local filename=$NETWORK_CONFIG_FILE
-    local IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
+    scipt_zip_file=$1
     echo -e "\t\t cluster_script_dist begin"
     # 考虑到通用性使用zip 打包 unzip 解压
     zip_dir $BASE_DIR
+    for ip in $CLUSTER_IPS ; do
+        __cluster_file_dist $scipt_zip_file $BASE_DIR
+    done
+
     echo -e "\t\t cluster_script_dist end"
     echo $?
 }
@@ -159,5 +139,4 @@ fi
 # cluster_create_user
 # cluster_user_authorize
 #cluster_script_dist
-# cluster_check_nodes
 # ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

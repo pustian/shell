@@ -11,24 +11,52 @@ function IsLocalIP()
  fi
 }
 
-
 VARIABLE_BASH_NAME=variable.sh
-INSTALL_PACAKGE_FILE=${BASE_DIR}/parafs.tar.gz
-INSTALL_PACAKGE_MD5=${BASE_DIR}/parafs.md5sum
+BASE_DIR=/opt/wotung/parafs-install
+
+###### 相关配置文件
 PASSWD_CONFIG_FILE=${BASE_DIR}/conf/passwd
 NETWORK_CONFIG_FILE=${BASE_DIR}/conf/networks
-USER_PASSWD=${BASE_DIR}/conf/user_passwd
+USER_PASSWD_FILE=${BASE_DIR}/conf/user_passwd
 INSTALLONLY_CONFIG_FILE=${BASE_DIR}/conf/installonly
 BASHRC_CONFIG_FILE=${BASE_DIR}/conf/bashrc
 
+###### EXPECT 相关代码
 SSH_EXP_LOGIN=${BASE_DIR}/parafs/expect_common/ssh_login.exp
+SSH_EXP_COPY=${BASE_DIR}/parafs/expect_common/ssh_copy.exp
 SSH_REMOTE_EXEC=${BASE_DIR}/parafs/expect_common/ssh_remote_exec.exp
 SSH_EXP_AUTHORIZE=${BASE_DIR}/parafs/expect_common/current_authorize.exp
 
+###### 新建用户名 user_passwd
+USER_NAME=`grep 'user=' $USER_PASSWD_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+USER_PASSWD=`grep 'passwd_plain=' $USER_PASSWD_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+USER_PASSWD_SSL=`grep 'passwd_ssl=' $USER_PASSWD_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+USER_HOME=`grep home $USER_PASSWD_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+USER_SHELL=`grep shell $USER_PASSWD_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+test -z "$USER_NAME"  &&  USER_NAME="parauser" 
+test -z "$USER_HOME"  &&  USER_HOME="/home/$username"
+test -z "$USER_SHELL" &&  USER_SHELL="/bin/bash"  
+if [ -z $USER_PASSWD ] || [ -z $USER_PASSWD_SSL ] ; then
+    echo "please generate a encrpt passwd config the conf/user_passwd"
+    exit 1
+fi
+
+#######
+CLUSTER_IPS=`cat ${NETWORK_CONFIG_FILE} |grep -v '^#' | awk -F " " '{print $1}'` 
+####### PASSWD_CONFIG_FILE 中默认用户
+DEFAULT_USER=`grep 'default_user=' $USER_PASSWD_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+DEFAULT_USER_HOME=`grep 'default_user_home=' $USER_PASSWD_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+test -z "$DEFAULT_USER" && DEFAULT_USER=root
+test -z "$DEFAULT_USER_HOME" && DEFAULT_USER_HOME=/root
+
+# echo $CLUSTER_IPS
+# echo $DEFAULT_USER
+# echo $DEFAULT_USER_HOME
 #以下变量请不要赋值变更
 # ip数组
-IP_ARRAY=
-IPLongShortArray=
+IP_ARRAY=`cat ${NETWORK_CONFIG_FILE} |grep -v "^#" | awk -F " " '{print $1}'`    
+IPLongShortArray=`cat ${NETWORK_CONFIG_FILE} |grep -v "^#"  | awk -F " " '{print $1","$2","$3}'` 	  
+
 # 本机IP
 Local_IP=
 # master ip
@@ -46,8 +74,6 @@ InstallParafsFiles="${BASE_DIR}/conf/InstallParafsFiles"
 # parafs 复制文件
 CopyFiles="${BASE_DIR}/conf/CopyFiles"
 
-IP_ARRAY=`cat ${NETWORK_CONFIG_FILE} |grep -v "^#" | awk -F " " '{print $1}'`    
-IPLongShortArray=`cat ${NETWORK_CONFIG_FILE} |grep -v "^#"  | awk -F " " '{print $1","$2","$3}'` 	  
    
 for ip in ${IP_ARRAY}; do
 	Master_IP=$ip
