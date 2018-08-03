@@ -58,9 +58,8 @@ while [ x"${input}" != x"E" ]; do
             ;;
         R|r) 
             echo -e "\033[40;34m\tpre-installation begin\033[0m"
-
         #    cluster_create_user
-        #    cluster_user_authorize
+            cluster_user_authorize
         #    # 删除 passwd user_passwd 文件
 
         #    ### 打包script

@@ -28,11 +28,11 @@ SSH_REMOTE_EXEC=${BASE_DIR}/parafs/expect_common/ssh_remote_exec.exp
 SSH_EXP_AUTHORIZE=${BASE_DIR}/parafs/expect_common/current_authorize.exp
 
 ###### 新建用户名 user_passwd
-USER_NAME=`grep 'user=' $USER_PASSWD_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
-USER_PASSWD=`grep 'passwd_plain=' $USER_PASSWD_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
-USER_PASSWD_SSL=`grep 'passwd_ssl=' $USER_PASSWD_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
-USER_HOME=`grep home $USER_PASSWD_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
-USER_SHELL=`grep shell $USER_PASSWD_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+USER_NAME=`grep '^user=' $USER_PASSWD_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+USER_PASSWD=`grep '^passwd_plain=' $USER_PASSWD_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+USER_PASSWD_SSL=`grep '^passwd_ssl=' $USER_PASSWD_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+USER_HOME=`grep '^home=' $USER_PASSWD_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+USER_SHELL=`grep '^shell=' $USER_PASSWD_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
 test -z "$USER_NAME"  &&  USER_NAME="parauser" 
 test -z "$USER_HOME"  &&  USER_HOME="/home/$username"
 test -z "$USER_SHELL" &&  USER_SHELL="/bin/bash"  
@@ -40,6 +40,11 @@ if [ -z $USER_PASSWD ] || [ -z $USER_PASSWD_SSL ] ; then
     echo "please generate a encrpt passwd config the conf/user_passwd"
     exit 1
 fi
+# echo "USER_NAME $USER_NAME"
+# echo "USER_PASSWD $USER_PASSWD"
+# echo "USER_PASSWD_SSL $USER_PASSWD_SSL"
+# echo "USER_HOME $USER_HOME"
+# echo "USER_SHELL $USER_SHELL"
 
 #######
 CLUSTER_IPS=`cat ${NETWORK_CONFIG_FILE} |grep -v '^#' | awk -F " " '{print $1}'` 

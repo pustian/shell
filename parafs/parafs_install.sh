@@ -4,7 +4,6 @@
 # Copyright (C) 2015-2050 Wotung.com.
 ###############################################################################
 
-
 function install_usage() {
     echo "cluster_ParafsInstallation：parafs的安装，需要使用networks"
     echo "cluster-hadoop"
