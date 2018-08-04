@@ -15,14 +15,13 @@ VARIABLE_BASH_NAME=variable.sh
 
 ###### 安装相关文件
 INSTALL_DIR=/opt/wotung
-SCRIPT_FILE=parafs-install.tar.gz
-SCRIPT_MD5_FILE=parafs-install.md5sum
 
 BASE_DIR=/opt/wotung/parafs-install
 ###### 相关配置文件
 PASSWD_CONFIG_FILE=${BASE_DIR}/conf/passwd
 NETWORK_CONFIG_FILE=${BASE_DIR}/conf/networks
 USER_PASSWD_FILE=${BASE_DIR}/conf/user_passwd
+MISC_CONF_FILE=${BASE_DIR}/conf/misc_config
 INSTALLONLY_CONFIG_FILE=${BASE_DIR}/conf/installonly
 BASHRC_CONFIG_FILE=${BASE_DIR}/conf/bashrc
 
@@ -31,6 +30,16 @@ SSH_EXP_LOGIN=${BASE_DIR}/parafs/expect_common/ssh_login.exp
 SSH_EXP_COPY=${BASE_DIR}/parafs/expect_common/ssh_copy.exp
 SSH_REMOTE_EXEC=${BASE_DIR}/parafs/expect_common/ssh_remote_exec.exp
 SSH_EXP_AUTHORIZE=${BASE_DIR}/parafs/expect_common/current_authorize.exp
+
+###### 安装文件,不包含目录 misc_config
+SCRIPT_FILE=`grep '^parafs_install_file=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+SCRIPT_MD5_FILE=`grep '^parafs_install_file_md5=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+PARAFS_RPM=`grep '^parafs_rpm=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+PARAFS_MD5_RPM=`grep '^parafs_rpm_md5=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+LLOG_RPM=`grep '^llog_rpm=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+LLOG_MD5_RPM=`grep '^llog_rpm_md5=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+HADOOP_FILE=`grep '^parafs_hadoop_file=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+HADOOP_MD5_FILE=`grep '^parafs_hadoop_file_md5=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
 
 ###### 新建用户名 user_passwd
 USER_NAME=`grep '^user=' $USER_PASSWD_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
@@ -54,8 +63,8 @@ fi
 #######
 CLUSTER_IPS=`cat ${NETWORK_CONFIG_FILE} |grep -v '^#' | awk -F " " '{print $1}'` 
 ####### PASSWD_CONFIG_FILE 中默认用户
-DEFAULT_USER=`grep 'default_user=' $USER_PASSWD_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
-DEFAULT_USER_HOME=`grep 'default_user_home=' $USER_PASSWD_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+DEFAULT_USER=`grep 'default_user=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+DEFAULT_USER_HOME=`grep 'default_user_home=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
 test -z "$DEFAULT_USER" && DEFAULT_USER=root
 test -z "$DEFAULT_USER_HOME" && DEFAULT_USER_HOME=/root
 
@@ -72,13 +81,6 @@ for local_ip in `ip addr |grep inet |awk '{print $2}' |awk -F '/' '{print $1}' |
     fi
 done
 # echo $CLUSTER_LOCAL_IP
-
-
-
-
-
-
-
 
 
 #以下变量请不要赋值变更

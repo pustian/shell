@@ -60,11 +60,12 @@ while [ x"${input}" != x"E" ]; do
             echo -e "\033[40;34m\tpre-installation begin\033[0m"
 #            cluster_create_user
 #            cluster_user_authorize
+            # 删除 passwd user_passwd 文件
 #            cluster_wotung_chown
 #            cluster_script_dist
-            # 删除 passwd user_passwd 文件
-            # cluster_config_hostname
-            # cluster_config_hosts
+#            cluster_config_network
+            cluster_parafs_rpm_dist
+            cluster_hadoop_dist
             # cluster_yum_source
             # cluster_pip_source
             # cluster_yum_install

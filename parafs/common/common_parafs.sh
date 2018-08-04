@@ -90,7 +90,7 @@ function __cluster_file_dist() {
 
     local fault_ips=""
     for ip in $CLUSTER_IPS; do
-        if [ ${ip} = ${CLUSTER_LOCAL_IP}  ] ;
+        if [ ${ip} = ${CLUSTER_LOCAL_IP}  ] ; then
             continue
         fi
 #        echo "file_dist $dist_file_path $dist_zip_file $USER_NAME ${ip} ${USER_NAME}  $remote_path"
@@ -123,7 +123,7 @@ function __cluster_zipfile_check() {
     local md5=`cat ${zip_file_dir}/$zip_md5_file |awk '{print $1}'`
     local fault_ips=""
     for ip in $CLUSTER_IPS; do
-        if [ ${ip} = ${CLUSTER_LOCAL_IP}  ] ;
+        if [ ${ip} = ${CLUSTER_LOCAL_IP}  ] ; then
             continue
         fi
  #       echo "is_zip_file_ok $md5 $zip_file_dir $zip_file ${USER_NAME} $ip ${USER_NAME}"
@@ -154,7 +154,7 @@ function __cluster_unzipfile() {
 
     local fault_ips=""
     for ip in $CLUSTER_IPS; do
-        if [ ${ip} = ${CLUSTER_LOCAL_IP}  ] ;
+        if [ ${ip} = ${CLUSTER_LOCAL_IP}  ] ; then
             continue
         fi
         # echo "unzip_file $zip_file_dir $zip_file $USER_NAME $ip $USER_NAME"
@@ -178,26 +178,72 @@ function __cluster_config_hostname() {
     echo -e "\t\t __cluster_config_hostname begin"
     local fault_ips=""
     for ip in $CLUSTER_IPS; do
-        if [ ${ip} = ${CLUSTER_LOCAL_IP}  ] ;
-            continue
+        local hostname=`grep $ip $NETWORK_CONFIG_FILE | awk '{print $2}'`
+        # echo "config_hostname $USER_NAME $ip $USER_NAME $hostname"
+        config_hostname $USER_NAME $ip $USER_NAME $hostname
+        if [ $? -ne 0 ] ; then
+            echo -e "\033[31m\t\tfailed to config hostname at $ip \033[0m"
+            fault_ips="$ip $fault_ips"
+            # break;
         fi
     done
-    if [] ; then
+    if [ ! -z "$fault_ips" ]; then
+        echo -e "\033[31m\t\tmake sure the file /etc/hostname \033[0m"
+        exit 1
     fi
     echo -e "\t\t __cluster_config_hostname end"
 }
+
 ###### 免密后配置文件hosts
 function __cluster_config_hosts() {
     echo -e "\t\t __cluster_config_hostname begin"
     local fault_ips=""
-    for ip in $CLUSTER_IPS; do
-        if [ ${ip} = ${CLUSTER_LOCAL_IP}  ] ;
-            continue
-        fi
+    for config_ip in $CLUSTER_IPS; do
+        for cluster_ip in $CLUSTER_IPS; do
+            local ip_hostname_alias=`grep $cluster_ip $NETWORK_CONFIG_FILE `
+            local hostname=`echo $ip_hostname_alias | awk '{print $2}'`
+            local hostalias=`echo $ip_hostname_alias | awk '{print $3}'`
+            config_hosts $USER_NAME $config_ip $USER_NAME $cluster_ip $hostname $hostalias
+            if [ $? -ne 0 ] ; then
+                echo -e "\033[31m\t\tfailed to config hostname at $config_ip \033[0m"
+                fault_ips="$config_ip $fault_ips"
+                # break;
+            fi
+        done 
     done
-    if [] ; then
+    if [ ! -z "$fault_ips" ]; then
+        echo -e "\033[31m\t\tmake sure the file /etc/hosts \033[0m"
+        exit 1
     fi
     echo -e "\t\t __cluster_config_hostname end"
+}
+
+###### 免密后yum 安装
+function __cluster_install_yum() {
+    echo -e "\t\t __cluster_install_yum begin"
+    for ip in $CLUSTER_IPS; do
+        yum_install $USER_NAME $ip $USER_NAME
+    done
+    echo -e "\t\t __cluster_install_yum end"
+}
+
+###### 免密后pip 安装
+function __cluster_install_pip() {
+    echo -e "\t\t __cluster_install_pip begin"
+    for ip in $CLUSTER_IPS; do
+        pip_install $USER_NAME $ip $USER_NAME
+    done
+    echo -e "\t\t __cluster_install_pip end"
+}
+
+###### 免密后rpm 安装
+function __cluster_install_rpm() {
+    echo -e "\t\t __cluster_install_rpm begin"
+    for ip in $CLUSTER_IPS; do
+        rpm_install $USER_NAME $ip $USER_NAME $PARAFS_RPM
+        rpm_install $USER_NAME $ip $USER_NAME $LLOG_RPM
+    done
+    echo -e "\t\t __cluster_install_rpm end"
 }
 ###===========================================================================
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
@@ -217,6 +263,9 @@ fi
 if [ -z "$CONFIG_BASH_NAME"]; then
     . ${BASE_DIR}/parafs/common/common_config.sh
 fi
+if [ -z "$COMMON_INSTALL_BASH_NAME"]; then
+    . ${BASE_DIR}/parafs/common/common_install.sh
+fi
 # ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
 # __cluster_check_user parauser false
 # __cluster_create_user  "parauser" "YdwAWdHXqldYI" "/home/parauser"  "/bin/bash"
@@ -225,4 +274,10 @@ fi
 # __cluster_zipfile_check parafs-install.md5sum parafs-install.tgz /opt/wotung
 # __cluster_unzipfile parafs-install.tgz /opt/wotung
 #echo $?
+######
+
+# __cluster_config_hostname
+# __cluster_config_hosts
+# echo $?
+
 # ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

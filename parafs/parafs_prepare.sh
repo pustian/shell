@@ -8,7 +8,6 @@ function prepare_usage() {
     echo "cluster-user-authorize"
     echo "cluster-wotung-chown"
     echo "cluster-script-dist"
-
     echo "cluster-config-network"
 #    echo "cluster-yum-source"
 #    echo "cluster-yum-install"
@@ -63,17 +62,17 @@ function cluster_wotung_chown() {
      echo -e "\t\t cluster_wotung_chown end" 
 }
 
-####### 分发配置文件到各机器上,方便配置文件同步
+####### 分发安装脚本到各机器上,方便配置文件同步
 function cluster_script_dist() {
     echo -e "\t\t cluster_script_dist begin"
-    local script_zip_file=parafs-install.tar.gz
-    local script_zip_md5_file=parafs-install.md5sum
+#    local script_zip_file=parafs-install.tar.gz
+#    local script_zip_md5_file=parafs-install.md5sum
     
-    __cluster_file_dist $INSTALL_DIR $script_zip_file $INSTALL_DIR
+    __cluster_file_dist $INSTALL_DIR $SCRIPT_FILE $INSTALL_DIR
 
-    __cluster_zipfile_check $script_zip_md5_file $script_zip_file $INSTALL_DIR
+    __cluster_zipfile_check $SCRIPT_MD5_FILE $SCRIPT_FILE $INSTALL_DIR
 
-    __cluster_unzipfile $script_zip_file $INSTALL_DIR
+    __cluster_unzipfile $SCRIPT_FILE $INSTALL_DIR
     echo -e "\t\t cluster_script_dist end"
 }
 
@@ -87,55 +86,34 @@ function cluster_config_network() {
 
     echo -e "\t\t cluster_config_network end"
 }
-# 
-# ####### 根据配置文件network修改hostname
-# ####+++ 
-# function cluster_config_hostname() {
-#     local filename=$NETWORK_CONFIG_FILE
-#     local IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
-# #    for ip in $IPS; do
-# #    done
-#     echo -e "\t\t cluster_config_hostname end"
-#     echo $?
-# }
-# 
-# ####### 根据配置文件network修改hosts
-# ####+++ return :
-# function cluster_config_hosts() {
-#     local filename=$PASSWD_CONFIG_FILE
-#     echo -e "\t\t cluster_config_hosts end"
-#     echo $?
-# }
-# 
-# ####### 检查配置文件 network 是否存在并且network ip相同
-# ####+++ return : 不存在直接退出,并给出提示信息。否则无返回信息
-# function cluster_install_package_dist() {
-#     local ip_filename=
-#     local install_filename=
-#     # IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
-#     ### 检查ips相同
-#     echo -e "\t\t cluster_install_package_dist done"
-# }
-# 
-# ####### 检查配置文件 network 是否存在并且network ip相同
-# ####+++ return : 不存在直接退出,并给出提示信息。否则无返回信息
-# function cluster_check_install_package() {
-#     local ip_filename=
-#     local install_filename=
-#     #IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
-#     ### 检查ips相同
-#     echo -e "\t\t cluster_check_install_package done"
-# }
-# 
-# ####### 检查配置文件 network 是否存在并且network ip相同
-# ####+++ return : 不存在直接退出,并给出提示信息。否则无返回信息
-# function cluster_unzip_install_package() {
-#     local ip_filename=
-#     local install_filename=
-#     # IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
-#     ### 检查ips相同
-#     echo -e "\t\t cluster_unzip_install_package done"
-# }
+
+####### 分发安装文件到各机器上,llog.rpm parafs.rpm
+function cluster_parafs_rpm_dist() {
+    echo -e "\t\t cluster_parafs_rpm_dist begin"
+    
+    __cluster_file_dist $INSTALL_DIR $PARAFS_RPM $INSTALL_DIR
+
+    __cluster_zipfile_check $PARAFS_MD5_RPM $PARAFS_RPM $INSTALL_DIR
+
+    __cluster_file_dist $INSTALL_DIR $LLOG_RPM $INSTALL_DIR
+
+    __cluster_zipfile_check $LLOG_MD5_RPM $LLOG_RPM $INSTALL_DIR
+
+    echo -e "\t\t cluster_parafs_rpm_dist end"
+}
+ 
+#######  分发生态文件到各机器上,
+function cluster_parafs_hadoop_dist() {
+    echo -e "\t\t cluster_hadoop_dist begin"
+
+    __cluster_file_dist $INSTALL_DIR $HADOOP_FILE $INSTALL_DIR
+
+    __cluster_zipfile_check $HADOOP_MD5_FILE $HADOOP_FILE $INSTALL_DIR
+
+    __cluster_unzipfile $HADOOP_FILE $INSTALL_DIR
+    
+    echo -e "\t\t cluster_hadoop_dist end"
+}
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 PREPARE_BASH_NAME=parafs_prepare.sh
 if [ -z ${VARIABLE_BASH_NAME} ] ; then 

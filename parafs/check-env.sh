@@ -21,7 +21,7 @@ function check_config() {
         echo -e "\033[31m\t\tconfig_file=$NETWORK_CONFIG_FILE not exists\033[0m"
         exit 1
     fi
-
+    
     local fault_ips="" 
     for ip in $CLUSTER_IPS ; do
         grep $ip $PASSWD_CONFIG_FILE >/dev/null
