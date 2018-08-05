@@ -68,12 +68,57 @@ function config_hosts() {
     test $((ip_counts)) -ne 1 && return 1 || return 0
 }
 
+###### 远程配置yum安装源
+function config_yum_source() {
+    local local_user=$1
+    local authorize_ip=$2
+    local authorize_user=$3
+
+    local temp_file="/tmp/parafs_config_yum_source$authorize_ip"
+    local remote_command="ls -l"
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" >$temp_file
+    return $?
+}
+
+# ###### 远程配置yum安装源
+# function config_pip_source() {
+#     local local_user=$1
+#     local authorize_ip=$2
+#     local authorize_user=$3
 # 
-# function config_hadoop() {
+#     local temp_file="/tmp/parafs_config_pip_source$authorize_ip"
+#     local remote_command="ls -l"
+#     sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" >$temp_file
+#     return $?
 # }
-# 
-# function config_bashrc() {
-# }
+
+###
+### ret 0 成功配置 1 配置失败
+function config_ntpdate() {
+    local local_user=$1
+    local authorize_ip=$2
+    local authorize_user=$3
+    local ntp_hostname=$4
+
+    echo "do config_ntpdate at $authorize_ip "
+    local temp_file="/tmp/parafs_config_hosts$authorize_ip$hostname"
+    local boot_script_file="/etc/rc.d/rc.local"
+    local ntpdate_boot_condition="grep ntpdate /etc/rc.d/rc.local"
+    local ntpdate_boot_append="echo 'ntpdate $ntp_hostname' | sudo tee -a /etc/rc.d/rc.local"
+    local ntpdate_boot="$ntpdate_boot_condition || $ntpdate_boot_append"
+#    echo "sudo su - $local_user -c ssh '$authorize_user@$authorize_ip' '$ntpdate_boot'"
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$ntpdate_boot'" >$temp_file
+
+    local ntpdate_cron_command="0 */1 *  *  * root  /usr/sbin/ntpdate -u $ntp_hostname "
+    local ntpdate_cron_condition_1="test -f /etc/crontab"
+    local ntpdate_cron_do_1="echo '$ntpdate_cron_command' |sudo tee /etc/crontab"
+    local ntpdate_cron_condition_2="grep ntpdate /etc/crontab"
+    local ntpdate_cron_do_2="echo '$ntpdate_cron_command' |sudo tee -a /etc/crontab"
+    local ntpdate_cron="$ntpdate_cron_condition_1 || $ntpdate_cron_do_1 && $ntpdate_cron_condition_2 || $ntpdate_cron_do_2"
+#    echo "sudo su - $local_user -c ssh '$authorize_user@$authorize_ip' '$ntpdate_cron'"
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$ntpdate_cron'" >$temp_file
+    return $?
+}
 
 
 ###===========================================================================
@@ -85,4 +130,5 @@ CONFIG_BASH_NAME=common_config.sh
 # echo $?
 # config_hosts parauser 192.168.138.71 parauser 192.168.138.72 ht1.r2.n73 hia73
 # echo $?
+# config_ntpdate parauser 192.168.138.71 parauser 192.168.1.151
 ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

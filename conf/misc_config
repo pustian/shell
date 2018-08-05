@@ -10,3 +10,12 @@ llog_rpm=llog-1.0.1-1.x86_64-centos7-x86-20180426.rpm
 llog_rpm_md5=llog-1.0.1-1.x86_64-centos7-x86-20180426.rpm.md5sum
 parafs_hadoop_file=parafs-hadoop.tar.gz
 parafs_hadoop_file_md5=parafs-hadoop.md5sum
+### pip源
+# pip install -i https://pypi.tuna.tsinghua.edu.cn/simple pyspider，这样就会从清华这边的镜像去安装pyspider库
+# 清华：https://pypi.tuna.tsinghua.edu.cn/simple
+# 阿里云：http://mirrors.aliyun.com/pypi/simple/
+# 中国科技大学 https://pypi.mirrors.ustc.edu.cn/simple/
+# 华中理工大学：http://pypi.hustunique.com/
+# 山东理工大学：http://pypi.sdutlinux.org/ 
+# 豆瓣：http://pypi.douban.com/simple/
+pip_source=http://pypi.hustunique.com/

@@ -245,6 +245,23 @@ function __cluster_install_rpm() {
     done
     echo -e "\t\t __cluster_install_rpm end"
 }
+
+###### 免密后rpm 安装
+function __cluster_hadoop_slaves() {
+    echo -e "\t\t __cluster_install_hadoop begin"
+    slave_file=
+    rm xxxx
+    for ip in $CLUSTER_IPS; do
+        echo "" >xxx
+    done
+    for ip in $CLUSTER_IPS; do
+        if [ ${ip} = ${CLUSTER_LOCAL_IP}  ] ; then
+            continue
+        fi
+    done
+    echo -e "\t\t __cluster_install_hadoop end"
+    
+}
 ###===========================================================================
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 COMMON_BASH_NAME=common_parafs.h

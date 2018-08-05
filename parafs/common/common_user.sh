@@ -65,7 +65,8 @@ function sudoer_nopasswd() {
     local temp_file="/tmp/parafs_sudoer_nopasswd$ip"
 #    sudo sed -i '$a parauser ALL=(ALL) NOPASSWD: ALL' /etc/sudoers
     nopasswd_sentence="$username ALL=(ALL) NOPASSWD: ALL"
-    local remote_user_sudoer="sudo sed -i '\$a $nopasswd_sentence' /etc/sudoers"
+    local parauser_condition="grep $username /etc/sudoers |grep NOPASSWD"
+    local remote_user_sudoer=" $parauser_condition || sudo sed -i '\$a $nopasswd_sentence' /etc/sudoers"
     echo "do sudoer_nopasswd at $ip"
     sudo $SSH_REMOTE_EXEC "$ip" "$user" "$passwd" "$remote_user_sudoer"  >$temp_file
 }
@@ -121,6 +122,28 @@ function delete_user() {
     $SSH_REMOTE_EXEC "$ip" "$user" "$passwd" "$config_sudoer" >>$temp_file
 }
 
+###### 远程修改目录的所有者
+### remote_ip $1 远程ip
+### remote_user $2 远程机器用户
+### remote_passwd $3 远程机器用户密码
+### dirpath $4 需要变更目录
+### username $5 变更后所有者
+### groupname $6 变更后所有这
+###### 
+function dirpath_chown() {
+    local remote_ip=$1
+    local remote_user=$2
+    local remote_passwd=$3
+    local dirpath=$4
+    local username=$5
+    local groupname=$6
+
+    # sudo chown -R parauser:parauser /opt/wotung
+    local temp_file="/tmp/parafs_create_user$remote_ip"
+    local remote_chown="sudo chown -R $username:$groupname $dirpath"
+    echo "do dirpath_chown at $remote_ip"
+    $SSH_REMOTE_EXEC "$remote_ip" "$remote_user" "$remote_passwd" "$remote_chown" >$temp_file
+}
 ###===========================================================================
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 USER_BASH_NAME=common_user.sh

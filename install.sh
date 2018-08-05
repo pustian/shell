@@ -4,9 +4,17 @@
 # Copyright (C) 2015-2050 Wotung.com.
 ###############################################################################
 function usage() {
+#    clear
     echo -e "\033[40;37m##########################################################################\033[0m" ;
     echo -e "\033[40;37m#         Hetong Infinity Fusion installation and tools System           #\033[0m" ;
-    echo -e "\033[40;37m##########################################################################\033[0m" ;
+    echo -e "\033[40;35m##########################################################################\033[0m" ;
+    echo -e "\033[40;35m##          __      __       __                                         ##\033[0m" ; 
+    echo -e "\033[40;35m##          /  \    /  \_____/  |_ __ __  ____    ____                  ##\033[0m" ; 
+    echo -e "\033[40;35m##          \   \/\/   /  _ \   __\  |  \/    \  / ___\                 ##\033[0m" ; 
+    echo -e "\033[40;35m##           \        (  <_> )  | |  |  /   |  \/ /_/  >                ##\033[0m" ; 
+    echo -e "\033[40;35m##             \__/\  / \____/|__| |____/|___|  /\___  /                ##\033[0m" ; 
+    echo -e "\033[40;35m##                    \/                        \//_____/               ##\033[0m" ; 
+    echo -e "\033[40;35m##########################################################################\033[0m" ;
     echo -e "\033[40;37mpre-check -------------------------------------------------------------[P]\033[0m" ;
     echo -e "\033[40;37mpre-installation-------------------------------------------------------[R]\033[0m" ;
     echo -e "\033[40;37minstallation---------------------------------------------------------- [I]\033[0m" ;
@@ -23,18 +31,18 @@ function usage() {
 if [ -z $VARIABLE_BASH_NAME ] ; then
     . /opt/wotung/parafs-install/variable.sh
 fi
-if [ -z ${CHECK_ENV_BASH_NAME} ] ; then
-    . $BASE_DIR/parafs/check-env.sh
-fi
+#if [ -z ${CHECK_ENV_BASH_NAME} ] ; then
+#    . $BASE_DIR/parafs/check-env.sh
+#fi
 if [ -z ${PREPARE_BASH_NAME} ] ; then
     . $BASE_DIR/parafs/parafs_prepare.sh 
 fi
-if [ -z ${INSTALL_BASH_NAME} ] ; then
-    . $BASE_DIR/parafs/parafs_install.sh
-fi
-if [ -z ${CHECK_BASH_NAME} ] ; then
-    . $BASE_DIR/parafs/parafs_check.sh
-fi
+#if [ -z ${INSTALL_BASH_NAME} ] ; then
+#    . $BASE_DIR/parafs/parafs_install.sh
+#fi
+#if [ -z ${CHECK_BASH_NAME} ] ; then
+#    . $BASE_DIR/parafs/parafs_check.sh
+#fi
 #. /opt/wotung/parafs-install/install.sh
 
 EXPECT=`which expect`
@@ -50,33 +58,36 @@ while [ x"${input}" != x"E" ]; do
     case ${input} in
         P|p) 
             echo -e "\033[40;34m\tpre-check begin\033[0m"
-#            check_config 
-#            check_ips
-#            cluster_check_passwd
-#            cluster_check_nodes
+            check_config 
+            check_ips
+            cluster_check_passwd
+            cluster_check_nodes
             echo -e "\033[40;32m\tpre-check done \033[0m"
             ;;
         R|r) 
             echo -e "\033[40;34m\tpre-installation begin\033[0m"
 #            cluster_create_user
 #            cluster_user_authorize
-            # 删除 passwd user_passwd 文件
-#            cluster_wotung_chown
-#            cluster_script_dist
+            # 删除 passwd user_passwd 文件 
 #            cluster_config_network
-            cluster_parafs_rpm_dist
-            cluster_hadoop_dist
-            # cluster_yum_source
-            # cluster_pip_source
-            # cluster_yum_install
-            # cluster_pip_install
+            zip_dir
+            cluster_script_dist
             echo -e "\033[40;32m\tpre-installation done \033[0m"
             ;;
         I|i)
             echo -e "\033[40;34m\tinstallation begin\033[0m"
-            cluster_ParafsInstallation
-            cluster_SourceBashrc
-            cluster_ChangeConfigurationFile
+#            cluster_yum_source
+#            cluster_pip_source
+#            cluster_yum_install
+#            cluster_pip_install
+#            cluster_parafs_rpm_dist
+#            cluster_hadoop_dist
+#            cluster_bashrc
+#            cluster_hadoop_xml
+#            cluster_ParafsInstallation
+#            cluster_SourceBashrc
+#            cluster_ChangeConfigurationFile
+#            cluster_wotung_chown
             echo -e "\033[40;32m\tinstallation done \033[0m"
             ;;
         A|a) 
