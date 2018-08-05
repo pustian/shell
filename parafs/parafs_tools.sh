@@ -5,8 +5,13 @@
 ###############################################################################
 
 function tools_usage() {
-    echo "Tools: xxxx1";
-    echo "Tools: xxxx2";
+    echo "检查指定ip的node"
+    echo "新建一个parauser";
+    echo "同一用户免密"
+    echo "dist file to some computer";
+    echo "删除用户";
+    echo "集群新增一台机器"
+    echo "集群删除一台机器"
 }
 
 ### userdel -r parauser
