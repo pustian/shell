@@ -264,6 +264,6 @@ COMMON_INSTALL_BASH_NAME=common_install.sh
 # update_sed_script parauser 192.168.138.70 parauser  /opt/wotung/parafs-install/conf/sed_script/hadoop/hadoop_yarn
  #update_hadoop_yarn_ip parauser 192.168.138.71 parauser /opt/wotung/hadoop-parafs/hadoop-2.7.3/etc/hadoop/yarn-site.xml /opt/wotung/parafs-install/conf/sed_script/hadoop/hadoop_yarn_ip 192.168.1.299
 # update_hadoop_yarn_mem parauser 192.168.138.71 parauser /opt/wotung/hadoop-parafs/hadoop-2.7.3/etc/hadoop/yarn-site.xml /opt/wotung/parafs-install/conf/sed_script/hadoop/hadoop_yarn_mem
- update_hadoop_yarn_cpu parauser 192.168.138.71 parauser /opt/wotung/hadoop-parafs/hadoop-2.7.3/etc/hadoop/yarn-site.xml /opt/wotung/parafs-install/conf/sed_script/hadoop/hadoop_yarn_cpus
-echo $?
+# update_hadoop_yarn_cpu parauser 192.168.138.71 parauser /opt/wotung/hadoop-parafs/hadoop-2.7.3/etc/hadoop/yarn-site.xml /opt/wotung/parafs-install/conf/sed_script/hadoop/hadoop_yarn_cpus
+#echo $?
 ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

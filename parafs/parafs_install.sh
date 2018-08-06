@@ -137,6 +137,8 @@ function cluster_update_hadoop() {
     echo -e "\t\t cluster_update_hadoop begin"
 
     __cluster_hadoop_slave
+    
+    __cluster_hadoop_xml
 
     echo -e "\t\t cluster_update_hadoop begin"
 }

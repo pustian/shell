@@ -198,12 +198,12 @@ function __cluster_config_hostname() {
 function __cluster_config_hosts() {
     echo -e "\t\t __cluster_config_hostname begin"
     local fault_ips=""
-    for config_ip in $CLUSTER_IPS; do
-        for cluster_ip in $CLUSTER_IPS; do
-            local ip_hostname_alias=`grep $cluster_ip $NETWORK_CONFIG_FILE `
+    for config_ip in $cluster_ips; do
+        for cluster_ip in $cluster_ips; do
+            local ip_hostname_alias=`grep $cluster_ip $network_config_file `
             local hostname=`echo $ip_hostname_alias | awk '{print $2}'`
             local hostalias=`echo $ip_hostname_alias | awk '{print $3}'`
-            config_hosts $USER_NAME $config_ip $USER_NAME $cluster_ip $hostname $hostalias
+            config_hosts $user_name $config_ip $user_name $cluster_ip $hostname $hostalias
             if [ $? -ne 0 ] ; then
                 echo -e "\033[31m\t\tfailed to config hostname at $config_ip \033[0m"
                 fault_ips="$config_ip $fault_ips"
@@ -226,6 +226,8 @@ function config_local_hadoop_slaves() {
         echo $ip |sudo tee -a $slaves_file  
     done
 }
+
+###### slave配置
 function __cluster_hadoop_slave() {
     echo -e "\t\t __cluster_hadoop_slave begin"
     config_local_hadoop_slaves $HADOOP_SLAVES
@@ -234,6 +236,37 @@ function __cluster_hadoop_slave() {
     local remote_path=`dirname $HADOOP_SLAVES`
     __cluster_file_dist $dist_file_path $dist_zip_file $remote_path
     echo -e "\t\t __cluster_hadoop_slave end"
+}
+
+###### yarn配置文件
+function __cluster_hadoop_xml() {
+    echo -e "\t\t __cluster_hadoop_xml begin"
+    local fault_ips=""
+    for ip in $CLUSTER_IPS; do
+        # update_hadoop_yarn_ip parauser 192.168.138.71 parauser \
+        #     /opt/wotung/hadoop-parafs/hadoop-2.7.3/etc/hadoop/yarn-site.xml \
+        #     /opt/wotung/parafs-install/conf/sed_script/hadoop/hadoop_yarn_ip \
+        #     192.168.1.299 
+        # update_hadoop_yarn_mem parauser 192.168.138.71 parauser \
+        #     /opt/wotung/hadoop-parafs/hadoop-2.7.3/etc/hadoop/yarn-site.xml \
+        #     /opt/wotung/parafs-install/conf/sed_script/hadoop/hadoop_yarn_mem 
+        # update_hadoop_yarn_cpu parauser 192.168.138.71 parauser \
+        #     /opt/wotung/hadoop-parafs/hadoop-2.7.3/etc/hadoop/yarn-site.xml \
+        #     /opt/wotung/parafs-install/conf/sed_script/hadoop/hadoop_yarn_cpus 
+        update_hadoop_yarn_ip $USER_NAME ${ip} $USER_NAME ${HADOOP_YARN_XML} ${SED_SCRIPT_HADOOP_YARN_IP} ${MASTER_IP} \
+        && update_hadoop_yarn_mem $USER_NAME ${ip} $USER_NAME ${HADOOP_YARN_XML} ${SED_SCRIPT_HADOOP_YARN_MEM}         \
+        && update_hadoop_yarn_cpu $USER_NAME ${ip} $USER_NAME ${HADOOP_YARN_XML} ${SED_SCRIPT_HADOOP_YARN_CPUS}
+        if [ $? -ne 0 ] ; then
+            echo -e "\033[31m\t\tfailed to config ${HADOOP_YARN_XML} at $ip \033[0m"
+            fault_ips="$ip $fault_ips"
+            # break;
+        fi
+    done
+    if [ ! -z "$fault_ips" ]; then
+        echo -e "\033[31m\t\tmake sure the  ${HADOOP_YARN_XML} \033[0m"
+        exit 1
+    fi
+    echo -e "\t\t __cluster_hadoop_xml end"
 }
 ###===========================================================================
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
