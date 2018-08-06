@@ -6,7 +6,8 @@
 # $2	local_user
 # $3	remote_user
 # $4	remote_ip
-function config_hadoop() {
+function config_hadoop()
+{
 	local resourcemanager_ip=$1
 	local local_user=$2
 	local remote_user=$3
@@ -23,6 +24,9 @@ function config_hadoop() {
 	#TODO
 	local cmd="sed -i '${next_line},${next_line}c $string_writed' $config_file"
 
+	local string_writed="<value>$resourcemanager_ip</value>"
+	#TODO put this cmd in a script, remote create the script
+	local cmd="sed -i '${next_line},${next_line}c $string_writed' $config_file"
 	sudo su - $local_user -c "ssh $remote_user@$remote_ip $cmd" >>$log_file
 
 #	#设置总内存的两倍
