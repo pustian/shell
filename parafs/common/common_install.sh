@@ -15,8 +15,10 @@ function yum_install() {
     echo "do yum at $authorize_ip"
     local temp_file="/tmp/parafs_yum_install$authorize_ip"
     local remote_command="sudo yum -q -y install ntp ntpdate net-tools redhat-lsb gcc libffi-devel \
-        python python-devel python-pip openssl-devel numactl epel-release"
+        python python-devel openssl-devel numactl epel-release"
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" >$temp_file
 
+    local remote_command="sudo yum -q -y install python-pip "
     sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" >$temp_file
     return $?
 }
@@ -71,20 +73,21 @@ function update_bashrc() {
 }
 
 ###### 远程修改sed文件
-#function update_sed_script() {
-#    local local_user=$1
-#    local authorize_ip=$2
-#    local authorize_user=$3
-#    local sed_script_file=$4
-#    local sed_content=$5
-#    #local statement="\<value\>hello world\</value\> \<!-- 田--\>"
-# 
-#    ### 修改sed文件 
-#    local temp_file="/tmp/parafs_update_sed_script$authorize_ip"
-#    local remote_command="echo $sed_content |sudo tee $sed_script_file"   
-#    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" >>$temp_file
-#    return $?
-#}
+function update_sed_script() {
+    local local_user=$1
+    local authorize_ip=$2
+    local authorize_user=$3
+    local sed_script_file=$4
+    local sed_script=$5
+
+    sed_script="\<value\>hello world\</value\> \<!-- 田--\>"
+ 
+    ### 修改sed文件 
+    local temp_file="/tmp/parafs_update_sed_script$authorize_ip"
+    local remote_command="echo $sed_script |sudo tee $sed_script_file"   
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" >>$temp_file
+    return $?
+}
 
 function update_hadoop_yarn_ip() {
     local local_user=$1
@@ -95,26 +98,28 @@ function update_hadoop_yarn_ip() {
     local main_ip=$6
 
     ### 1, 远程获取需要更新的行数，
-    ### 2, 并在远端生成sed_script
-    ### 3, 远程执行sed脚本
-    local property='\<name\>yarn.resourcemanager.hostname\</name\>'
-    local line_num=sudo su - $local_user -c "ssh $authorize_user@$authorize_ip 'grep -n $property $filename'" |awk
-    local value="<value>${main_ip}</value>  <!-- yarn主节点 -->"
+    local property_label="name"
+    local property_label_value="yarn.resourcemanager.hostname"
+    local remote_property_line="grep -n $property_label_value $filename |grep $property_label_value "
+    local remote_property_line_result=`sudo su - $local_user -c "ssh $authorize_user@$authorize_ip '$remote_property_line' "` 
+    if [ -z "$remote_property_line" ]; then 
+        echo "pls check $filename at $authorize_ip"
+    fi
+#    echo $remote_property_line_result
+
+    ### 2, 在本地生成sed_script 然后复制到远端脚本所在地
+    local line_num=`echo "$remote_property_line"` | awk -F ':' '{print $1}'
+    local property_value="\<value\>${main_ip}\</value\>  \<!-- yarn主节点 --\>"
+    local sed_script="$(($line_num+1)),$(($line_num+1))c $property_value "   
+    echo $sed_script |sudo tee $sed_script_file >/dev/null
+    sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'"
     
-    # echo "do update_hadoop_yarn at $authorize_ip "
-    # local temp_file="/tmp/parafs_update_hadoop_yarn$authoriz_ip"
-    # ## 1, yarn 替换sed_script_file
-    # ## 2, 远程执行yarn文件
-    # local property="<name>yarn.resourcemanager.hostname</name>"
-#   #  local yarn_value="<value>${master_ip}</value>  <!-- yarn主节点 -->"
-#   #  local yarn_value="<value>${master_ip}</value>    <!-- yarn主节点 --> "
-#   #  local line_num=`grep -n "$property" /opt/wotung/parafs-install/conf/passwd | awk -F ':' '{print $1}'`
-    # local sed_script_file="/tmp/sed_script_tmp"
-#   #      local sed_script="echo $(($line_num+1)),$(($line_num+1))c '$yarn_value' |sudo tee $sed_script_file"
-#   #  local remote_command="$sed_script && sudo sed -i -f $sed_script_file  $filename"
-    # sudo su - $local_user -c "ssh '$authorize_user@$authoriz_ip'  'sudo sed -i -f $sed_script_file $filename' " >$temp_file
+    ### 3, 远程执行sed脚本
+    local remote_exec_sed_script="sed -i -f $sed_script_file $filename"
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'"
     return $?
 }
+
 function update_hadoop_mem() {
     local local_user=$1
     local authorize_ip=$2
@@ -180,7 +185,7 @@ COMMON_INSTALL_BASH_NAME=common_install.sh
 # rpm_install parauser 192.168.138.71 parauser /opt/wotung/parafs-1.0.1-1.x86_64.rpm
 # echo $?
 # update_bashrc parauser 192.168.138.72 parauser /home/parauser /opt/wotung/parafs-install/conf/bashrc
-update_sed_script parauser 192.168.138.70 parauser  /opt/wotung/parafs-install/conf/sed_script/hadoop/hadoop_yarn
-# update_hadoop_yarn_ip parauser 192.168.138.71 parauser /opt/wotung/hadoop-parafs/hadoop-2.7.3/etc/hadoop/yarn-site.xml /opt/wotung/parafs-install/conf/sed_script/hadoop/hadoop_yarn 192.168.1.1
+# update_sed_script parauser 192.168.138.70 parauser  /opt/wotung/parafs-install/conf/sed_script/hadoop/hadoop_yarn
+update_hadoop_yarn_ip parauser 192.168.138.71 parauser /opt/wotung/hadoop-parafs/hadoop-2.7.3/etc/hadoop/yarn-site.xml /opt/wotung/parafs-install/conf/sed_script/hadoop/hadoop_yarn 192.168.1.299
 echo $?
 ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###
