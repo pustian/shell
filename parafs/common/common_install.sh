@@ -99,9 +99,9 @@ function update_hadoop_yarn_ip() {
 
     local temp_file="/tmp/parafs_update_yarn_ip$authorize_ip"
     ### 1, 远程获取需要更新的行数，
-    local yarn_master_label="name"
+    local name_label="\\name\>" ## <name> <\name> '<是特殊字符需要注意'
     local yarn_master_label_value="yarn.resourcemanager.hostname"
-    local remote_yarn_master_line="grep -n $yarn_master_label_value $filename |grep $yarn_master_label_value "
+    local remote_yarn_master_line="grep -n $yarn_master_label_value $filename |grep $name_label"
     local remote_yarn_master_line_result=`sudo su - $local_user -c "ssh $authorize_user@$authorize_ip '$remote_yarn_master_line' "` 
     if [ -z "$remote_yarn_master_line_result" ]; then 
         echo "pls check $filename at $authorize_ip"
@@ -135,10 +135,10 @@ function update_hadoop_yarn_mem() {
     local mem_kb=`echo $remote_mem_kb_result | awk '{print $2}' `
     # local mem_mb_2=$(($mem_kb/512))  # XXX/1024*2
 
+    local name_label="\\name\>" ## <name> <\name> '<是特殊字符需要注意'
     ### 2,远程获取 总内存需要更新的行数，
-    local memory_label="name"
     local memory_label_value="yarn.nodemanager.resource.memory-mb"
-    local remote_memory_line="grep -n $memory_label_value $filename |grep $memory_label_value "
+    local remote_memory_line="grep -n $memory_label_value $filename |grep $name_label"
     local remote_memory_line_result=`sudo su - $local_user -c "ssh $authorize_user@$authorize_ip '$remote_memory_line' "` 
     if [ -z "$remote_memory_line" ]; then 
         echo "pls check $filename at $authorize_ip"
@@ -153,9 +153,8 @@ function update_hadoop_yarn_mem() {
     sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'" >>$temp_file   
     
     ### 4,远程获取 单个scheduler 内存 需要更新的行数，
-    local alloc_mem_label="name"
     local alloc_mem_label_value="yarn.scheduler.maximum-allocation-mb"
-    local remote_alloc_mem_line="grep -n $alloc_mem_label_value $filename |grep $alloc_mem_label_value "
+    local remote_alloc_mem_line="grep -n $alloc_mem_label_value $filename |grep $name_label"
     local remote_alloc_mem_line_result=`sudo su - $local_user -c "ssh $authorize_user@$authorize_ip '$remote_alloc_mem_line' "` 
     if [ -z "$remote_alloc_mem_line" ]; then 
         echo "pls check $filename at $authorize_ip"
@@ -168,7 +167,7 @@ function update_hadoop_yarn_mem() {
     echo $sed_script |sudo tee -a $sed_script_file >>$temp_file ## 此处为追加
     sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'" >>$temp_file   
 
-    ### 3, 远程执行sed脚本
+    ### 6, 远程执行sed脚本
     local remote_exec_sed_script="sed -i -f $sed_script_file $filename"
     sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$temp_file
     return $?
@@ -231,7 +230,7 @@ COMMON_INSTALL_BASH_NAME=common_install.sh
 # echo $?
 # update_bashrc parauser 192.168.138.72 parauser /home/parauser /opt/wotung/parafs-install/conf/bashrc
 # update_sed_script parauser 192.168.138.70 parauser  /opt/wotung/parafs-install/conf/sed_script/hadoop/hadoop_yarn
- update_hadoop_yarn_ip parauser 192.168.138.71 parauser /opt/wotung/hadoop-parafs/hadoop-2.7.3/etc/hadoop/yarn-site.xml /opt/wotung/parafs-install/conf/sed_script/hadoop/hadoop_yarn_ip 192.168.1.299
+ #update_hadoop_yarn_ip parauser 192.168.138.71 parauser /opt/wotung/hadoop-parafs/hadoop-2.7.3/etc/hadoop/yarn-site.xml /opt/wotung/parafs-install/conf/sed_script/hadoop/hadoop_yarn_ip 192.168.1.299
  update_hadoop_yarn_mem parauser 192.168.138.71 parauser /opt/wotung/hadoop-parafs/hadoop-2.7.3/etc/hadoop/yarn-site.xml /opt/wotung/parafs-install/conf/sed_script/hadoop/hadoop_yarn_mem
 echo $?
 ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###
