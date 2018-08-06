@@ -89,6 +89,7 @@ function update_bashrc() {
 #    return $?
 #}
 
+### 配置yarn_ip
 function update_hadoop_yarn_ip() {
     local local_user=$1
     local authorize_ip=$2
@@ -103,9 +104,9 @@ function update_hadoop_yarn_ip() {
     local yarn_master_label_value="yarn.resourcemanager.hostname"
     local remote_yarn_master_line="grep -n $yarn_master_label_value $filename |grep $name_label"
     local remote_yarn_master_line_result=`sudo su - $local_user -c "ssh $authorize_user@$authorize_ip '$remote_yarn_master_line' "` 
-    if [ -z "$remote_yarn_master_line_result" ]; then 
-        echo "pls check $filename at $authorize_ip"
-    fi
+#    if [ -z "$remote_yarn_master_line_result" ]; then 
+#        echo "pls check $filename at $authorize_ip"
+#    fi
     echo $remote_yarn_master_line_result >$temp_file
 
     ### 2, 在本地生成sed_script 然后复制到远端脚本所在地
@@ -121,6 +122,7 @@ function update_hadoop_yarn_ip() {
     return $?
 }
 
+### 配置yarn_mem
 function update_hadoop_yarn_mem() {
     local local_user=$1
     local authorize_ip=$2
@@ -140,9 +142,9 @@ function update_hadoop_yarn_mem() {
     local memory_label_value="yarn.nodemanager.resource.memory-mb"
     local remote_memory_line="grep -n $memory_label_value $filename |grep $name_label"
     local remote_memory_line_result=`sudo su - $local_user -c "ssh $authorize_user@$authorize_ip '$remote_memory_line' "` 
-    if [ -z "$remote_memory_line" ]; then 
-        echo "pls check $filename at $authorize_ip"
-    fi
+#    if [ -z "$remote_memory_line_result" ]; then 
+#        echo "pls check $filename at $authorize_ip"
+#    fi
     echo $remote_memory_line_result >$temp_file
 
     ### 3, 在本地生成sed_script 然后复制到远端脚本所在地
@@ -155,13 +157,13 @@ function update_hadoop_yarn_mem() {
     ### 4,远程获取 单个scheduler 内存 需要更新的行数，
     local alloc_mem_label_value="yarn.scheduler.maximum-allocation-mb"
     local remote_alloc_mem_line="grep -n $alloc_mem_label_value $filename |grep $name_label"
-    local remote_alloc_mem_line_result=`sudo su - $local_user -c "ssh $authorize_user@$authorize_ip '$remote_alloc_mem_line' "` 
-    if [ -z "$remote_alloc_mem_line" ]; then 
-        echo "pls check $filename at $authorize_ip"
-    fi
-    echo $remote_alloc_mem_line_result >$temp_file
+    local alloc_mem_line_result=`sudo su - $local_user -c "ssh $authorize_user@$authorize_ip '$remote_alloc_mem_line' "` 
+#    if [ -z "$alloc_mem_line_result" ]; then 
+#        echo "pls check $filename at $authorize_ip"
+#    fi
+    echo $alloc_mem_line_result >>$temp_file
     ### 5, 在本地生成sed_script 然后复制到远端脚本所在地
-    local line_num=`echo "$remote_alloc_mem_line_result" | awk -F ':' '{print $1}'`
+    local line_num=`echo "$alloc_mem_line_result" | awk -F ':' '{print $1}'`
     local alloc_mem_value="\<value\>$(($mem_kb/1024))\</value\>  \<!-- 单个进程最大占用内存 --\>"
     local sed_script="$(($line_num+1)),$(($line_num+1))c $alloc_mem_value "   
     echo $sed_script |sudo tee -a $sed_script_file >>$temp_file ## 此处为追加
@@ -172,11 +174,41 @@ function update_hadoop_yarn_mem() {
     sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$temp_file
     return $?
 }
-function update_hadoop_scheduler_mem() {
-echo $?
-}
-function update_hadoop_cpu() {
-echo $?
+
+### 配置yarn_cpu
+function update_hadoop_yarn_cpu() {
+    local local_user=$1
+    local authorize_ip=$2
+    local authorize_user=$3
+    local filename=$4
+    local sed_script_file=$5
+
+    local temp_file="/tmp/parafs_update_yarn_mem$authorize_ip"
+    ### 1 远程获取cpu
+    local remote_cpus="grep processor /proc/cpuinfo |wc -l"
+    local remote_cpus_result=`sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_cpus'" `
+
+    local name_label="\\name\>" ## <name> <\name> '<是特殊字符需要注意'
+    ### 2,远程获取 总内存需要更新的行数，
+    local cpu_label_value="yarn.nodemanager.resource.cpu-vcores"
+    local remote_cpu_line="grep -n $cpu_label_value $filename |grep $name_label"
+    local remote_cpu_line_result=`sudo su - $local_user -c "ssh $authorize_user@$authorize_ip '$remote_cpu_line' "` 
+#    if [ -z "$remote_cpu_line_result" ]; then 
+#        echo "pls check $filename at $authorize_ip"
+#    fi
+    echo $remote_cpu_line_result >$temp_file
+
+    ### 3, 在本地生成sed_script 然后复制到远端脚本所在地
+    local line_num=`echo "$remote_cpu_line_result" | awk -F ':' '{print $1}'`
+    local cpus_value="\<value\>${remote_cpus_result}\</value\>  \<!-- cpu 数量--\>"
+    local sed_script="$(($line_num+1)),$(($line_num+1))c $cpus_value"
+    echo $sed_script |sudo tee $sed_script_file >>$temp_file
+    sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'" >>$temp_file   
+
+    ### 6, 远程执行sed脚本
+    local remote_exec_sed_script="sed -i -f $sed_script_file $filename"
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$temp_file
+    return $?
 }
 ###### 远程 更改spark配置
 function update_spark_config() {
@@ -231,6 +263,7 @@ COMMON_INSTALL_BASH_NAME=common_install.sh
 # update_bashrc parauser 192.168.138.72 parauser /home/parauser /opt/wotung/parafs-install/conf/bashrc
 # update_sed_script parauser 192.168.138.70 parauser  /opt/wotung/parafs-install/conf/sed_script/hadoop/hadoop_yarn
  #update_hadoop_yarn_ip parauser 192.168.138.71 parauser /opt/wotung/hadoop-parafs/hadoop-2.7.3/etc/hadoop/yarn-site.xml /opt/wotung/parafs-install/conf/sed_script/hadoop/hadoop_yarn_ip 192.168.1.299
- update_hadoop_yarn_mem parauser 192.168.138.71 parauser /opt/wotung/hadoop-parafs/hadoop-2.7.3/etc/hadoop/yarn-site.xml /opt/wotung/parafs-install/conf/sed_script/hadoop/hadoop_yarn_mem
+# update_hadoop_yarn_mem parauser 192.168.138.71 parauser /opt/wotung/hadoop-parafs/hadoop-2.7.3/etc/hadoop/yarn-site.xml /opt/wotung/parafs-install/conf/sed_script/hadoop/hadoop_yarn_mem
+ update_hadoop_yarn_cpu parauser 192.168.138.71 parauser /opt/wotung/hadoop-parafs/hadoop-2.7.3/etc/hadoop/yarn-site.xml /opt/wotung/parafs-install/conf/sed_script/hadoop/hadoop_yarn_cpus
 echo $?
 ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###
