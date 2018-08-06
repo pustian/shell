@@ -68,18 +68,18 @@ function config_hosts() {
     test $((ip_counts)) -ne 1 && return 1 || return 0
 }
 
-###### 远程配置yum安装源
-function config_yum_source() {
-    local local_user=$1
-    local authorize_ip=$2
-    local authorize_user=$3
-
-    local temp_file="/tmp/parafs_config_yum_source$authorize_ip"
-    local remote_command="ls -l"
-    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" >$temp_file
-    return $?
-}
-
+# ###### 远程配置yum安装源
+# function config_yum_source() {
+#     local local_user=$1
+#     local authorize_ip=$2
+#     local authorize_user=$3
+# 
+#     local temp_file="/tmp/parafs_config_yum_source$authorize_ip"
+#     local remote_command="ls -l"
+#     sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" >$temp_file
+#     return $?
+# }
+# 
 # ###### 远程配置yum安装源
 # function config_pip_source() {
 #     local local_user=$1
@@ -92,7 +92,6 @@ function config_yum_source() {
 #     return $?
 # }
 
-###
 ### ret 0 成功配置 1 配置失败
 function config_ntpdate() {
     local local_user=$1

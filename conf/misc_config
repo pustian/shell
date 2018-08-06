@@ -3,13 +3,13 @@ default_user=root
 default_user_home=/root
 ### 以下配置不可以缺少
 parafs_install_file=parafs-install.tar.gz
-parafs_install_file_md5=parafs-install.md5sum
+parafs_install_file_md5=parafs-install.tar.gz.md5sum
 parafs_rpm=parafs-1.0.1-1.x86_64.rpm
 parafs_rpm_md5=parafs-1.0.1-1.x86_64.rpm.md5sum
 llog_rpm=llog-1.0.1-1.x86_64-centos7-x86-20180426.rpm
 llog_rpm_md5=llog-1.0.1-1.x86_64-centos7-x86-20180426.rpm.md5sum
-parafs_hadoop_file=parafs-hadoop.tar.gz
-parafs_hadoop_file_md5=parafs-hadoop.md5sum
+parafs_hadoop_file=hadoop-parafs.tar.gz
+parafs_hadoop_file_md5=hadoop-parafs.tar.gz.md5sum
 ### pip源
 # pip install -i https://pypi.tuna.tsinghua.edu.cn/simple pyspider，这样就会从清华这边的镜像去安装pyspider库
 # 清华：https://pypi.tuna.tsinghua.edu.cn/simple

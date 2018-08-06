@@ -2,9 +2,9 @@
 ###++++++++++++++++++++++++      const variable   ++++++++++++++++++++++++++###
 VARIABLE_BASH_NAME=variable.sh
 
-###### 安装相关文件
+###### 安装相关文件目录不可变更
 INSTALL_DIR=/opt/wotung
-###### 脚本根目录
+###### 脚本根目录支持parafs-install 不在/opt/wotung目录下
 BASE_DIR=/opt/wotung/parafs-install
 
 ###### EXPECT 相关代码
@@ -28,8 +28,8 @@ CLUSTER_IPS=`cat ${NETWORK_CONFIG_FILE} |grep -v '^#' | awk -F " " '{print $1}'`
 ###### 需要创建parauser 的所有机器，root密码
 
 ###### 安装文件,不包含目录 misc_config
-SCRIPT_FILE=`grep '^parafs_install_file=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
-SCRIPT_MD5_FILE=`grep '^parafs_install_file_md5=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+SCRIPT_FILE=`basename $BASE_DIR`.tar.gz
+SCRIPT_MD5_FILE=${SCRIPT_MD5_FILE}.md5sum
 PARAFS_RPM=`grep '^parafs_rpm=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
 PARAFS_MD5_RPM=`grep '^parafs_rpm_md5=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
 LLOG_RPM=`grep '^llog_rpm=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
@@ -41,7 +41,7 @@ DEFAULT_USER=`grep 'default_user=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '
 DEFAULT_USER_HOME=`grep 'default_user_home=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
 test -z "$DEFAULT_USER" && DEFAULT_USER=root
 test -z "$DEFAULT_USER_HOME" && DEFAULT_USER_HOME=/root
-if [ -z $SCRIPT_FILE ] || [ -z $PARAFS_RPM ] || [ -z $LLOG_RPM ] || [ -z $HADOOP_FILE ] ; then
+if [ -z $PARAFS_RPM ] || [ -z $LLOG_RPM ] || [ -z $HADOOP_FILE ] ; then
     echo "please confirm the file $MISC_CONF_FILE "
     exit 1
 fi
@@ -87,3 +87,8 @@ for local_ip in `ip addr |grep inet |awk '{print $2}' |awk -F '/' '{print $1}' |
     fi
 done
 # echo "CLUSTER_LOCAL_IP=$CLUSTER_LOCAL_IP"
+
+# /opt/wotung/hadoop-parafs/hadoop-2.7.3/etc/hadoop/slaves
+HADOOP_SLAVES=$INSTALL_DIR/hadoop-parafs/hadoop-2.7.3/etc/hadoop/slaves
+#### sed 文件位置
+HADOOP_YARN_SED=${BASE_DIR}/conf/

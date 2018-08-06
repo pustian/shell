@@ -58,28 +58,29 @@ while [ x"${input}" != x"E" ]; do
     case ${input} in
         P|p) 
             echo -e "\033[40;34m\tpre-check begin\033[0m"
-            check_config 
-            check_ips
-            cluster_check_passwd
-            cluster_check_nodes
+#            check_config 
+#            check_ips
+#            cluster_check_passwd
+#            cluster_check_nodes
             echo -e "\033[40;32m\tpre-check done \033[0m"
             ;;
         R|r) 
             echo -e "\033[40;34m\tpre-installation begin\033[0m"
 #            cluster_create_user
 #            cluster_user_authorize
-            # 删除 passwd user_passwd 文件 
 #            cluster_config_network
-            zip_dir
-            cluster_script_dist
+#            local_script_zip
+#            cluster_script_dist
+#            cluster_root_chown
+#            # 删除 passwd user_passwd 文件 
             echo -e "\033[40;32m\tpre-installation done \033[0m"
             ;;
         I|i)
             echo -e "\033[40;34m\tinstallation begin\033[0m"
-#            cluster_yum_source
+#            #cluster_yum_source
 #            cluster_pip_source
-#            cluster_yum_install
-#            cluster_pip_install
+            cluster_yum_install
+            cluster_pip_install
 #            cluster_parafs_rpm_dist
 #            cluster_hadoop_dist
 #            cluster_bashrc
@@ -87,7 +88,7 @@ while [ x"${input}" != x"E" ]; do
 #            cluster_ParafsInstallation
 #            cluster_SourceBashrc
 #            cluster_ChangeConfigurationFile
-#            cluster_wotung_chown
+#            cluster_sudoer_chown
             echo -e "\033[40;32m\tinstallation done \033[0m"
             ;;
         A|a) 

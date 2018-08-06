@@ -72,7 +72,22 @@ function is_parafs_node_ok() {
         return 0
     fi
 }
+#####################################################################
+###### 免密升级sudoer用户不需要密码 修改文件所有用户
+function dirpath_sudoer_chown() {
+    local local_user=$1
+    local authorize_ip=$2
+    local authorize_user=$3
+    local dirpath=$4
+    local username=$5
+    local groupname=$6
 
+    echo "do dirpath at $authorize_ip"
+    local temp_file="/tmp/parafs_dirpath_sudoer_chown$authorize_ip"
+    local remote_command="sudo chown -R $username:$groupname $dirpath"
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" >>$temp_file
+    return $?
+}
 ###===========================================================================
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 UTILS_BASH_NAME=common_utils.sh
@@ -86,28 +101,6 @@ fi
 #  # is_parafs_node_ok 192.168.138.71 "root" "Tianpusen@1" 
 #  # echo $?
 #  # is_parafs_node_ok 192.168.138.70 "parafs" "tianpusen" 
+#dirpath_sudoer_chown parauser 192.168.138.71 parauser /opt/wotung/hadoop-parafs parauser parauser
 #  # echo $?
-#  ###########
-#  # is_no_parauser 192.168.138.70 "root" "Tianpusen@1" "parauser" 
-#  # echo $?
-#  # is_no_parauser 192.168.138.71 "root" "Tianpusen@1" "parauser"
-#  # echo $?
-#  # is_no_parauser 192.168.138.72 "root" "Tianpusen@1" "parauser"
-#  # echo $?
-#  # is_no_parauser 192.168.138.73 "root" "Tianpusen@1" "parauser"
-#  # echo $?
-#  ###########
-#  # delete_user 192.168.138.70 "parafs" "tianpusen" "parauser" 
-#  # create_user "192.168.138.70" "parafs" "tianpusen" "parauser" "YdwAWdHXqldYI" "/home/parauser" "/bin/bash"
-#  # sudoer_nopasswd "192.168.138.70" "parafs" "tianpusen" "parauser" 
-#  # sudoer_nopasswd "192.168.138.71" "root" "Tianpusen@1" "parauser" 
-#  # echo $?
-#  ##########
-#  # ssh_user_authorize "192.168.138.71" 'parauser' "hetong@2015" "/home/parauser"  \
-#  #     "192.168.138.71" "parauser" "hetong@2015" "/home/parauser"
-#  # root用户执行
-#  # zip_dir /opt/wotung/parafs-install
-#  #######
-# dirpath_chown 192.168.138.72 root Tianpusen@1 /opt/wotung parauser parauser
-# dirpath_chown 192.168.1.99 parafs tianpusen /opt/wotung parafs parafs
 #  # ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

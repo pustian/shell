@@ -130,7 +130,7 @@ function delete_user() {
 ### username $5 变更后所有者
 ### groupname $6 变更后所有这
 ###### 
-function dirpath_chown() {
+function dirpath_root_chown() {
     local remote_ip=$1
     local remote_user=$2
     local remote_passwd=$3
@@ -141,7 +141,7 @@ function dirpath_chown() {
     # sudo chown -R parauser:parauser /opt/wotung
     local temp_file="/tmp/parafs_create_user$remote_ip"
     local remote_chown="sudo chown -R $username:$groupname $dirpath"
-    echo "do dirpath_chown at $remote_ip"
+    echo "do dirpath_root_chown at $remote_ip"
     $SSH_REMOTE_EXEC "$remote_ip" "$remote_user" "$remote_passwd" "$remote_chown" >$temp_file
 }
 ###===========================================================================
@@ -151,3 +151,26 @@ if [ -z "$VARIABLE_BASH_NAME" ] ; then
     . /opt/wotung/parafs-install/variable.sh
 fi
 ###++++++++++++++++++++++++      main  end        ++++++++++++++++++++++++++###
+###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
+#  ###########
+#  # is_no_parauser 192.168.138.70 "root" "Tianpusen@1" "parauser" 
+#  # echo $?
+#  # is_no_parauser 192.168.138.71 "root" "Tianpusen@1" "parauser"
+#  # echo $?
+#  # is_no_parauser 192.168.138.72 "root" "Tianpusen@1" "parauser"
+#  # echo $?
+#  # is_no_parauser 192.168.138.73 "root" "Tianpusen@1" "parauser"
+#  # echo $?
+#  ###########
+#  # delete_user 192.168.138.70 "parafs" "tianpusen" "parauser" 
+#  # create_user "192.168.138.70" "parafs" "tianpusen" "parauser" "YdwAWdHXqldYI" "/home/parauser" "/bin/bash"
+#  # sudoer_nopasswd "192.168.138.70" "parafs" "tianpusen" "parauser" 
+#  # sudoer_nopasswd "192.168.138.71" "root" "Tianpusen@1" "parauser" 
+#  # echo $?
+#  ##########
+#  # ssh_user_authorize "192.168.138.71" 'parauser' "hetong@2015" "/home/parauser"  \
+#  #     "192.168.138.71" "parauser" "hetong@2015" "/home/parauser"
+#  #######
+# dirpath_root_chown 192.168.138.72 root Tianpusen@1 /opt/wotung parauser parauser
+# dirpath_root_chown 192.168.1.99 parafs tianpusen /opt/wotung parafs parafs
+###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

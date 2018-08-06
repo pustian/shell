@@ -94,7 +94,7 @@ function __cluster_file_dist() {
             continue
         fi
 #        echo "file_dist $dist_file_path $dist_zip_file $USER_NAME ${ip} ${USER_NAME}  $remote_path"
-        file_dist $dist_file_path $dist_zip_file $USER_NAME ${ip} ${USER_NAME}  $remote_path
+        file_dist $USER_NAME ${ip} ${USER_NAME} $dist_file_path $dist_zip_file $remote_path
         if [ $? -ne 0 ] ; then 
             echo -e "\033[31m\t\tfile dist error to $ip \033[0m"
             fault_ips="$ip $fault_ips"
@@ -127,7 +127,7 @@ function __cluster_zipfile_check() {
             continue
         fi
  #       echo "is_zip_file_ok $md5 $zip_file_dir $zip_file ${USER_NAME} $ip ${USER_NAME}"
-        is_zip_file_ok $md5 $zip_file_dir $zip_file ${USER_NAME} $ip ${USER_NAME}
+        is_zip_file_ok ${USER_NAME} $ip ${USER_NAME} $md5 $zip_file_dir $zip_file 
         if [ $? -ne 0 ] ; then
             echo -e "\033[31m\t\tzip_file=$zip_file is damage at $ip \033[0m"
             fault_ips="$ip $fault_ips"
@@ -157,8 +157,8 @@ function __cluster_unzipfile() {
         if [ ${ip} = ${CLUSTER_LOCAL_IP}  ] ; then
             continue
         fi
-        # echo "unzip_file $zip_file_dir $zip_file $USER_NAME $ip $USER_NAME"
-        unzip_file $zip_file_dir $zip_file $USER_NAME $ip $USER_NAME
+#        echo "unzip_file $zip_file_dir $zip_file $USER_NAME $ip $USER_NAME"
+        unzip_file $USER_NAME $ip $USER_NAME $zip_file_dir $zip_file
         if [ $? -ne 0 ] ; then
             echo -e "\033[31m\t\tfailed to unzip $zip_file at $ip \033[0m"
             fault_ips="$ip $fault_ips"
@@ -218,49 +218,22 @@ function __cluster_config_hosts() {
     echo -e "\t\t __cluster_config_hostname end"
 }
 
-###### 免密后yum 安装
-function __cluster_install_yum() {
-    echo -e "\t\t __cluster_install_yum begin"
+###### slave 应该为空文件
+function config_local_hadoop_slaves() {
+    local slaves_file=$1
+    test -f $slaves_file && sudo truncate -s 0 $slaves_file || sudo touch $slaves_file
     for ip in $CLUSTER_IPS; do
-        yum_install $USER_NAME $ip $USER_NAME
+        echo $ip |sudo tee -a $slaves_file  
     done
-    echo -e "\t\t __cluster_install_yum end"
 }
-
-###### 免密后pip 安装
-function __cluster_install_pip() {
-    echo -e "\t\t __cluster_install_pip begin"
-    for ip in $CLUSTER_IPS; do
-        pip_install $USER_NAME $ip $USER_NAME
-    done
-    echo -e "\t\t __cluster_install_pip end"
-}
-
-###### 免密后rpm 安装
-function __cluster_install_rpm() {
-    echo -e "\t\t __cluster_install_rpm begin"
-    for ip in $CLUSTER_IPS; do
-        rpm_install $USER_NAME $ip $USER_NAME $PARAFS_RPM
-        rpm_install $USER_NAME $ip $USER_NAME $LLOG_RPM
-    done
-    echo -e "\t\t __cluster_install_rpm end"
-}
-
-###### 免密后rpm 安装
-function __cluster_hadoop_slaves() {
-    echo -e "\t\t __cluster_install_hadoop begin"
-    slave_file=
-    rm xxxx
-    for ip in $CLUSTER_IPS; do
-        echo "" >xxx
-    done
-    for ip in $CLUSTER_IPS; do
-        if [ ${ip} = ${CLUSTER_LOCAL_IP}  ] ; then
-            continue
-        fi
-    done
-    echo -e "\t\t __cluster_install_hadoop end"
-    
+function __cluster_hadoop_slave() {
+    echo -e "\t\t __cluster_hadoop_slave begin"
+    config_local_hadoop_slaves $HADOOP_SLAVES
+    local dist_file_path=`dirname $HADOOP_SLAVES`
+    local dist_zip_file=`basename $HADOOP_SLAVES`
+    local remote_path=`dirname $HADOOP_SLAVES`
+    __cluster_file_dist $dist_file_path $dist_zip_file $remote_path
+    echo -e "\t\t __cluster_hadoop_slave end"
 }
 ###===========================================================================
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
@@ -288,7 +261,7 @@ fi
 # __cluster_create_user  "parauser" "YdwAWdHXqldYI" "/home/parauser"  "/bin/bash"
 # __cluster_config_sudoers parauser
 # __cluster_file_dist  /opt/wotung parafs-install.tgz /opt/wotung
-# __cluster_zipfile_check parafs-install.md5sum parafs-install.tgz /opt/wotung
+# __cluster_zipfile_check parafs-install.tar.gz.md5sum parafs-install.tar.gz /opt/wotung
 # __cluster_unzipfile parafs-install.tgz /opt/wotung
 #echo $?
 ######
@@ -296,5 +269,7 @@ fi
 # __cluster_config_hostname
 # __cluster_config_hosts
 # echo $?
+# __config_hadoop_slaves parauser 192.168.138.70 parauser /opt/wotung/hadoop-parafs/hadoop-2.7.3/etc/hadoop/slaves
+# config_local_hadoop_slaves /opt/wotung/pusentian
 
 # ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###
