@@ -51,6 +51,7 @@ function file_md5sum() {
     return $?
 }
 ###### 指定用户 分发文件 到已免密登陆用户分发到机器上
+### scp提供文件到文件如果存在 scp -r 不会覆盖
 ### local_user $1 以用户 该用户可以免密登陆remote_user@remote_ip
 ### authoriz_ip $2 指定的ip
 ### authorize_user $3 指定用户
@@ -65,10 +66,12 @@ function file_dist() {
     local local_file_dir=$4
     local local_file=$5
     local remote_path=$6
-
+    # local remote_file=$7
+    
     local temp_file="/tmp/parafs_file_dist${local_file}$authoriz_ip"
     echo "do dist $local_file to $authoriz_ip"
     sudo su - $local_user -c "scp '${local_file_dir}/$local_file' '$authorize_user@$authoriz_ip:$remote_path'" >$temp_file
+
     return $?
 }
 

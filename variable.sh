@@ -88,14 +88,34 @@ fi
 # echo "HADOOP_MD5_FILE=$HADOOP_MD5_FILE" 
 # echo "PIP_SOURCE     =$PIP_SOURCE     " 
 
+#####################################################################
+###### hadoop相关配置文件
 # /opt/wotung/hadoop-parafs/hadoop-2.7.3/etc/hadoop/slaves
 MASTER_IP=`grep '^master_ip=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
 test -z $MASTER_IP && MASTER_IP=$CLUSTER_LOCAL_IP
 HADOOP_SLAVES=$INSTALL_DIR/hadoop-parafs/hadoop-2.7.3/etc/hadoop/slaves
 HADOOP_YARN_XML=$INSTALL_DIR/hadoop-parafs/hadoop-2.7.3/etc/hadoop/yarn-site.xml
 
+SPARK_SLAVES=$INSTALL_DIR/hadoop-parafs/spark-2.0.1/conf/slaves
+SPARK_ENV=$INSTALL_DIR/hadoop-parafs/spark-2.0.1/conf/spark-env.sh
+SPARK_CONF=$INSTALL_DIR/hadoop-parafs/spark-2.0.1/conf/spark-defaults.conf
+ZOOKEEPER_CONF=$INSTALL_DIR/hadoop-parafs/zookeeper-3.4.10/conf/zoo.cfg
+ZOOKEEPER_MY_ID=$INSTALL_DIR/hadoop-parafs/zookeeper-3.4.10/zk-data/myid
+ZOOKEEPER_DATA=$INSTALL_DIR/hadoop-parafs/zookeeper-3.4.10/zk-data
+ZOOKEEPER_DATA_LOG=$INSTALL_DIR/hadoop-parafs/zookeeper-3.4.10/zk-log
+HBASE_REGEION_SERVERS=$INSTALL_DIR/hadoop-parafs/hbase-1.2.5/conf/regionservers
+HBASE_CONF=$INSTALL_DIR/hadoop-parafs/hbase-1.2.5/conf/hbase-site.xml
+HIVE_CONF=$INSTALL_DIR/hadoop-parafs/hive-2.1.1/conf/hive-site.xml
+AZKABAN_EXEC_CONF=$INSTALL_DIR/hadoop-parafs/azkaban/azkaban-exec-server-3.41.0/conf/azkaban.properties
+AZKABAN_WEB_CONF=$INSTALL_DIR/hadoop-parafs/azkaban/azkaban-web-server-3.41.0/conf/azkaban.properties
+KAFKA_CONF=$INSTALL_DIR/hadoop-parafs/kafka_2.11-1.0.1/config/server.properties
 #### sed_script 文件位置
 SED_SCRIPT_HADOOP_YARN_IP=${BASE_DIR}/conf/sed_script/hadoop/hadoop_yarn_ip
 SED_SCRIPT_HADOOP_YARN_MEM=${BASE_DIR}/conf/sed_script/hadoop/hadoop_yarn_mem
 SED_SCRIPT_HADOOP_YARN_CPUS=${BASE_DIR}/conf/sed_script/hadoop/hadoop_yarn_cpus
-
+SED_SCRIPT_SPARK_ENV=${BASE_DIR}/conf/sed_script/spark/spark_defaults
+SED_SCRIPT_SPARK_CONF=${BASE_DIR}/conf/sed_script/spark/spark_env
+SED_SCRIPT_HBASE_CONF=${BASE_DIR}/conf/sed_script/hbase/hbase_conf
+SED_SCRIPT_HIVE_CONF=${BASE_DIR}/conf/sed_script/hive/hive_conf
+SED_SCRIPT_AZKABAN_CONF=${BASE_DIR}/conf/sed_script/azkaban/azkaban_conf 
+SED_SCRIPT_KAFKA_CONF=${BASE_DIR}/conf/sed_script/kafka/kafka_conf

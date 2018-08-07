@@ -218,19 +218,10 @@ function __cluster_config_hosts() {
     echo -e "\t\t __cluster_config_hostname end"
 }
 
-###### slave 应该为空文件
-function config_local_hadoop_slaves() {
-    local slaves_file=$1
-    test -f $slaves_file && sudo truncate -s 0 $slaves_file || sudo touch $slaves_file
-    for ip in $CLUSTER_IPS; do
-        echo $ip |sudo tee -a $slaves_file  
-    done
-}
-
 ###### slave配置
 function __cluster_hadoop_slave() {
     echo -e "\t\t __cluster_hadoop_slave begin"
-    config_local_hadoop_slaves $HADOOP_SLAVES
+    config_local_hadoop_slaves $HADOOP_SLAVES "${CLUSTER_IPS[*]}"
     local dist_file_path=`dirname $HADOOP_SLAVES`
     local dist_zip_file=`basename $HADOOP_SLAVES`
     local remote_path=`dirname $HADOOP_SLAVES`
@@ -268,6 +259,203 @@ function __cluster_hadoop_xml() {
     fi
     echo -e "\t\t __cluster_hadoop_xml end"
 }
+
+###### spark slave配置 可以考虑软连接hadoop
+function __cluster_spark_slave() {
+    echo -e "\t\t __cluster_spark_slave begin"
+    config_local_hadoop_slaves $SPARK_SLAVES "${CLUSTER_IPS[*]}"
+    local dist_file_path=`dirname $SPARK_SLAVES`
+    local dist_zip_file=`basename $SPARK_SLAVES`
+    local remote_path=`dirname $SPARK_SLAVES`
+    __cluster_file_dist $dist_file_path $dist_zip_file $remote_path
+    echo -e "\t\t __cluster_spark_slave end"
+}
+
+function __cluster_spark_env() {
+    echo -e "\t\t __cluster_spark_env begin"
+    local fault_ips=""
+    for ip in $CLUSTER_IPS; do
+        # update_spark_env parauser 192.168.138.71 parauser \
+        #     /opt/wotung/hadoop-parafs/spark-2.0.1/conf/spark-env.sh \
+        #     /opt/wotung/parafs-install/conf/sed_script/spark/spark_env \
+        #     192.168.1.299
+        # update_spark_conf parauser 192.168.138.71 parauser \
+        #     /opt/wotung/hadoop-parafs/spark-2.0.1/conf/spark-defaults.conf \
+        #     /opt/wotung/parafs-install/conf/sed_script/spark/spark_defaults
+        update_spark_env $USER_NAME $ip $USER_NAME $SPARK_ENV $SED_SCRIPT_SPARK_ENV \
+        && update_spark_conf $USER_NAME $ip $USER_NAME $SPARK_CONF $SED_SCRIPT_SPARK_CONF
+        if [ $? -ne 0 ] ; then
+            echo -e "\033[31m\t\tfailed to config ${HADOOP_YARN_XML} at $ip \033[0m"
+            fault_ips="$ip $fault_ips"
+            # break;
+        fi
+    done
+    if [ ! -z "$fault_ips" ]; then
+        echo -e "\033[31m\t\tmake sure the  ${HADOOP_YARN_XML} \033[0m"
+        exit 1
+    fi
+    echo -e "\t\t __cluster_spark_env end"
+}
+
+function __cluster_spark_sql() {
+    echo -e "\t\t __cluster_spark_sql begin"
+#    update_spark_sql_config
+    echo -e "\t\t __cluster_spark_sql end"
+}
+###### 
+function __cluster_zookeeper_conf() {
+    echo -e "\t\t __cluster_zookeeper_conf begin"
+    config_local_zookeeper_conf $ZOOKEEPER_CONF $ZOOKEEPER_DATA $ZOOKEEPER_DATA_LOG "${CLUSTER_IPS[*]}"
+    local dist_file_path=`dirname $ZOOKEEPER_CONF`
+    local dist_zip_file=`basename $ZOOKEEPER_CONF`
+    local remote_path=`dirname $ZOOKEEPER_CONF`
+    __cluster_file_dist $dist_file_path $dist_zip_file $remote_path
+    echo -e "\t\t __cluster_zookeeper_conf end"
+}
+
+function __cluster_zookeeper_myid() {
+    echo -e "\t\t __cluster_zookeeper_myid begin"
+    local fault_ips=""
+    for ip in $CLUSTER_IPS; do
+        # update_zookeeper_myid parauser 192.168.138.71 parauser \
+        #     /opt/wotung/hadoop-parafs/zookeeper-3.4.10/zk-data/myid 
+        update_zookeeper_myid $USER_NAME $ip $USER_NAME $ZOOKEEPER_MY_ID
+        if [ $? -ne 0 ] ; then
+            echo -e "\033[31m\t\tfailed to config ${ZOOKEEPER_MY_ID} at $ip \033[0m"
+            fault_ips="$ip $fault_ips"
+            # break;
+        fi
+    done
+    if [ ! -z "$fault_ips" ]; then
+        echo -e "\033[31m\t\tmake sure the ${ZOOKEEPER_MY_ID} \033[0m"
+        exit 1
+    fi
+    
+    echo -e "\t\t __cluster_zookeeper_myid end"
+}
+
+###### spark slave配置 可以考虑软连接hadoop
+function __cluster_hbase_regeionservers() {
+    echo -e "\t\t __cluster_hive_regeionservers begin"
+    config_local_hadoop_slaves $HBASE_REGEION_SERVERS "${CLUSTER_IPS[*]}"
+    local dist_file_path=`dirname $HBASE_REGEION_SERVERS`
+    local dist_zip_file=`basename $HBASE_REGEION_SERVERS`
+    local remote_path=`dirname $HBASE_REGEION_SERVERS`
+    __cluster_file_dist $dist_file_path $dist_zip_file $remote_path
+    echo -e "\t\t __cluster_hive_regeionservers end"
+}
+
+function __cluster_hbase_xml() {
+    echo -e "\t\t __cluster_hbase_xml begin"
+    local fault_ips=""
+    for ip in $CLUSTER_IPS; do
+        # update_hbase_config parauser 192.168.138.71 parauser \
+        #     /opt/wotung/hadoop-parafs/hbase-1.2.5/conf/hbase-site.xml \
+        #     /opt/wotung/parafs-install/conf/sed_script/hbase/hbase_conf \
+        #     192..168.1.1213 \
+        #     "${CLUSTER_IPS[*]}"
+        update_hbase_config $USER_NAME $ip $USER_NAME $HBASE_CONF $SED_SCRIPT_HBASE_CONF $MASTER_IP "${CLUSTER_IPS[*]}"
+        if [ $? -ne 0 ] ; then
+            echo -e "\033[31m\t\tfailed to config ${HBASE_CONF} at $ip \033[0m"
+            fault_ips="$ip $fault_ips"
+            # break;
+        fi
+    done
+    if [ ! -z "$fault_ips" ]; then
+        echo -e "\033[31m\t\tmake sure the ${HBASE_CONF} \033[0m"
+        exit 1
+    fi
+    
+    echo -e "\t\t __cluster_hbase_xml end"
+}
+
+function __cluster_hive_xml() {
+    echo -e "\t\t __cluster_hive_xml begin"
+    local fault_ips=""
+    for ip in $CLUSTER_IPS; do
+        # update_hive_config parauser 192.168.138.71 parauser \
+        #     /opt/wotung/hadoop-parafs/hive-2.1.1/conf/hive-site.xml \
+        #     /opt/wotung/parafs-install/conf/sed_script/hive/hive_conf \
+        #     192..168.1213.abx 
+        update_hive_config $USER_NAME $ip $USER_NAME ${HIVE_CONF} ${SED_SCRIPT_HIVE_CONF} ${MASTER_IP}
+        if [ $? -ne 0 ] ; then
+            echo -e "\033[31m\t\tfailed to config ${HIVE_CONF} at $ip \033[0m"
+            fault_ips="$ip $fault_ips"
+            # break;
+        fi
+    done
+    if [ ! -z "$fault_ips" ]; then
+        echo -e "\033[31m\t\tmake sure the ${HIVE_CONF} \033[0m"
+        exit 1
+    fi
+    
+    echo -e "\t\t __cluster_hive_xml end"
+}
+
+function __cluster_azkaban_properties() {
+    echo -e "\t\t __cluster_azkaban_properties begin"
+    local fault_ips=""
+    for ip in $CLUSTER_IPS; do
+        # update_azkaban_config parauser 192.168.138.71 parauser \
+        #     /opt/wotung/hadoop-parafs/azkaban/azkaban-exec-server-3.41.0/conf/azkaban.properties \
+        #     # azkaban/azkaban-web-server-3.41.0/conf/azkaban.properties
+        #     /opt/wotung/parafs-install/conf/sed_script/azkaban/azkaban_conf \
+        #     192.168.1213.abx 
+        update_azkaban_config $USER_NAME $ip $USER_NAME $AZKABAN_EXEC_CONF $SED_SCRIPT_AZKABAN_CONF ${MASTER_IP} &&
+        update_azkaban_config $USER_NAME $ip $USER_NAME $AZKABAN_WEB_CONF $SED_SCRIPT_AZKABAN_CONF ${MASTER_IP} 
+        if [ $? -ne 0 ] ; then
+            echo -e "\033[31m\t\tfailed to config ${ZOOKEEPER_MY_ID} at $ip \033[0m"
+            fault_ips="$ip $fault_ips"
+            # break;
+        fi
+    done
+    if [ ! -z "$fault_ips" ]; then
+        echo -e "\033[31m\t\tmake sure the ${ZOOKEEPER_MY_ID} \033[0m"
+        exit 1
+    fi
+    
+    echo -e "\t\t __cluster_azkaban_properties end"
+}
+
+function __cluster_kafka_connect() {
+echo "++++++++++++++++++++++++++++++++"
+    echo -e "\t\t __cluster_kafka_connect begin"
+    local fault_ips=""
+    for ip in $CLUSTER_IPS; do
+        # update_kafka_config parauser 192.168.138.71 parauser \
+        #     /opt/wotung/hadoop-parafs/kafka_2.11-1.0.1/config/server.properties \
+        #     /opt/wotung/parafs-install/conf/sed_script/kafka/kafka_conf\
+        #     "${CLUSTER_IPS[*]}"
+
+        if [ $? -ne 0 ] ; then
+            echo -e "\033[31m\t\tfailed to config ${ZOOKEEPER_MY_ID} at $ip \033[0m"
+            fault_ips="$ip $fault_ips"
+            # break;
+        fi
+    done
+    if [ ! -z "$fault_ips" ]; then
+        echo -e "\033[31m\t\tmake sure the ${ZOOKEEPER_MY_ID} \033[0m"
+        exit 1
+    fi
+    
+    echo -e "\t\t __cluster_kafka_connect end"
+}
+
+function __cluster_kafka_broker_id() {
+echo "++++++++++++++++++++++++++++++++"
+    echo -e "\t\t __cluster_kafka_broker_id begin"
+    local broker_id=0
+    for ip in $CLUSTER_IPS; do
+        if [ ${ip} = $CLUSTER_LOCAL_IP ] ; then
+           continue 
+        fi
+        broker_id=$(($broker_id+1))
+        #1, 修改本地的 broker_id
+        #2, 复制文件到ip 
+    done
+    # 本地配置为broker_id 0 不再复制
+    echo -e "\t\t __cluster_kafka_broker_id end"
+}
 ###===========================================================================
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 COMMON_BASH_NAME=common_parafs.h
@@ -303,6 +491,5 @@ fi
 # __cluster_config_hosts
 # echo $?
 # __config_hadoop_slaves parauser 192.168.138.70 parauser /opt/wotung/hadoop-parafs/hadoop-2.7.3/etc/hadoop/slaves
-# config_local_hadoop_slaves /opt/wotung/pusentian
-
+#__cluster_hadoop_slave 
 # ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

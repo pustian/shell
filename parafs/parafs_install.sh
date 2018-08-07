@@ -140,7 +140,43 @@ function cluster_update_hadoop() {
     
     __cluster_hadoop_xml
 
-    echo -e "\t\t cluster_update_hadoop begin"
+    echo -e "\t\t cluster_update_hadoop end"
+}
+
+function cluster_update_spark() {
+    echo -e "\t\t cluster_update_spark begin"
+
+    echo -e "\t\t cluster_update_spark end"
+}
+
+function cluster_update_zookeeper () {
+    echo -e "\t\t cluster_update_zookeeper begin"
+
+    echo -e "\t\t cluster_update_zookeeper end"
+}
+
+function cluster_update_hbase() {
+    echo -e "\t\t cluster_update_hbase begin"
+
+    echo -e "\t\t cluster_update_hbase end"
+}
+
+function cluster_update_hive() {
+    echo -e "\t\t cluster_update_hive begin"
+
+    echo -e "\t\t cluster_update_hive end"
+}
+
+function cluster_update_azkaban() {
+    echo -e "\t\t cluster_update_azkaban begin"
+
+    echo -e "\t\t cluster_update_azkaban end"
+}
+
+function cluster_update_kafka() {
+    echo -e "\t\t cluster_update_kafka begin"
+
+    echo -e "\t\t cluster_update_kafka end"
 }
 # ####### ParafsInstallation 
 # ####+++ 逐台安装parafs和日志
