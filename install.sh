@@ -28,9 +28,6 @@ function usage() {
     echo -e "\033[40;37mpackage-dist ------------------------------------------------------------- [D]\033[0m" ;
     echo -e "\033[40;37minstallation-------------------------------------------------------------- [I]\033[0m" ;
     echo -e "\033[40;37mafter-check----------------------------------------------------------------[A]\033[0m" ;
-    echo -e "\033[40;37mSynchronizeInstall---------------------------------------------------------[S]\033[0m" ;
-    echo -e "\033[40;37mUpgradeParafs--------------------------------------------------------------[U]\033[0m" ;
-    echo -e "\033[40;37mTest---------------------------------------------------------------------- [T]\033[0m" ;
     echo -e "\033[40;37mExit ----------------------------------------------------------------------[E]\033[0m" ;
 }
 
@@ -86,6 +83,13 @@ while [ x"${input}" != x"E" ]; do
             ;;
         D|d)
             echo -e "\033[40;34m\tdistribute begin\033[0m"
+#            cluster_dist_rpm
+#            cluster_hadoop_dist
+#            if [ `basename ${SOURCE_DIR}` != `basename ${INSTALL_DIR}` ] \
+#                || [ `dirname ${SOURCE_DIR}` != `dirname ${INSTALL_DIR}` ] ;
+#                local_dist_rpm
+#                local_dist_hadoop
+#            fi
             echo -e "\033[40;34m\tdistribute end\033[0m"
             ;;
         I|i)
@@ -108,19 +112,6 @@ while [ x"${input}" != x"E" ]; do
             echo -e "\033[40;34m\tafter-check begin\033[0m"
             
             echo -e "\033[40;32m\tafter-check done \033[0m"
-            ;;
-        S|s) 
-            echo -e "\033[40;34m\SynchronizeInstall begin\033[0m"
-#            source $SCRIPT_BASE_DIR/parafs/SynchronizeFolder.sh
-            echo -e "\033[40;32m\SynchronizeInstall done\033[0m"
-            ;;
-        U|u) 
-            echo -e "\033[40;34m\UpgradeParafs begin\033[0m"
-#            source $SCRIPT_BASE_DIR/parafs/InstallALLParafs.sh
-            echo -e "\033[40;32m\UpgradeParafs done\033[0m"
-            ;;
-        T|t) 
-            echo $SCRIPT_BASE_DIR
             ;;
         E|e|Q|q) echo "exit"
             exit 0

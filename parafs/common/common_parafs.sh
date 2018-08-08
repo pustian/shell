@@ -123,7 +123,7 @@ function __cluster_config_hosts() {
 ###### 以下函数执行前需要ssh免密才能顺利进行
 ###############################################################################
 ###### common_parafs.sh ==>common_zip.sh
-####### 免密后以免密用户分发文件
+####### 免密后以免密用户分发文件, 此处分发会跳过本机
 ### 此处 dist_user用户下可以免密登陆 authorize_user@authorize_ip 
 ###      authorize_user 在remote_path 用户写权限
 #### dist_file_path
@@ -164,10 +164,11 @@ function __cluster_file_dist() {
 function __cluster_zipfile_check() {
     echo -e "\t\t __cluster_zipfile_check begin"
     local zip_md5_file=$1
-    local zip_file=$2
-    local zip_file_dir=$3
+    local zip_md5_dir=$2
+    local zip_file=$3
+    local zip_file_dir=$4
     
-    local md5=`cat ${zip_file_dir}/$zip_md5_file |awk '{print $1}'`
+    local md5=`cat ${zip_md5_dir}/$zip_md5_file |awk '{print $1}'`
     local fault_ips=""
     for ip in $CLUSTER_IPS; do
         if [ ${ip} = ${CLUSTER_LOCAL_IP}  ] ; then
@@ -204,7 +205,7 @@ function __cluster_unzipfile() {
         if [ ${ip} = ${CLUSTER_LOCAL_IP}  ] ; then
             continue
         fi
-#        echo "unzip_file $zip_file_dir $zip_file $USER_NAME $ip $USER_NAME"
+        # echo "unzip_file $zip_file_dir $zip_file $USER_NAME $ip $USER_NAME"
         unzip_file $USER_NAME $ip $USER_NAME $zip_file_dir $zip_file
         if [ $? -ne 0 ] ; then
             echo -e "\033[31m\t\tfailed to unzip $zip_file at $ip \033[0m"

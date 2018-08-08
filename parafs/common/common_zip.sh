@@ -131,7 +131,7 @@ ZIP_BASH_NAME=common_zip.sh
 #zip_dir parauser 192.168.138.70 parauser /opt/wotung/parafs-install /opt/wotung
 #file_md5sum parauser 192.168.138.70 parauser /opt/wotung/parafs-install.tar.gz
 # file_dist parauser 192.168.138.71 parauser  /opt/wotung  parafs-install.tar.gz /opt/wotung
-# is_zip_file_ok  parauser 192.168.138.71 parauser "f40b7a7217aa973dedc11b929334e3aa"  /opt/wotung parafs-install.tar.gz 
+#  is_zip_file_ok  parauser 192.168.138.71 parauser "f40b7a7217aa973dedc11b929334e3aa"  /opt/wotung parafs-install.tar.gz 
 # unzip_file parauser 192.168.138.71 parauser /opt/wotung parafs-install.tar.gz 
 # echo $?
 ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

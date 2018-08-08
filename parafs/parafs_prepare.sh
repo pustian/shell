@@ -75,7 +75,7 @@ function cluster_script_dist() {
 
     __cluster_file_dist $script_basedir $script_file $script_basedir
 
-    __cluster_zipfile_check $script_md5_file $script_file $script_basedir
+    __cluster_zipfile_check $script_md5_file $script_basedir $script_file $script_basedir
 
     __cluster_unzipfile $script_file $script_basedir
 

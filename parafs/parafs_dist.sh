@@ -4,22 +4,23 @@
 # Copyright (C) 2015-2050 Wotung.com.
 ###############################################################################
 
-function install_usage() {
+function dist_usage() {
     echo "cluster-dist-rpm"
     echo "cluster-dist-hadoop"
+    echo "local-dist-rpm"
+    echo "local-dist-hadoop"
 }
 
 ####### 分发安装文件到各机器上,llog.rpm parafs.rpm
 function cluster_dist_rpm() {
-    echo -e "\t\t cluster_parafs_rpm_dist begin"
     
-    __cluster_file_dist $INSTALL_DIR $PARAFS_RPM $INSTALL_DIR
+    __cluster_file_dist $SOURCE_DIR $PARAFS_RPM $INSTALL_DIR
 
-    __cluster_zipfile_check $PARAFS_MD5_RPM $PARAFS_RPM $INSTALL_DIR
+    __cluster_zipfile_check $PARAFS_MD5_RPM $SOURCE_DIR $PARAFS_RPM $INSTALL_DIR
 
-    __cluster_file_dist $INSTALL_DIR $LLOG_RPM $INSTALL_DIR
+    __cluster_file_dist $SOURCE_DIR $LLOG_RPM $INSTALL_DIR
 
-    __cluster_zipfile_check $LLOG_MD5_RPM $LLOG_RPM $INSTALL_DIR
+    __cluster_zipfile_check $LLOG_MD5_RPM $SOURCE_DIR $LLOG_RPM $INSTALL_DIR
 
     echo -e "\t\t cluster_parafs_rpm_dist end"
 }
@@ -28,15 +29,37 @@ function cluster_dist_rpm() {
 function cluster_dist_hadoop() {
     echo -e "\t\t cluster_hadoop_dist begin"
 
-    __cluster_file_dist $INSTALL_DIR $HADOOP_FILE $INSTALL_DIR
+    __cluster_file_dist $SOURCE_DIR $HADOOP_FILE $INSTALL_DIR
 
-    __cluster_zipfile_check $HADOOP_MD5_FILE $HADOOP_FILE $INSTALL_DIR
+    __cluster_zipfile_check $HADOOP_MD5_FILE $SOURCE_DIR $HADOOP_FILE $INSTALL_DIR
 
     __cluster_unzipfile $HADOOP_FILE $INSTALL_DIR
     
     echo -e "\t\t cluster_hadoop_dist end"
 }
 
+function local_dist_rpm() {
+    echo -e "\t\t local_dist_rpm begin"
+    file_dist $USER_NAME ${CLUSTER_LOCAL_IP} ${USER_NAME} $SOURCE_DIR $PARAFS_RPM $INSTALL_DIR
+    local md5=`cat $SOURCE_DIR/$PARAFS_MD5_RPM |awk '{print $1}'`
+    is_zip_file_ok $USER_NAME ${CLUSTER_LOCAL_IP} ${USER_NAME} $md5 $PARAFS_RPM $INSTALL_DIR
+
+    file_dist $USER_NAME ${CLUSTER_LOCAL_IP} ${USER_NAME} $SOURCE_DIR $LLOG_RPM $INSTALL_DIR
+    local md5=`cat $SOURCE_DIR/$LLOG_RPM |awk '{print $1}'`
+    is_zip_file_ok $USER_NAME ${CLUSTER_LOCAL_IP} ${USER_NAME} $md5 $LLOG_RPM $INSTALL_DIR
+    echo -e "\t\t local_dist_rpm end"
+}
+
+function local_dist_hadoop() {
+    echo -e "\t\t local_dist_hadoop begin"
+    file_dist $USER_NAME ${CLUSTER_LOCAL_IP} ${USER_NAME} $SOURCE_DIR $HADOOP_FILE $INSTALL_DIR
+
+    local md5=`cat $SOURCE_DIR/$PARAFS_MD5_RPM |awk '{print $1}'`
+    is_zip_file_ok $USER_NAME ${CLUSTER_LOCAL_IP} ${USER_NAME} $md5 $HADOOP_FILE $INSTALL_DIR
+
+    unzip_file $USER_NAME $CLUSTER_LOCAL_IP $USER_NAME $HADOOP_FILE $INSTALL_DIR
+    echo -e "\t\t local_dist_hadoop end"
+}
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 DIST_BASH_NAME=parafs_dist.sh_
 if [ -z ${VARIABLE_BASH_NAME} ] ; then 
@@ -50,13 +73,8 @@ fi
 ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
 # install_usage
 #set -x
- cluster_dist_rpm
-# cluster_dist_hadoop
-# cluster_yum
-# cluster_pip
-# cluster_config_bashrc
-# cluster_sudoer_chown /opt/wotung/hadoop-parafs
-# cluster_update_hadoop
- echo $?
+# cluster_dist_rpm
+ cluster_dist_hadoop
+# echo $?
 #set +x
 ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

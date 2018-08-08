@@ -5,8 +5,6 @@
 ###############################################################################
 
 function install_usage() {
-    echo "cluster-dist-rpm"
-    echo "cluster-dist-hadoop"
     echo "cluster-yum"
     echo "cluster-pip"
     echo "cluster-rpm-install"
@@ -20,34 +18,6 @@ function install_usage() {
     echo "cluster-update-kafka"
     echo "cluster-update-azkaban"
     echo "cluster-update-ycsb"
-}
-
-####### 分发安装文件到各机器上,llog.rpm parafs.rpm
-function cluster_dist_rpm() {
-    echo -e "\t\t cluster_parafs_rpm_dist begin"
-    
-    __cluster_file_dist $INSTALL_DIR $PARAFS_RPM $INSTALL_DIR
-
-    __cluster_zipfile_check $PARAFS_MD5_RPM $PARAFS_RPM $INSTALL_DIR
-
-    __cluster_file_dist $INSTALL_DIR $LLOG_RPM $INSTALL_DIR
-
-    __cluster_zipfile_check $LLOG_MD5_RPM $LLOG_RPM $INSTALL_DIR
-
-    echo -e "\t\t cluster_parafs_rpm_dist end"
-}
- 
-#######  分发生态文件到各机器上,
-function cluster_dist_hadoop() {
-    echo -e "\t\t cluster_hadoop_dist begin"
-
-    __cluster_file_dist $INSTALL_DIR $HADOOP_FILE $INSTALL_DIR
-
-    __cluster_zipfile_check $HADOOP_MD5_FILE $HADOOP_FILE $INSTALL_DIR
-
-    __cluster_unzipfile $HADOOP_FILE $INSTALL_DIR
-    
-    echo -e "\t\t cluster_hadoop_dist end"
 }
 
 ###### 免密后yum 安装
