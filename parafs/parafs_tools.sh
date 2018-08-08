@@ -17,6 +17,7 @@ function tools_usage() {
 ### userdel -r parauser
 ### sed -i '/parauser/'d /etc/sudoers
 function __cluster_delete_user() {
+    echo -e "\t\t cluster_delete_user begin"
     local username=$1
     local delete_user="userdel -r $1"
     local config_sudoer="sed -i '/$username/'d /etc/sudoers "
@@ -43,14 +44,8 @@ function __cluster_delete_user() {
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 TOOLS_BASH_NAME=parafs_tools.sh
 if [ -z ${VARIABLE_BASH_NAME} ] ; then 
-    . /opt/wotung/parafs-install/variable.sh
+    . ../variable.sh
 fi
-
-# local user_passwd_file=${USER_PASSWD}
-# local username=`grep user $user_passwd_file | grep -v '^#' | awk -F "=" '{print $2}'`
-# test -z "$username"  &&  username="parauser" 
-# cluster_delete_user $username
-
 ###++++++++++++++++++++++++      main end         ++++++++++++++++++++++++++###
 # ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
 # __cluster_delete_user parauser

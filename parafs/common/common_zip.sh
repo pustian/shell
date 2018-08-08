@@ -11,7 +11,7 @@
 ###### 远程打包
 ###### tar 压缩打包文件并生成md5文件 tar czf xxx.tar.gz -C /xxxx/xxx_dir xxx
 ### dirpath $1 打包该绝对路径目录或文件
-### zippedfile_dir $2 打包后声称文件地址
+### zippedfile_dir $2 打包后生成文件地址
 function zip_dir() {
     local local_user=$1
     local authoriz_ip=$2

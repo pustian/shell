@@ -16,8 +16,8 @@ function prepare_usage() {
 ####+++ return : 
 function cluster_create_user() {
     echo -e "\t\t cluster_create_user begin"
-
     #__cluster_check_user $username $userhome
+    # 检查没有创建过parauser用户
     __cluster_check_user $USER_NAME false
 
     __cluster_create_user $USER_NAME $USER_PASSWD_SSL $USER_HOME $USER_SHELL
@@ -29,8 +29,7 @@ function cluster_create_user() {
     echo -e "\t\t cluster_create_user end"
 }
 
-###### cluster_user
-######
+###### 用户免密  n*n ssh_user_authorize==>common_user.sh
 function cluster_user_authorize() {
     echo -e "\t\t cluster_user_authorize begin"
     
@@ -58,9 +57,9 @@ function cluster_config_network() {
 ####### 各机器上配置文件,/etc/hosts /etc/hostname
 function local_script_zip() {
     echo -e "\t\t local_script_zip begin"
-    zip_dir $USER_NAME $CLUSTER_LOCAL_IP $USER_NAME $BASE_DIR $INSTALL_DIR
-    zip_file=`basename $BASE_DIR`.tar.gz
-    file_md5sum $USER_NAME $CLUSTER_LOCAL_IP $USER_NAME $INSTALL_DIR/$zip_file
+    zip_dir $USER_NAME $CLUSTER_LOCAL_IP $USER_NAME $SCRIPT_BASE_DIR `dirname $SCRIPT_BASE_DIR`
+    zip_file=`basename $SCRIPT_BASE_DIR`.tar.gz
+    file_md5sum $USER_NAME $CLUSTER_LOCAL_IP $USER_NAME `dirname $SCRIPT_BASE_DIR`/$zip_file
     echo -e "\t\t local_script_zip end"
 }
 
@@ -69,8 +68,8 @@ function cluster_script_dist() {
     echo -e "\t\t cluster_script_dist begin"
 #    local script_zip_file=parafs-install.tar.gz
 #    local script_zip_md5_file=parafs-install.md5sum
-    local script_basedir=`dirname $BASE_DIR`
-    local script_file=`basename $BASE_DIR`.tar.gz
+    local script_basedir=`dirname $SCRIPT_BASE_DIR`
+    local script_file=`basename $SCRIPT_BASE_DIR`.tar.gz
     local script_md5_file=${script_file}.md5sum
     echo $script_file $script_basedir $script_md5_file
 
@@ -88,7 +87,7 @@ function cluster_root_chown() {
     echo -e "\t\t cluster_root_chown begin"
     local filename=$PASSWD_CONFIG_FILE
 
-    local script_basedir=`dirname $BASE_DIR`
+    local script_basedir=`dirname $SCRIPT_BASE_DIR`
     for ip in $CLUSTER_IPS; do
        passwd=`grep ${ip} $filename |awk '{print $2 }'`
        
@@ -103,16 +102,16 @@ function cluster_root_chown() {
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 PREPARE_BASH_NAME=parafs_prepare.sh
 if [ -z ${VARIABLE_BASH_NAME} ] ; then 
-    . /opt/wotung/parafs-install/variable.sh
+    . ../variable.sh
 fi
 if [ -z ${USER_BASH_NAME} ] ; then 
-    . ${BASE_DIR}/parafs/common/common_user.sh
+    . ${SCRIPT_BASE_DIR}/parafs/common/common_user.sh
 fi
 if [ -z ${ZIP_BASH_NAME} ] ; then
-    . ${BASE_DIR}/parafs/common/common_zip.sh
+    . ${SCRIPT_BASE_DIR}/parafs/common/common_zip.sh
 fi
 if [ -z ${COMMON_BASH_NAME} ] ; then
-    . ${BASE_DIR}/parafs/common/common_parafs.sh
+    . ${SCRIPT_BASE_DIR}/parafs/common/common_parafs.sh
 fi
 ###++++++++++++++++++++++++      main end         ++++++++++++++++++++++++++###
 # ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
@@ -122,5 +121,5 @@ fi
 # cluster_config_network
 # local_script_zip
 # cluster_script_dist
-# cluster_wotung_chown
+ cluster_root_chown
 # ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

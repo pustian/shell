@@ -182,7 +182,7 @@ function cluster_update_kafka() {
 # ####+++ 逐台安装parafs和日志
 # function cluster_ParafsInstallation() {
 #    	echo -e "\t\t cluster_ParafsInstallation start"
-# 		 source $BASE_DIR/parafs/InstallALLParafs.sh
+# 		 source $SCRIPT_BASE_DIR/parafs/InstallALLParafs.sh
 #     echo -e "\t\t cluster_parafs done"
 # }
 # 
@@ -190,7 +190,7 @@ function cluster_update_kafka() {
 # ####+++  设置环境变量
 # function cluster_SourceBashrc() {
 # 	  echo -e "\t\t cluster_SourceBashrc start"
-# 	  	source $BASE_DIR/parafs/InstallAllSourceBashrc.sh 
+# 	  	source $SCRIPT_BASE_DIR/parafs/InstallAllSourceBashrc.sh 
 #     echo -e "\t\t cluster_SourceBashrc done"
 # }
 # 
@@ -198,7 +198,7 @@ function cluster_update_kafka() {
 # ####+++ 修改xml文件
 # function cluster_ChangeConfigurationFile() {
 #     echo -e "\t\t cluster_ChangeConfigurationFile start"
-# 	  	source $BASE_DIR/parafs/InstallAllChangeParaCfg.sh  
+# 	  	source $SCRIPT_BASE_DIR/parafs/InstallAllChangeParaCfg.sh  
 #     echo -e "\t\t cluster_ChangeConfigurationFile done"
 # }
 # 
@@ -206,13 +206,13 @@ function cluster_update_kafka() {
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 INSTALL_BASH_NAME=parafs_install.sh
 if [ -z ${VARIABLE_BASH_NAME} ] ; then 
-    . /opt/wotung/parafs-install/variable.sh
+    . ../variable.sh
 fi
 if [ -z ${COMMON_BASH_NAME} ] ; then
-    . ${BASE_DIR}/parafs/common/common_parafs.sh
+    . ${SCRIPT_BASE_DIR}/parafs/common/common_parafs.sh
 fi
 if [ -z ${UTILS_BASH_NAME} ] ; then 
-    . /opt/wotung/parafs-install/common/common_utils.sh
+    . ${SCRIPT_BASE_DIR}/parafs/common/common_utils.sh
 fi
 
 
@@ -220,7 +220,7 @@ fi
 ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
 # install_usage
 #set -x
-# cluster_dist_rpm
+ cluster_dist_rpm
 # cluster_dist_hadoop
 # cluster_yum
 # cluster_pip

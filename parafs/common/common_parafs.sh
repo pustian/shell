@@ -4,12 +4,10 @@
 # Copyright (C) 2015-2050 Wotung.com.
 ###############################################################################
 ###############################################################################
-###### parafs_prepare.sh cluster_create_user ---> common_parafs.sh
-###############################################################################
-###### 检查user是否已经存在，现在只检查了用户名。uid gid home未作检查
+###### common_parafs.sh ===>common_user.sh
+###### 检查user是否已经存在，不符合退出报错。uid gid home未作检查
 ### username $1
-### is_exist $2 true/false true 检查$username是否存在
-### grep parauser /etc/passwd
+### is_exist $2 true/false false 不存在；true 检查$username是已存在
 function __cluster_check_user() {
     echo -e "\t\t __cluster_check_user begin"
     local username=$1
@@ -17,6 +15,7 @@ function __cluster_check_user() {
 
     for ip in $CLUSTER_IPS; do
         passwd=`grep ${ip} $PASSWD_CONFIG_FILE |awk '{print $2 }'`
+        ### grep parauser /etc/passwd
         is_no_parauser "$ip" "$DEFAULT_USER" "$passwd" ${username}
         if [ $? -eq 0 ] ; then 
             if [ x${is_exist} = x"false" ] ; then
@@ -41,8 +40,6 @@ function __cluster_check_user() {
 }
 
 ###### 创建用户
-### 注意此处 -p 后面参数需要使用openssl passwd 生成
-### useradd -d /home/parauser -m -U -p 'YdwAWdHXqldYI' -s '/bin/bash'  parauser
 function __cluster_create_user() {
     echo -e "\t\t __cluster_create_user begin"
     local fault_ips=""
@@ -55,8 +52,7 @@ function __cluster_create_user() {
     echo -e "\t\t __cluster_create_user end"
 }
 
-###### sudo 执行免密
-#####  echo "parauser ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+###### 执行sudo 免密 
 function __cluster_config_sudoers() {
     echo -e "\t\t __cluster_config_sudoers begin"
     local username=$1
@@ -64,7 +60,6 @@ function __cluster_config_sudoers() {
     local fault_ips=""
     local filename=$PASSWD_CONFIG_FILE
     for ip in $CLUSTER_IPS; do
-         
         passwd=`grep ${ip} $filename |awk '{print $2 }'`
         # echo "sudoer_nopasswd ${ip} ${DEFAULT_USER} ${passwd} ${username}"
         sudoer_nopasswd ${ip} ${DEFAULT_USER} ${passwd} ${username}
@@ -74,8 +69,60 @@ function __cluster_config_sudoers() {
 }
 
 ###############################################################################
-###### parafs_prepare.sh cluster_dist ---> common_parafs.sh
+###### 以下函数执行前需要ssh免密才能顺利进行
 ###############################################################################
+###### common_parafs.sh ==>common_config.sh
+###### 免密后修改 hostname 
+function __cluster_config_hostname() {
+    echo -e "\t\t __cluster_config_hostname begin"
+    local fault_ips=""
+    for ip in $CLUSTER_IPS; do
+        local hostname=`grep $ip $NETWORK_CONFIG_FILE | awk '{print $2}'`
+        # echo "config_hostname $USER_NAME $ip $USER_NAME $hostname" 
+        # config_hostname parauser 192.168.138.71 parauser ht1.r1.x71
+        config_hostname $USER_NAME $ip $USER_NAME $hostname
+        if [ $? -ne 0 ] ; then
+            echo -e "\033[31m\t\tfailed to config hostname at $ip \033[0m"
+            fault_ips="$ip $fault_ips"
+            # break;
+        fi
+    done
+    if [ ! -z "$fault_ips" ]; then
+        echo -e "\033[31m\t\tmake sure the file /etc/hostname \033[0m"
+        exit 1
+    fi
+    echo -e "\t\t __cluster_config_hostname end"
+}
+###### 免密后修改 hosts
+function __cluster_config_hosts() {
+    echo -e "\t\t __cluster_config_hosts begin"
+    local fault_ips=""
+    for config_ip in $CLUSTER_IPS; do
+        for cluster_ip in $CLUSTER_IPS; do
+            local ip_hostname_alias=`grep $cluster_ip $NETWORK_CONFIG_FILE `
+            local hostname=`echo $ip_hostname_alias | awk '{print $2}'`
+            local hostalias=`echo $ip_hostname_alias | awk '{print $3}'`
+            # config_hosts parauser 192.168.138.71 parauser 192.168.138.72 ht1.r2.n73 hia73
+            #echo "config_hosts $USER_NAME $config_ip $USER_NAME $cluster_ip $hostname $hostalias"
+            config_hosts $USER_NAME $config_ip $USER_NAME $cluster_ip $hostname $hostalias
+            if [ $? -ne 0 ] ; then
+                echo -e "\033[31m\t\tfailed to config hostname at $config_ip \033[0m"
+                fault_ips="$config_ip $fault_ips"
+                # break;
+            fi
+        done 
+    done
+    if [ ! -z "$fault_ips" ]; then
+        echo -e "\033[31m\t\tmake sure the file /etc/hosts \033[0m"
+        exit 1
+    fi
+    echo -e "\t\t __cluster_config_hosts end"
+}
+
+###############################################################################
+###### 以下函数执行前需要ssh免密才能顺利进行
+###############################################################################
+###### common_parafs.sh ==>common_zip.sh
 ####### 免密后以免密用户分发文件
 ### 此处 dist_user用户下可以免密登陆 authorize_user@authorize_ip 
 ###      authorize_user 在remote_path 用户写权限
@@ -111,7 +158,7 @@ function __cluster_file_dist() {
 
 ###### 免密后检查分发文件的md5
 ### 此处 dist_user用户下可以免密登陆 authorize_user@authorize_ip 
-###      authorize_user 在remote_path 用户写权限
+###      authorize_user 在remote_path 用户可执行文件权限
 ### zip_file
 ### zip_md5_file
 function __cluster_zipfile_check() {
@@ -173,51 +220,9 @@ function __cluster_unzipfile() {
     echo -e "\t\t __cluster_unzipfile end"
 }
 
-###### 免密后配置文件hostname 
-function __cluster_config_hostname() {
-    echo -e "\t\t __cluster_config_hostname begin"
-    local fault_ips=""
-    for ip in $CLUSTER_IPS; do
-        local hostname=`grep $ip $NETWORK_CONFIG_FILE | awk '{print $2}'`
-        # echo "config_hostname $USER_NAME $ip $USER_NAME $hostname"
-        config_hostname $USER_NAME $ip $USER_NAME $hostname
-        if [ $? -ne 0 ] ; then
-            echo -e "\033[31m\t\tfailed to config hostname at $ip \033[0m"
-            fault_ips="$ip $fault_ips"
-            # break;
-        fi
-    done
-    if [ ! -z "$fault_ips" ]; then
-        echo -e "\033[31m\t\tmake sure the file /etc/hostname \033[0m"
-        exit 1
-    fi
-    echo -e "\t\t __cluster_config_hostname end"
-}
-
-###### 免密后配置文件hosts
-function __cluster_config_hosts() {
-    echo -e "\t\t __cluster_config_hostname begin"
-    local fault_ips=""
-    for config_ip in $cluster_ips; do
-        for cluster_ip in $cluster_ips; do
-            local ip_hostname_alias=`grep $cluster_ip $network_config_file `
-            local hostname=`echo $ip_hostname_alias | awk '{print $2}'`
-            local hostalias=`echo $ip_hostname_alias | awk '{print $3}'`
-            config_hosts $user_name $config_ip $user_name $cluster_ip $hostname $hostalias
-            if [ $? -ne 0 ] ; then
-                echo -e "\033[31m\t\tfailed to config hostname at $config_ip \033[0m"
-                fault_ips="$config_ip $fault_ips"
-                # break;
-            fi
-        done 
-    done
-    if [ ! -z "$fault_ips" ]; then
-        echo -e "\033[31m\t\tmake sure the file /etc/hosts \033[0m"
-        exit 1
-    fi
-    echo -e "\t\t __cluster_config_hostname end"
-}
-
+###############################################################################
+###### 以下函数执行前需要ssh免密, 且远程文件存在
+###############################################################################
 ###### slave配置
 function __cluster_hadoop_slave() {
     echo -e "\t\t __cluster_hadoop_slave begin"
@@ -460,22 +465,22 @@ echo "++++++++++++++++++++++++++++++++"
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 COMMON_BASH_NAME=common_parafs.h
 if [ -z "$VARIABLE_BASH_NAME" ] ; then 
-    . /opt/wotung/parafs-install/variable.sh
+    . ../../variable.sh
 fi
 if [ -z "$UTILS_BASH_NAME" ]; then
-    . ${BASE_DIR}/parafs/common/common_utils.sh
+    . ${SCRIPT_BASE_DIR}/parafs/common/common_utils.sh
 fi
 if [ -z "$USER_BASH_NAME" ]; then
-    . ${BASE_DIR}/parafs/common/common_user.sh
+    . ${SCRIPT_BASE_DIR}/parafs/common/common_user.sh
 fi
 if [ -z "$ZIP_BASH_NAME" ]; then
-    . ${BASE_DIR}/parafs/common/common_zip.sh
+    . ${SCRIPT_BASE_DIR}/parafs/common/common_zip.sh
 fi
 if [ -z "$CONFIG_BASH_NAME"]; then
-    . ${BASE_DIR}/parafs/common/common_config.sh
+    . ${SCRIPT_BASE_DIR}/parafs/common/common_config.sh
 fi
 if [ -z "$COMMON_INSTALL_BASH_NAME"]; then
-    . ${BASE_DIR}/parafs/common/common_install.sh
+    . ${SCRIPT_BASE_DIR}/parafs/common/common_install.sh
 fi
 # ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
 # __cluster_check_user parauser false

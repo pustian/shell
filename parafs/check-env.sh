@@ -4,43 +4,27 @@
 # Copyright (C) 2015-2050 Wotung.com.
 ###############################################################################
 function env_usage() {
-    echo "check-config"
+    echo "check-local-install-files"
     echo "check-ips"
     echo "cluster-check-root-passwd"
     echo "cluster-check-nodes"
 }
 
-####### 检查配置文件 passwd network 是否存在, 并且network ip相同
-####+++ return : 不存在直接退出,并给出提示信息。否则无返回信息
-function check_config() {
-    if [ ! -f $PASSWD_CONFIG_FILE ] ; then
-        echo -e "\033[31m\t\tconfig_file=$PASSWD_CONFIG_FILE not exists\033[0m"
+####### 配置文件相关检查已经在 需要安装文件在此处作检查
+function check_local_install_files() {
+    if [ ! -d $SOURCE_DIR ] || [ ! -f $SOURCE_DIR/$PARAFS_RPM ] || [ ! -f $SOURCE_DIR/$PARAFS_MD5_RPM ] \
+        || [ ! -f $SOURCE_DIR/$LLOG_RPM ] || [ ! -f $SOURCE_DIR/$LLOG_MD5_RPM ] \
+        || [ ! -f $SOURCE_DIR/$HADOOP_FILE ] || [ ! -f $SOURCE_DIR/$HADOOP_MD5_FILE ] ; then 
+        echo -e "\033[31m\t\t check local install file at $SOURCE_DIR and config at $MISC_CONF_FILE \033[0m"
         exit 1
     fi
-    if [ ! -f $NETWORK_CONFIG_FILE ] ; then
-        echo -e "\033[31m\t\tconfig_file=$NETWORK_CONFIG_FILE not exists\033[0m"
-        exit 1
-    fi
-    
-    local fault_ips="" 
-    for ip in $CLUSTER_IPS ; do
-        grep $ip $PASSWD_CONFIG_FILE >/dev/null
-        if [ $? -ne 0 ] ; then
-            echo -e "\033[31m\t\t$ip not eixst at ${PASSWD_CONFIG_FILE}\033[0m"
-            fault_ips="$ip $fault_ips"
-            # break;
-        fi
-    done
-    if [ ! -z "$fault_ips" ]; then
-        echo -e "\033[31m\t\tmake sure the files $NETWORK_CONFIG_FILE and $PASSWD_CONFIG_FILE \033[0m"
-        exit 1
-    fi
-    echo -e "\t\t check_config end"
+    echo -e "\t\t check_local_install_files "
 }
 
 ####### 根据配置文件network检查ip连通状况
 ####+++ return : 检查失败输出到屏幕，并且停止进行
 function check_ips() {
+    echo -e "\t\t check_ips begin"
     local fault_ips="" 
     for ip in $CLUSTER_IPS; do
         is_conn $ip
@@ -115,15 +99,15 @@ function cluster_check_nodes() {
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 CHECK_ENV_BASH_NAME=check-env.sh
 if [ -z ${VARIABLE_BASH_NAME} ] ; then 
-    . /opt/wotung/parafs-install/variable.sh
+    . ../variable.sh
 fi
 if [ -z ${UTILS_BASH_NAME} ] ; then 
-    . /opt/wotung/parafs-install/parafs/common/common_utils.sh
+    . $SCRIPT_BASE_DIR/parafs/common/common_utils.sh
 fi
 
 ###++++++++++++++++++++++++      main end         ++++++++++++++++++++++++++###
 # ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
-# check_config
+  check_local_install_files
 # check_ips
 # cluster_check_passwd
 # cluster_check_nodes

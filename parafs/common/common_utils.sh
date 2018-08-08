@@ -92,15 +92,15 @@ function dirpath_sudoer_chown() {
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 UTILS_BASH_NAME=common_utils.sh
 if [ -z "$VARIABLE_BASH_NAME" ] ; then 
-    . /opt/wotung/parafs-install/variable.sh
+    . ../..//variable.sh
 fi
 #  # ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
-#  # is_conn "ht1.r1.n72"
-#  # is_local_parafs_node_OK 
-#  # echo $?
-#  # is_parafs_node_ok 192.168.138.71 "root" "Tianpusen@1" 
-#  # echo $?
-#  # is_parafs_node_ok 192.168.138.70 "parafs" "tianpusen" 
-#dirpath_sudoer_chown parauser 192.168.138.71 parauser /opt/wotung/hadoop-parafs parauser parauser
-#  # echo $?
+  # is_conn "ht1.r1.n72"
+  # is_local_parafs_node_OK 
+  # echo $?
+  # is_parafs_node_ok 192.168.138.71 "root" "Tianpusen@1" 
+  # echo $?
+  # is_parafs_node_ok 192.168.138.70 "parafs" "tianpusen" 
+  # dirpath_sudoer_chown parauser 192.168.138.71 parauser /opt/wotung/hadoop-parafs parauser parauser
+  # echo $?
 #  # ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

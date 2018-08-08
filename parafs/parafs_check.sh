@@ -13,10 +13,10 @@ function check_usage() {
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 CHEC_BASH_NAME=parafs_check.sh
 if [ -z ${VARIABLE_BASH_NAME} ] ; then 
-    . /opt/wotung/parafs-install/variable.sh
+    . ../variable.sh
 fi
 if [ -z ${UTILS_BASH_NAME} ] ; then 
-    . $BASE_DIR/parafs/common/common_utils.sh
+    . $SCRIPT_BASE_DIR/parafs/common/common_utils.sh
 fi
 
 ###++++++++++++++++++++++++      main end         ++++++++++++++++++++++++++###

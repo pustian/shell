@@ -3,9 +3,10 @@
 #-*- coding: utf-8 -*-
 # Copyright (C) 2015-2050 Wotung.com.
 ###############################################################################
-###### parafs_prepare.sh cluster_create_user ---> common_parafs.sh
+###### parafs_prepare.sh cluster_create_user ---> common_parafs.sh create_user
 ###############################################################################
 ###### 远程判断是否存在用户
+###### 检查/etc/passwd
 ### ip $1 远程ip
 ### user $2 远程机器用户
 ### passwd $3 远程机器用户密码
@@ -27,6 +28,7 @@ function is_no_parauser() {
 }
 
 ###### 远程增加用户
+###### useradd -d $userhome -m -U -p $userpasswd_ssl -s $usershell $username"
 ### ip $1 远程ip
 ### user $2 远程机器用户
 ### passwd $3 远程机器用户密码
@@ -34,7 +36,6 @@ function is_no_parauser() {
 ### userpasswd_ssl
 ### userhome
 ### usershell
-###### useradd -d $userhome -m -U -p $userpasswd_ssl -s $usershell $username"
 function create_user() {
     local ip=$1
     local user=$2
@@ -51,11 +52,11 @@ function create_user() {
 }
 
 ###### 远程增加修改sudoer 用户sudo免密
+###### /etc/sudoers 行尾追加一行免密提升至root
 ### ip $1 远程ip
 ### user $2 远程机器用户
 ### passwd $3 远程机器用户密码
 ### username $4 远程机器需要检查的用户
-###### /etc/sudoers 行尾追加一行免密提升至root
 function sudoer_nopasswd() {
     local ip=$1
     local user=$2
@@ -72,7 +73,7 @@ function sudoer_nopasswd() {
 }
 
 ###############################################################################
-###### parafs_prepare.sh
+###### parafs_prepare.sh cluster_user_authorize
 ###############################################################################
 ###### 当前current_ip上的用户current_user 免密登陆远程机器remote_ip上用户remote_user 
 ### current_ip 
@@ -94,13 +95,13 @@ function ssh_user_authorize() {
     local remote_userhome=$8
 
     local temp_file="/tmp/parafs_ssh_user_authorize$ip"
-    echo "do ssh_user_authorize at $current_ip to $remote_ip"
+    echo "do ssh_user_authorize at $current_user@$current_ip to $remote_user@$remote_ip"
     $SSH_EXP_AUTHORIZE ${current_ip} ${current_user} ${current_passwd} ${current_userhome} \
         ${remote_ip} ${remote_user} ${remote_passwd} ${remote_userhome} >$temp_file
 }
 
 ###############################################################################
-###### parafs_tools.sh
+###### parafs_tools.sh 
 ###############################################################################
 ###### 远程删除存在的用户
 ### ip $1 远程ip
@@ -141,14 +142,14 @@ function dirpath_root_chown() {
     # sudo chown -R parauser:parauser /opt/wotung
     local temp_file="/tmp/parafs_create_user$remote_ip"
     local remote_chown="sudo chown -R $username:$groupname $dirpath"
-    echo "do dirpath_root_chown at $remote_ip"
+    echo "do dirpath_root_chown $dirpath at $remote_ip"
     $SSH_REMOTE_EXEC "$remote_ip" "$remote_user" "$remote_passwd" "$remote_chown" >$temp_file
 }
 ###===========================================================================
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 USER_BASH_NAME=common_user.sh
 if [ -z "$VARIABLE_BASH_NAME" ] ; then 
-    . /opt/wotung/parafs-install/variable.sh
+    . ../../variable.sh
 fi
 ###++++++++++++++++++++++++      main  end        ++++++++++++++++++++++++++###
 ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
