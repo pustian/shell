@@ -104,14 +104,15 @@ PIP_SOURCE=`grep '^pip_source=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{pr
 DEFAULT_USER=`grep 'default_user=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
 DEFAULT_USER_HOME=`grep 'default_user_home=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
 MASTER_IP=`grep '^master_ip=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
-test -z $MASTER_IP && MASTER_IP=$CLUSTER_LOCAL_IP
 test -z "$DEFAULT_USER" && DEFAULT_USER=root
 test -z "$DEFAULT_USER_HOME" && DEFAULT_USER_HOME=/root
-if [ -z $SOURCE_DIR ] || [ -z $PARAFS_RPM ] || [ -z $LLOG_RPM ] || [ -z $HADOOP_FILE ] ; then
+if [ -z $SOURCE_DIR ]|| [ -z $MASTER_IP ] \
+    || [ -z $PARAFS_RPM ] || [ -z $LLOG_RPM ] || [ -z $HADOOP_FILE ] ; then
     echo -e "\033[31mplease confirm the file $MISC_CONF_FILE ,\033[0m"
-    echo -e "\033[31m    the llog_rpm, parafs_rpm, and parafs_hadoop_file are must\033[0m"
+    echo -e "\033[31m    the source_dir, maser_ip, llog_rpm, parafs_rpm, and parafs_hadoop_file are must\033[0m"
     exit 1
 fi
+
 
 # echo "PARAFS_RPM     =$PARAFS_RPM     " 
 # echo "PARAFS_MD5_RPM =$PARAFS_MD5_RPM " 
@@ -146,14 +147,14 @@ AZKABAN_EXEC_CONF=${HADOOP_PARAFS_HOME}/azkaban/azkaban-exec-server-3.41.0/conf/
 AZKABAN_WEB_CONF=${HADOOP_PARAFS_HOME}/azkaban/azkaban-web-server-3.41.0/conf/azkaban.properties
 KAFKA_CONF=${HADOOP_PARAFS_HOME}/kafka_2.11-1.0.1/config/server.properties
 
-if test ! -f $HADOOP_SLAVES || test ! -f $HADOOP_YARN_XML \
-    || test ! -f $SPARK_SLAVES || test ! -f $SPARK_ENV || test ! -f $SPARK_CONF \
-    || test ! -f $ZOOKEEPER_CONF || test ! -f $ZOOKEEPER_MY_ID \
-    || test ! -d $ZOOKEEPER_DATA || test ! -d $ZOOKEEPER_DATA_LOG \
-    || test ! -f $HBASE_REGEION_SERVERS || test ! -f $HBASE_CONF \
-    || test ! -f $HIVE_CONF || test ! -f $KAFKA_CONF \
-    || test ! -f $AZKABAN_EXEC_CONF || test ! -f $AZKABAN_WEB_CONF ; then
-    echo -e "\033[31m$HADOOP_PARAFS_HOME need update config file\033[0m"
-    exit 1
-fi
+#if test ! -f $HADOOP_SLAVES || test ! -f $HADOOP_YARN_XML \
+#    || test ! -f $SPARK_SLAVES || test ! -f $SPARK_ENV || test ! -f $SPARK_CONF \
+#    || test ! -f $ZOOKEEPER_CONF || test ! -f $ZOOKEEPER_MY_ID \
+#    || test ! -d $ZOOKEEPER_DATA || test ! -d $ZOOKEEPER_DATA_LOG \
+#    || test ! -f $HBASE_REGEION_SERVERS || test ! -f $HBASE_CONF \
+#    || test ! -f $HIVE_CONF || test ! -f $KAFKA_CONF \
+#    || test ! -f $AZKABAN_EXEC_CONF || test ! -f $AZKABAN_WEB_CONF ; then
+#    echo -e "\033[31m$HADOOP_PARAFS_HOME need update config file\033[0m"
+#    exit 1
+#fi
 # echo "====================variable loaded==========="

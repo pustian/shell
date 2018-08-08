@@ -1,3 +1,3 @@
-67,67c export SPARK_MASTER_IP\=192.168.138.29
-68,68c export SPARK_MASTER_HOST\=192.168.138.29
-69,69c export SPARK_LOCAL_IP\=192.168.138.71
+32,32c spark.executor.memory 256M
+33,33c spark.executor.instances 3
+34,34c spark.executor.cores 3

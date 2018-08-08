@@ -42,11 +42,11 @@ function local_dist_rpm() {
     echo -e "\t\t local_dist_rpm begin"
     file_dist $USER_NAME ${CLUSTER_LOCAL_IP} ${USER_NAME} $SOURCE_DIR $PARAFS_RPM $INSTALL_DIR
     local md5=`cat $SOURCE_DIR/$PARAFS_MD5_RPM |awk '{print $1}'`
-    is_zip_file_ok $USER_NAME ${CLUSTER_LOCAL_IP} ${USER_NAME} $md5 $PARAFS_RPM $INSTALL_DIR
+    is_zip_file_ok $USER_NAME ${CLUSTER_LOCAL_IP} ${USER_NAME} $md5 $INSTALL_DIR $PARAFS_RPM 
 
     file_dist $USER_NAME ${CLUSTER_LOCAL_IP} ${USER_NAME} $SOURCE_DIR $LLOG_RPM $INSTALL_DIR
-    local md5=`cat $SOURCE_DIR/$LLOG_RPM |awk '{print $1}'`
-    is_zip_file_ok $USER_NAME ${CLUSTER_LOCAL_IP} ${USER_NAME} $md5 $LLOG_RPM $INSTALL_DIR
+    local md5=`cat $SOURCE_DIR/$LLOG_MD5_RPM |awk '{print $1}'`
+    is_zip_file_ok $USER_NAME ${CLUSTER_LOCAL_IP} ${USER_NAME} $md5 $INSTALL_DIR $LLOG_RPM 
     echo -e "\t\t local_dist_rpm end"
 }
 
@@ -55,13 +55,13 @@ function local_dist_hadoop() {
     file_dist $USER_NAME ${CLUSTER_LOCAL_IP} ${USER_NAME} $SOURCE_DIR $HADOOP_FILE $INSTALL_DIR
 
     local md5=`cat $SOURCE_DIR/$PARAFS_MD5_RPM |awk '{print $1}'`
-    is_zip_file_ok $USER_NAME ${CLUSTER_LOCAL_IP} ${USER_NAME} $md5 $HADOOP_FILE $INSTALL_DIR
+    is_zip_file_ok $USER_NAME ${CLUSTER_LOCAL_IP} ${USER_NAME} $md5 $INSTALL_DIR $HADOOP_FILE 
 
-    unzip_file $USER_NAME $CLUSTER_LOCAL_IP $USER_NAME $HADOOP_FILE $INSTALL_DIR
+    unzip_file $USER_NAME $CLUSTER_LOCAL_IP $USER_NAME $INSTALL_DIR $HADOOP_FILE 
     echo -e "\t\t local_dist_hadoop end"
 }
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
-DIST_BASH_NAME=parafs_dist.sh_
+DIST_BASH_NAME=parafs_dist.sh
 if [ -z ${VARIABLE_BASH_NAME} ] ; then 
     . ../variable.sh
 fi
@@ -74,7 +74,9 @@ fi
 # install_usage
 #set -x
 # cluster_dist_rpm
- cluster_dist_hadoop
+# cluster_dist_hadoop
+# local_dist_rpm
+# local_dist_hadoop
 # echo $?
 #set +x
 ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

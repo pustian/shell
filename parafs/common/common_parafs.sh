@@ -305,12 +305,14 @@ function __cluster_spark_env() {
 
 function __cluster_spark_sql() {
     echo -e "\t\t __cluster_spark_sql begin"
+echo "+++++++++ do nothing +++++++"
 #    update_spark_sql_config
     echo -e "\t\t __cluster_spark_sql end"
 }
 ###### 
 function __cluster_zookeeper_conf() {
     echo -e "\t\t __cluster_zookeeper_conf begin"
+    # echo "config_local_zookeeper_conf $ZOOKEEPER_CONF $ZOOKEEPER_DATA $ZOOKEEPER_DATA_LOG '${CLUSTER_IPS[*]}' "
     config_local_zookeeper_conf $ZOOKEEPER_CONF $ZOOKEEPER_DATA $ZOOKEEPER_DATA_LOG "${CLUSTER_IPS[*]}"
     local dist_file_path=`dirname $ZOOKEEPER_CONF`
     local dist_zip_file=`basename $ZOOKEEPER_CONF`
@@ -342,13 +344,13 @@ function __cluster_zookeeper_myid() {
 
 ###### spark slave配置 可以考虑软连接hadoop
 function __cluster_hbase_regeionservers() {
-    echo -e "\t\t __cluster_hive_regeionservers begin"
+    echo -e "\t\t __cluster_hbase_regeionservers begin"
     config_local_hadoop_slaves $HBASE_REGEION_SERVERS "${CLUSTER_IPS[*]}"
     local dist_file_path=`dirname $HBASE_REGEION_SERVERS`
     local dist_zip_file=`basename $HBASE_REGEION_SERVERS`
     local remote_path=`dirname $HBASE_REGEION_SERVERS`
     __cluster_file_dist $dist_file_path $dist_zip_file $remote_path
-    echo -e "\t\t __cluster_hive_regeionservers end"
+    echo -e "\t\t __cluster_hbase_regeionservers end"
 }
 
 function __cluster_hbase_xml() {
@@ -432,6 +434,7 @@ echo "++++++++++++++++++++++++++++++++"
         #     /opt/wotung/hadoop-parafs/kafka_2.11-1.0.1/config/server.properties \
         #     /opt/wotung/parafs-install/conf/sed_script/kafka/kafka_conf\
         #     "${CLUSTER_IPS[*]}"
+        update_kafka_config $USER_NAME $ip $USER_NAME $KAFKA_CONF $SED_SCRIPT_KAFKA_CONF "${CLUSTER_IPS[*]}"
 
         if [ $? -ne 0 ] ; then
             echo -e "\033[31m\t\tfailed to config ${ZOOKEEPER_MY_ID} at $ip \033[0m"
@@ -450,6 +453,7 @@ echo "++++++++++++++++++++++++++++++++"
 function __cluster_kafka_broker_id() {
 echo "++++++++++++++++++++++++++++++++"
     echo -e "\t\t __cluster_kafka_broker_id begin"
+    echo "+++++++++ do nothing +++++++"
     local broker_id=0
     for ip in $CLUSTER_IPS; do
         if [ ${ip} = $CLUSTER_LOCAL_IP ] ; then
@@ -460,6 +464,7 @@ echo "++++++++++++++++++++++++++++++++"
         #2, 复制文件到ip 
     done
     # 本地配置为broker_id 0 不再复制
+
     echo -e "\t\t __cluster_kafka_broker_id end"
 }
 ###===========================================================================
@@ -476,6 +481,9 @@ if [ -z "$USER_BASH_NAME" ]; then
 fi
 if [ -z "$ZIP_BASH_NAME" ]; then
     . ${SCRIPT_BASE_DIR}/parafs/common/common_zip.sh
+fi
+if [ -z "$NETWORK_CONFIG_FILE" ]; then
+    . ${SCRIPT_BASE_DIR}/parafs/common/common_network.sh
 fi
 if [ -z "$CONFIG_BASH_NAME"]; then
     . ${SCRIPT_BASE_DIR}/parafs/common/common_config.sh
@@ -497,5 +505,17 @@ fi
 # __cluster_config_hosts
 # echo $?
 # __config_hadoop_slaves parauser 192.168.138.70 parauser /opt/wotung/hadoop-parafs/hadoop-2.7.3/etc/hadoop/slaves
-#__cluster_hadoop_slave 
+# __cluster_hadoop_slave 
+# __cluster_hadoop_xml
+# __cluster_spark_slave
+# __cluster_spark_env
+# __cluster_spark_sql
+# __cluster_zookeeper_conf
+# __cluster_zookeeper_myid
+# __cluster_hbase_regeionservers
+# __cluster_hbase_xml
+# __cluster_hive_xml
+# __cluster_azkaban_properties
+# __cluster_kafka_connect
+# __cluster_kafka_broker_id
 # ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

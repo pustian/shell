@@ -3,6 +3,7 @@ default_user=root
 default_user_home=/root
 ### 以下配置不可以缺少
 source_dir=/opt/wotung/package
+master_ip=192.168.138.10
 parafs_install_file=parafs-install.tar.gz
 parafs_install_file_md5=parafs-install.tar.gz.md5sum
 parafs_rpm=parafs-1.0.1-1.x86_64.rpm

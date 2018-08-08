@@ -88,6 +88,7 @@ function dirpath_sudoer_chown() {
     sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" >>$temp_file
     return $?
 }
+
 ###===========================================================================
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 UTILS_BASH_NAME=common_utils.sh
