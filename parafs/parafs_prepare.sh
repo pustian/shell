@@ -121,5 +121,5 @@ fi
 # cluster_config_network
 # local_script_zip
 # cluster_script_dist
- cluster_root_chown
+# cluster_root_chown
 # ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

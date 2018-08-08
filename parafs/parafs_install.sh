@@ -57,7 +57,7 @@ function cluster_yum() {
     for ip in $CLUSTER_IPS; do
         yum_install $USER_NAME $ip $USER_NAME
         if [ $? -ne 0 ] ; then
-            echo -e "\033[31m\t\tfailed to pip install paramiko at $ip \033[0m"
+            echo -e "\033[31m\t\tfailed to yum file at $ip \033[0m"
             fault_ips="$config_ip $fault_ips"
             # break;
         fi
@@ -220,13 +220,13 @@ fi
 ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
 # install_usage
 #set -x
- cluster_dist_rpm
+# cluster_dist_rpm
 # cluster_dist_hadoop
 # cluster_yum
 # cluster_pip
 # cluster_config_bashrc
 # cluster_sudoer_chown /opt/wotung/hadoop-parafs
 # cluster_update_hadoop
- echo $?
+# echo $?
 #set +x
 ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

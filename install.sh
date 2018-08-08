@@ -87,6 +87,7 @@ while [ x"${input}" != x"E" ]; do
         D|d)
             echo -e "\033[40;34m\tdistribute begin\033[0m"
             echo -e "\033[40;34m\tdistribute end\033[0m"
+            ;;
         I|i)
             echo -e "\033[40;34m\tinstallation begin\033[0m"
 #            #cluster_yum_source

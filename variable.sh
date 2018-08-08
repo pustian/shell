@@ -156,4 +156,4 @@ if test ! -f $HADOOP_SLAVES || test ! -f $HADOOP_YARN_XML \
     echo -e "\033[31m$HADOOP_PARAFS_HOME need update config file\033[0m"
     exit 1
 fi
-echo "====================variable loaded==========="
+# echo "====================variable loaded==========="
