@@ -49,8 +49,8 @@ function cluster_pip() {
 function cluster_rpm_install() {
     echo -e "\t\t __cluster_install_rpm begin"
     for ip in $CLUSTER_IPS; do
-        rpm_install $USER_NAME $ip $USER_NAME $PARAFS_RPM
-        rpm_install $USER_NAME $ip $USER_NAME $LLOG_RPM
+        rpm_install $USER_NAME $ip $USER_NAME ${INSTALL_DIR}/$PARAFS_RPM
+        rpm_install $USER_NAME $ip $USER_NAME ${INSTALL_DIR}/$LLOG_RPM
     done
     echo -e "\t\t __cluster_install_rpm end"
 }
