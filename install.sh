@@ -74,7 +74,7 @@ while [ x"${input}" != x"E" ]; do
             check_local_install_files
             check_ips
             cluster_check_passwd #在root免密的情况下会直接通过，先重命名~/.ssh 使免密失效
-#            cluster_check_nodes
+            cluster_check_nodes
             echo -e "\033[40;32m\tpre-check done \033[0m"
             ;;
         R|r) 
@@ -141,7 +141,7 @@ while [ x"${input}" != x"E" ]; do
             
             echo -e "\033[40;32m\tafter-check done \033[0m"
             ;;
-        E|e|Q|q) echo "exit"
+        E|e|Q|q|exit) echo "exit"
             exit 0
             ;;
     esac

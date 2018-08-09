@@ -109,6 +109,6 @@ fi
 # ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
 # check_local_install_files
 # check_ips
- cluster_check_passwd
+# cluster_check_passwd
 # cluster_check_nodes
 # ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

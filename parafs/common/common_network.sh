@@ -29,7 +29,8 @@ function config_hostname() {
     local remote_hostname="$command_condition || $command_set_hostname \
         && $command_bak_hostname && $command_update_hostname "
     echo "do config_hostname at $authorize_ip"
-    sudo su - $local_user  -c "ssh $authorize_user@$authorize_ip '$remote_hostname' ">$temp_file 
+    #sudo su - $local_user  -c "ssh $authorize_user@$authorize_ip '$remote_hostname' ">$temp_file 
+    ssh $authorize_user@$authorize_ip '$remote_hostname'>$temp_file  
     return $?
 } 
 
@@ -56,7 +57,9 @@ function config_hosts() {
     local command_update_hosts="echo '$ip $hostname $alias' |sudo tee -a /etc/hosts"
     local remote_hosts="$command_condition || $command_bak_hosts && $command_update_hosts"
     echo "do config_hosts at $authorize_ip for $ip"
-    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_hosts'" >$temp_file
+#    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_hosts'" >$temp_file
+    ssh '$authorize_user@$authorize_ip' '$remote_hosts' >$temp_file
+
     return $?
     ### 验证配置情况 grep ip /etc/hosts 如果有两条认为有问题
 #    ip_counts=`sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' 'cat /etc/hosts'" \
@@ -107,8 +110,9 @@ function config_ntpdate_boot() {
     local ntpdate_boot_condition="grep ntpdate /etc/rc.d/rc.local"
     local ntpdate_boot_append="echo 'ntpdate $ntp_hostname' | sudo tee -a /etc/rc.d/rc.local"
     local ntpdate_boot="$ntpdate_boot_condition || $ntpdate_boot_append"
-#    echo "sudo su - $local_user -c ssh '$authorize_user@$authorize_ip' '$ntpdate_boot'"
-    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$ntpdate_boot'" >$temp_file
+    #sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$ntpdate_boot'" >$temp_file
+    ssh '$authorize_user@$authorize_ip' '$ntpdate_boot'>$temp_file
+
     return $?
 }
 
@@ -132,7 +136,8 @@ function config_ntpdate_cron() {
     local ntpdate_cron_do_2="echo '$ntpdate_cron_command' |sudo tee -a /etc/crontab"
     local ntpdate_cron="$ntpdate_cron_condition_1 || $ntpdate_cron_do_1 && $ntpdate_cron_condition_2 || $ntpdate_cron_do_2"
 #    echo "sudo su - $local_user -c ssh '$authorize_user@$authorize_ip' '$ntpdate_cron'"
-    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$ntpdate_cron'" >$temp_file
+#    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$ntpdate_cron'" >$temp_file
+    ssh '$authorize_user@$authorize_ip' '$ntpdate_cron'>$temp_file
     return $?
 }
 
