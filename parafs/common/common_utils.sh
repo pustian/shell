@@ -98,7 +98,7 @@ fi
 #  # ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
   # is_conn "ht1.r1.n72"
   # is_local_parafs_node_OK 
-is_passwd_ok 192.168.1.11 'root' '' '/root'
+is_passwd_ok 192.168.1.12 'root' '' '/root'
   # echo $?
   # is_parafs_node_ok 192.168.138.71 "root" "Tianpusen@1" 
   # echo $?

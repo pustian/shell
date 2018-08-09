@@ -51,6 +51,9 @@ fi
 if [ -z ${INSTALL_BASH_NAME} ] ; then
     . $SCRIPT_BASE_DIR/parafs/parafs_install.sh
 fi
+if [ -z ${CONFIG_BASH_NAME} ] ; then
+    . $SCRIPT_BASE_DIR/parafs/parafs_config.sh
+fi
 #if [ -z ${CHECK_BASH_NAME} ] ; then
 #    . $SCRIPT_BASE_DIR/parafs/parafs_check.sh
 #fi
@@ -70,7 +73,7 @@ while [ x"${input}" != x"E" ]; do
             echo -e "\033[40;34m\tpre-check begin\033[0m"
             check_local_install_files
             check_ips
-            cluster_check_passwd
+            cluster_check_passwd #在root免密的情况下会直接通过，先重命名~/.ssh 使免密失效
 #            cluster_check_nodes
             echo -e "\033[40;32m\tpre-check done \033[0m"
             ;;
@@ -124,7 +127,7 @@ while [ x"${input}" != x"E" ]; do
         C|c)
             echo -e "\033[40;32m\tconfig begin \033[0m"
 #            cluster_config_bashrc
-#            cluster_update_hadoop
+            cluster_update_hadoop
 #            cluster_update_spark
 #            cluster_update_zookeeper
 #            cluster_update_hbase
