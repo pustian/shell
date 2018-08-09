@@ -32,7 +32,7 @@ function __cluster_delete_user() {
          
         passwd=`grep ${ip} $filename |awk '{print $2 }'`
         user='root'
-        
+        echo "do delete_user at $ip"       
         $SSH_REMOTE_EXEC "$ip" "$user" "$passwd" "$delete_user" >/dev/null
         $SSH_REMOTE_EXEC "$ip" "$user" "$passwd" "$config_sudoer" >/dev/null
 
