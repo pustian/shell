@@ -126,7 +126,7 @@ function cluster_update_kafka() {
 # 
 
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
-INSTALL_BASH_NAME=parafs_install.sh
+CONFIG_BASH_NAME=parafs_config.sh
 if [ -z ${VARIABLE_BASH_NAME} ] ; then 
     . ../variable.sh
 fi

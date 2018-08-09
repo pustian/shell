@@ -485,7 +485,7 @@ fi
 if [ -z "$NETWORK_BASH_NAME" ]; then
     . ${SCRIPT_BASE_DIR}/parafs/common/common_network.sh
 fi
-if [ -z "$CONFIG_BASH_NAME"]; then
+if [ -z "$COMMON_CONFIG_BASH_NAME"]; then
     . ${SCRIPT_BASE_DIR}/parafs/common/common_config.sh
 fi
 if [ -z "$COMMON_INSTALL_BASH_NAME"]; then

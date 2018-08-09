@@ -86,6 +86,8 @@ if [ -z $USER_PASSWD ] || [ -z $USER_PASSWD_SSL ] ; then
     echo -e "\033[31m    the passwd_plain and passwd_ssl are must\033[0m"
     exit 1
 fi
+USER_NAME='root'
+USER_HOME='/root'
 # echo "USER_NAME      =$USER_NAME"
 # echo "USER_PASSWD    =$USER_PASSWD"
 # echo "USER_PASSWD_SSL=$USER_PASSWD_SSL"

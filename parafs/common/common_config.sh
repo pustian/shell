@@ -549,7 +549,7 @@ function update_kafka_config() {
 # }
 ###===========================================================================
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
-CONFIG_BASH_NAME=common_config.sh
+COMMON_CONFIG_BASH_NAME=common_config.sh
 ###++++++++++++++++++++++++      main end         ++++++++++++++++++++++++++###
 ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
 # update_bashrc parauser 192.168.138.72 parauser /home/parauser /opt/wotung/parafs-install/conf/bashrc

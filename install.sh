@@ -51,6 +51,9 @@ fi
 if [ -z ${INSTALL_BASH_NAME} ] ; then
     . $SCRIPT_BASE_DIR/parafs/parafs_install.sh
 fi
+if [ -z ${CONFIG_BASH_NAME} ] ; then
+    . $SCRIPT_BASE_DIR/parafs/parafs_config.sh
+fi
 #if [ -z ${CHECK_BASH_NAME} ] ; then
 #    . $SCRIPT_BASE_DIR/parafs/parafs_check.sh
 #fi
@@ -68,17 +71,17 @@ while [ x"${input}" != x"E" ]; do
     case ${input} in
         P|p) 
             echo -e "\033[40;34m\tpre-check begin\033[0m"
-            check_local_install_files
-            check_ips
+#            check_local_install_files
+#            check_ips
 #            cluster_check_passwd
 #            cluster_check_nodes
             echo -e "\033[40;32m\tpre-check done \033[0m"
             ;;
         R|r) 
             echo -e "\033[40;34m\tpre-installation begin\033[0m"
-#            cluster_create_user
-#            cluster_user_authorize
-             cluster_root_authorize
+#            # cluster_create_user
+#            # cluster_user_authorize
+#             cluster_root_authorize
 #            cluster_config_network
 #            local_script_zip
 #            ### 远程机器需要同样存在 目录 `dirname $SCRIPT_BASE_DIR`
@@ -124,7 +127,7 @@ while [ x"${input}" != x"E" ]; do
         C|c)
             echo -e "\033[40;32m\tconfig begin \033[0m"
 #            cluster_config_bashrc
-#            cluster_update_hadoop
+            cluster_update_hadoop
 #            cluster_update_spark
 #            cluster_update_zookeeper
 #            cluster_update_hbase
