@@ -71,16 +71,16 @@ while [ x"${input}" != x"E" ]; do
     case ${input} in
         P|p) 
             echo -e "\033[40;34m\tpre-check begin\033[0m"
-#            check_local_install_files
-#            check_ips
-#            cluster_check_passwd
+            check_local_install_files
+            check_ips
+            cluster_check_passwd #在root免密的情况下会直接通过，先重命名~/.ssh 使免密失效
 #            cluster_check_nodes
             echo -e "\033[40;32m\tpre-check done \033[0m"
             ;;
         R|r) 
             echo -e "\033[40;34m\tpre-installation begin\033[0m"
-#            # cluster_create_user
-#            # cluster_user_authorize
+#            cluster_create_user
+#            cluster_user_authorize
 #             cluster_root_authorize
 #            cluster_config_network
 #            local_script_zip

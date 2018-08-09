@@ -81,6 +81,9 @@ USER_SHELL=`grep '^shell=' $USER_PASSWD_FILE | grep -v '^#' | awk -F "=" '{print
 test -z "$USER_NAME"  &&  USER_NAME="parauser" 
 test -z "$USER_HOME"  &&  USER_HOME="/home/$username"
 test -z "$USER_SHELL" &&  USER_SHELL="/bin/bash"  
+# change user to root, may change...
+USER_NAME="root"
+USER_HOME="/"
 if [ -z $USER_PASSWD ] || [ -z $USER_PASSWD_SSL ] ; then
     echo -e "\033[31mplease confirm the file $USER_PASSWD_FILE,\033[0m"
     echo -e "\033[31m    the passwd_plain and passwd_ssl are must\033[0m"
