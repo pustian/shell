@@ -70,7 +70,7 @@ while [ x"${input}" != x"E" ]; do
             echo -e "\033[40;34m\tpre-check begin\033[0m"
             check_local_install_files
             check_ips
-#            cluster_check_passwd
+            cluster_check_passwd
 #            cluster_check_nodes
             echo -e "\033[40;32m\tpre-check done \033[0m"
             ;;
@@ -78,7 +78,7 @@ while [ x"${input}" != x"E" ]; do
             echo -e "\033[40;34m\tpre-installation begin\033[0m"
 #            cluster_create_user
 #            cluster_user_authorize
-             cluster_root_authorize
+#             cluster_root_authorize
 #            cluster_config_network
 #            local_script_zip
 #            ### 远程机器需要同样存在 目录 `dirname $SCRIPT_BASE_DIR`

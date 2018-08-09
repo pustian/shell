@@ -51,8 +51,8 @@ function cluster_check_passwd() {
     fault_ips=""
     for ip in $CLUSTER_IPS; do
         passwd=`grep ${ip} $filename |awk '{print $2 }'`
-        
-        is_passwd_ok $ip $DEFAULT_USER $passwd $DEFAULT_USER_HOME
+        echo "ip=$ip DEFAULT_USER=$DEFAULT_USER passwd=$passwd DEFAULT_USER_HOME=$DEFAULT_USER_HOME"
+        is_passwd_ok "$ip" "$DEFAULT_USER" "$passwd" "$DEFAULT_USER_HOME"
         if [ $? -ne 0 ]; then
             fault_ips="$ip $fault_ips"
             echo -e "\033[31m\t\t $ip $user passwd error\033[0m"
@@ -107,8 +107,8 @@ fi
 
 ###++++++++++++++++++++++++      main end         ++++++++++++++++++++++++++###
 # ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
-  check_local_install_files
+# check_local_install_files
 # check_ips
-# cluster_check_passwd
+ cluster_check_passwd
 # cluster_check_nodes
 # ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###
