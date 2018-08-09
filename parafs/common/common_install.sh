@@ -49,6 +49,7 @@ function rpm_install() {
     local authorize_user=$3
     local rpm_file=$4
 
+    echo "do rpm $rpm_file at $authorize_ip"
     local temp_file="/tmp/parafs_rpm_install$authorize_ip"
     local remote_command="sudo rpm -ivh --force $rpm_file "
 

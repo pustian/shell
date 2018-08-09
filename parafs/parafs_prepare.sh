@@ -43,6 +43,23 @@ function cluster_user_authorize() {
     echo -e "\t\t cluster_user_authorize end"
 }
 
+function cluster_root_authorize() {
+    echo -e "\t\t cluster_user_authorize begin"
+
+    local filename=$PASSWD_CONFIG_FILE
+    local user_name='root'
+    local user_home='/root'
+    
+    for outer_ip in $CLUSTER_IPS; do
+        user_passwd=`grep ${outer_ip} $filename |awk '{print $2 }'`
+        for inner_ip in $CLUSTER_IPS; do
+        ssh_user_authorize ${outer_ip} ${user_name} ${user_passwd} ${user_home} \
+                ${inner_ip} ${user_name} ${user_passwd} ${user_home} 
+        done
+    done
+
+    echo -e "\t\t cluster_user_authorize end"
+}
 ####### 各机器上配置文件,/etc/hosts /etc/hostname
 function cluster_config_network() {
     echo -e "\t\t cluster_config_network begin"
@@ -118,6 +135,7 @@ fi
 # install_usage
 # cluster_create_user
 # cluster_user_authorize
+# cluster_root_authorize
 # cluster_config_network
 # local_script_zip
 # cluster_script_dist

@@ -482,7 +482,7 @@ fi
 if [ -z "$ZIP_BASH_NAME" ]; then
     . ${SCRIPT_BASE_DIR}/parafs/common/common_zip.sh
 fi
-if [ -z "$NETWORK_CONFIG_FILE" ]; then
+if [ -z "$NETWORK_BASH_NAME" ]; then
     . ${SCRIPT_BASE_DIR}/parafs/common/common_network.sh
 fi
 if [ -z "$CONFIG_BASH_NAME"]; then
@@ -500,7 +500,6 @@ fi
 # __cluster_unzipfile parafs-install.tgz /opt/wotung
 #echo $?
 ######
-
 # __cluster_config_hostname
 # __cluster_config_hosts
 # echo $?

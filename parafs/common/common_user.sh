@@ -153,25 +153,25 @@ if [ -z "$VARIABLE_BASH_NAME" ] ; then
 fi
 ###++++++++++++++++++++++++      main  end        ++++++++++++++++++++++++++###
 ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
-#  ###########
-#  # is_no_parauser 192.168.138.70 "root" "Tianpusen@1" "parauser" 
-#  # echo $?
-#  # is_no_parauser 192.168.138.71 "root" "Tianpusen@1" "parauser"
-#  # echo $?
-#  # is_no_parauser 192.168.138.72 "root" "Tianpusen@1" "parauser"
-#  # echo $?
-#  # is_no_parauser 192.168.138.73 "root" "Tianpusen@1" "parauser"
-#  # echo $?
-#  ###########
-#  # delete_user 192.168.138.70 "parafs" "tianpusen" "parauser" 
-#  # create_user "192.168.138.70" "parafs" "tianpusen" "parauser" "YdwAWdHXqldYI" "/home/parauser" "/bin/bash"
-#  # sudoer_nopasswd "192.168.138.70" "parafs" "tianpusen" "parauser" 
-#  # sudoer_nopasswd "192.168.138.71" "root" "Tianpusen@1" "parauser" 
-#  # echo $?
-#  ##########
-#  # ssh_user_authorize "192.168.138.71" 'parauser' "hetong@2015" "/home/parauser"  \
-#  #     "192.168.138.71" "parauser" "hetong@2015" "/home/parauser"
-#  #######
+###########
+# is_no_parauser 192.168.138.70 "root" "Tianpusen@1" "parauser" 
+# echo $?
+# is_no_parauser 192.168.138.71 "root" "Tianpusen@1" "parauser"
+# echo $?
+# is_no_parauser 192.168.138.72 "root" "Tianpusen@1" "parauser"
+# echo $?
+# is_no_parauser 192.168.138.73 "root" "Tianpusen@1" "parauser"
+# echo $?
+###########
+# delete_user 192.168.138.70 "parafs" "tianpusen" "parauser" 
+# create_user "192.168.138.70" "parafs" "tianpusen" "parauser" "YdwAWdHXqldYI" "/home/parauser" "/bin/bash"
+# sudoer_nopasswd "192.168.138.70" "parafs" "tianpusen" "parauser" 
+# sudoer_nopasswd "192.168.138.71" "root" "Tianpusen@1" "parauser" 
+# echo $?
+##########
+# ssh_user_authorize "192.168.138.71" 'parauser' "hetong@2015" "/home/parauser"  \
+#     "192.168.138.71" "parauser" "hetong@2015" "/home/parauser"
+#######
 # dirpath_root_chown 192.168.138.72 root Tianpusen@1 /opt/wotung parauser parauser
 # dirpath_root_chown 192.168.1.99 parafs tianpusen /opt/wotung parafs parafs
 ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###
