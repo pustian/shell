@@ -97,7 +97,7 @@ function cluster_check_nodes() {
 }
 
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
-CHECK_ENV_BASH_NAME=check-env.sh
+CHECK_ENV_BASH_NAME=check_env.sh
 if [ -z ${VARIABLE_BASH_NAME} ] ; then 
     . ../variable.sh
 fi
@@ -107,7 +107,7 @@ fi
 
 ###++++++++++++++++++++++++      main end         ++++++++++++++++++++++++++###
 # ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
- # check_local_install_files
+  check_local_install_files
 # check_ips
 # cluster_check_passwd
 # cluster_check_nodes

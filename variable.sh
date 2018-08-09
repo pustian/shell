@@ -93,17 +93,17 @@ fi
 # echo "USER_SHELL     =$USER_SHELL"
 
 ###### 安装文件,不包含目录 misc_config
-SOURCE_DIR=`grep '^source_dir=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
-PARAFS_RPM=`grep '^parafs_rpm=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
-PARAFS_MD5_RPM=`grep '^parafs_rpm_md5=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
-LLOG_RPM=`grep '^llog_rpm=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
-LLOG_MD5_RPM=`grep '^llog_rpm_md5=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
-HADOOP_FILE=`grep '^parafs_hadoop_file=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
-HADOOP_MD5_FILE=`grep '^parafs_hadoop_file_md5=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
-PIP_SOURCE=`grep '^pip_source=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+SOURCE_DIR=`grep '^source_dir' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+PARAFS_RPM=`grep '^parafs_rpm' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+PARAFS_MD5_RPM=`grep '^md5_parafs_rpm' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+LLOG_RPM=`grep '^llog_rpm' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+LLOG_MD5_RPM=`grep '^md5_llog_rpm' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+HADOOP_FILE=`grep '^parafs_hadoop_file' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+HADOOP_MD5_FILE=`grep '^md5_parafs_hadoop_file' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+PIP_SOURCE=`grep '^pip_source' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
 DEFAULT_USER=`grep 'default_user=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
 DEFAULT_USER_HOME=`grep 'default_user_home=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
-MASTER_IP=`grep '^master_ip=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+MASTER_IP=`grep '^master_ip' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
 test -z "$DEFAULT_USER" && DEFAULT_USER=root
 test -z "$DEFAULT_USER_HOME" && DEFAULT_USER_HOME=/root
 if [ -z $SOURCE_DIR ]|| [ -z $MASTER_IP ] \
@@ -113,14 +113,17 @@ if [ -z $SOURCE_DIR ]|| [ -z $MASTER_IP ] \
     exit 1
 fi
 
-
-# echo "PARAFS_RPM     =$PARAFS_RPM     " 
-# echo "PARAFS_MD5_RPM =$PARAFS_MD5_RPM " 
-# echo "LLOG_RPM       =$LLOG_RPM       " 
-# echo "LLOG_MD5_RPM   =$LLOG_MD5_RPM   " 
-# echo "HADOOP_FILE    =$HADOOP_FILE    " 
-# echo "HADOOP_MD5_FILE=$HADOOP_MD5_FILE" 
-# echo "PIP_SOURCE     =$PIP_SOURCE     " 
+#echo "#$SOURCE_DIR#"
+#echo "#$PARAFS_RPM#" 
+#echo "#$PARAFS_MD5_RPM#" 
+#echo "#$LLOG_RPM#" 
+#echo "#$LLOG_MD5_RPM#" 
+#echo "#$HADOOP_FILE#" 
+#echo "#$HADOOP_MD5_FILE#" 
+#echo "#$PIP_SOURCE#" 
+#echo "#$DEFAULT_USER#"
+#echo "#$DEFAULT_USER_HOME#"
+#echo "#$MASTER_IP#"
 
 #####################################################################
 HADOOP_PARAFS_HOME=`grep '^export HADOOP_PARAFS_HOME=' $BASHRC_CONFIG_FILE | awk -F "=" '{print $2}'`

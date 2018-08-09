@@ -40,7 +40,7 @@ if [ -z $VARIABLE_BASH_NAME ] ; then
     . ./variable.sh
 fi
 if [ -z ${CHECK_ENV_BASH_NAME} ] ; then
-    . $SCRIPT_BASE_DIR/parafs/check-env.sh
+    . $SCRIPT_BASE_DIR/parafs/check_env.sh
 fi
 if [ -z ${PREPARE_BASH_NAME} ] ; then
     . $SCRIPT_BASE_DIR/parafs/parafs_prepare.sh 
@@ -68,8 +68,8 @@ while [ x"${input}" != x"E" ]; do
     case ${input} in
         P|p) 
             echo -e "\033[40;34m\tpre-check begin\033[0m"
-#            check_local_install_files
-#            check_ips
+            check_local_install_files
+            check_ips
 #            cluster_check_passwd
 #            cluster_check_nodes
             echo -e "\033[40;32m\tpre-check done \033[0m"
