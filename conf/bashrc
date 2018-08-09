@@ -1,7 +1,7 @@
 ###############################################################################
 ###### parafs use path begin
 # HADOOP main path
-export HADOOP_PARAFS_HOME=/opt/wotung/hadoop-parafs
+export HADOOP_PARAFS_HOME=/opt/wotung/hadoop-system
 
 # JDK 
 export JAVA_HOME=$HADOOP_PARAFS_HOME/jdk1.8.0_131
