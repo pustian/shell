@@ -111,7 +111,7 @@ function config_ntpdate_boot() {
     local ntpdate_boot_append="echo 'ntpdate $ntp_hostname' | sudo tee -a /etc/rc.d/rc.local"
     local ntpdate_boot="$ntpdate_boot_condition || $ntpdate_boot_append"
     #sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$ntpdate_boot'" >$temp_file
-    ssh '$authorize_user@$authorize_ip' '$ntpdate_boot'>$temp_file
+    ssh "$authorize_user@$authorize_ip" "$ntpdate_boot">$temp_file
 
     return $?
 }
@@ -137,7 +137,7 @@ function config_ntpdate_cron() {
     local ntpdate_cron="$ntpdate_cron_condition_1 || $ntpdate_cron_do_1 && $ntpdate_cron_condition_2 || $ntpdate_cron_do_2"
 #    echo "sudo su - $local_user -c ssh '$authorize_user@$authorize_ip' '$ntpdate_cron'"
 #    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$ntpdate_cron'" >$temp_file
-    ssh '$authorize_user@$authorize_ip' '$ntpdate_cron'>$temp_file
+    ssh "$authorize_user@$authorize_ip" "$ntpdate_cron">$temp_file
     return $?
 }
 
@@ -150,6 +150,7 @@ NETWORK_BASH_NAME=common_network.sh
 # config_hostname parauser 192.168.138.71 parauser ht1.r1.x71
 # echo $?
 # config_hosts parauser 192.168.138.71 parauser 192.168.138.72 ht1.r2.n73 hia73
+ config_hosts root 192.168.1.15 root 192.168.138.72 ht1.r2.n73 hia73
 # echo $?
 # config_ntpdate_boot parauser 192.168.138.71 parauser 192.168.1.151
 # config_ntpdate_cron parauser 192.168.138.71 parauser 192.168.1.151

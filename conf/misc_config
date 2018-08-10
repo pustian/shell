@@ -3,9 +3,9 @@ default_user=root
 default_user_home=/root
 ### 以下配置不可以缺少
 source_dir              =/opt/wotung/package
-master_ip               =192.168.138.10
-parafs_rpm              =parafs-1.0.3-1.x86_64.rpm
-md5_parafs_rpm          =parafs-1.0.3-1.x86_64.rpm.md5sum
+master_ip               =192.168.1.15
+parafs_rpm              =parafs-2.0.0-1.x86_64.rpm
+md5_parafs_rpm          =parafs-2.0.0-1.x86_64.md5sum
 llog_rpm                =llog-1.0.1-1.x86_64-centos7-x86-20180426.rpm
 md5_llog_rpm            =llog-1.0.1-1.x86_64-centos7-x86-20180426.rpm.md5sum
 parafs_hadoop_file      =hadoop-system.tar.gz

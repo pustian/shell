@@ -79,10 +79,10 @@ while [ x"${input}" != x"E" ]; do
             ;;
         R|r) 
             echo -e "\033[40;34m\tpre-installation begin\033[0m"
-#            cluster_create_user
-#            cluster_user_authorize
+#           # cluster_create_user
+#           # cluster_user_authorize
 #             cluster_root_authorize
-#            cluster_config_network
+            cluster_config_network
 #            local_script_zip
 #            ### 远程机器需要同样存在 目录 `dirname $SCRIPT_BASE_DIR`
 #            cluster_script_dist
@@ -93,12 +93,9 @@ while [ x"${input}" != x"E" ]; do
         U|u)
             echo -e "\033[40;32m\tdist and install begin \033[0m"
 #            cluster_dist_rpm
+#            local_dist_rpm
 #            cluster_hadoop_dist
-#            if [ `basename ${SOURCE_DIR}` != `basename ${INSTALL_DIR}` ] \
-#                || [ `dirname ${SOURCE_DIR}` != `dirname ${INSTALL_DIR}` ] ;
-#                local_dist_rpm
-#                local_dist_hadoop
-#            fi
+#            local_dist_hadoop
 #            cluster_yum
 #            cluster_pip
 #            cluster_rpm_install
@@ -107,33 +104,30 @@ while [ x"${input}" != x"E" ]; do
             ;;
         D|d)
             echo -e "\033[40;34m\tdistribute begin\033[0m"
-#            cluster_dist_rpm
-#            cluster_hadoop_dist
-#            if [ `basename ${SOURCE_DIR}` != `basename ${INSTALL_DIR}` ] \
-#                || [ `dirname ${SOURCE_DIR}` != `dirname ${INSTALL_DIR}` ] ;
-#                local_dist_rpm
-#                local_dist_hadoop
-#            fi
+#             local_dist_rpm
+#             cluster_dist_rpm
+#             local_dist_hadoop
+#             cluster_hadoop_dist
             echo -e "\033[40;34m\tdistribute end\033[0m"
             ;;
         I|i)
             echo -e "\033[40;34m\tinstallation begin\033[0m"
-#            cluster_yum
-#            cluster_pip
-#            cluster_rpm_install
+             cluster_yum
+             cluster_pip
+             cluster_rpm_install
 #            cluster_sudoer_chown
             echo -e "\033[40;32m\tinstallation done \033[0m"
             ;;
         C|c)
             echo -e "\033[40;32m\tconfig begin \033[0m"
 #            cluster_config_bashrc
-            cluster_update_hadoop
+#	           cluster_update_hadoop
 #            cluster_update_spark
 #            cluster_update_zookeeper
 #            cluster_update_hbase
-#            cluster_update_hive
+#             cluster_update_hive
 #            cluster_update_azkaban
-#            cluster_update_kafka
+             cluster_update_kafka
             echo -e "\033[40;32m\tconfig done \033[0m"
             ;;
         A|a) 

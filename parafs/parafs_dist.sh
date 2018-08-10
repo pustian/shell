@@ -26,7 +26,7 @@ function cluster_dist_rpm() {
 }
  
 #######  分发生态文件到各机器上,
-function cluster_dist_hadoop() {
+function cluster_hadoop_dist() {
     echo -e "\t\t cluster_hadoop_dist begin"
 
     __cluster_file_dist $SOURCE_DIR $HADOOP_FILE $INSTALL_DIR

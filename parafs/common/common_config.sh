@@ -16,7 +16,7 @@ function update_bashrc() {
 
     echo "do update_bashrc at $authorize_ip"
     local temp_file="/tmp/parafs_update_bashrc$authorize_ip"
-    local remote_command="cat $bashrc_file| sudo tee -a $authorize_home/.bashrc && source  $authorize_home/.bashrc"
+    local remote_command="cat $bashrc_file|tee -a $authorize_home/.bashrc && source  $authorize_home/.bashrc"
     
     sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" >$temp_file
     return $?
@@ -39,9 +39,9 @@ function check_local_config_file() {
 function config_local_hadoop_slaves() {
     local slaves_file=$1
     local cluster_ips=$2
-    test -f $slaves_file && sudo truncate -s 0 $slaves_file || sudo touch $slaves_file
+    test -f $slaves_file && truncate -s 0 $slaves_file || touch $slaves_file
     for ip in ${cluster_ips[*]}; do
-        echo $ip |sudo tee -a $slaves_file  
+        echo $ip |tee -a $slaves_file  
     done
 }
 
@@ -61,7 +61,7 @@ function sed_xml_script() {
     echo "================$filename" >>$temp_file
     local name_label="\\name\>" ## <name> <\name> '<是特殊字符需要注意'
     local remote_line="grep -n $xml_key $filename |grep $name_label"
-    local remote_line_ret=`sudo su - $local_user -c "ssh $authorize_user@$authorize_ip '$remote_line'"` 
+    local remote_line_ret=`su - $local_user -c "ssh $authorize_user@$authorize_ip '$remote_line'"` 
     if [ -z "$remote_line_ret" ]; then 
         echo "pls check $filename at $authorize_ip"
     fi
@@ -72,9 +72,9 @@ function sed_xml_script() {
 #    echo line_num=$line_num
     local sed_script="$(($line_num+1)),$(($line_num+1))c $xml_value "   
     if [ x${is_append} = 'xtrue' ] ; then
-        echo $sed_script |sudo tee -a $sed_script_file >>$temp_file
+        echo $sed_script |tee -a $sed_script_file >>$temp_file
     else
-        echo $sed_script |sudo tee $sed_script_file >>$temp_file
+        echo $sed_script |tee $sed_script_file >>$temp_file
     fi
     ### 修改sed文件 
     return $?
@@ -100,7 +100,7 @@ function update_hadoop_yarn_ip() {
     ### 2，同步sed_script 
     sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'" >>$temp_file       
     ### 3, 远程执行sed脚本
-    local remote_exec_sed_script="sudo sed -i -f $sed_script_file $filename"
+    local remote_exec_sed_script="sed -i -f $sed_script_file $filename"
     sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$temp_file
     return $?
 }
@@ -117,7 +117,7 @@ function update_hadoop_yarn_mem() {
     local temp_file="/tmp/parafs_update_yarn_mem$authorize_ip"
     ### 1 远程获取内存
     local remote_mem_kb="grep MemTotal /proc/meminfo"
-    local remote_mem_kb_result=`sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_mem_kb'" `
+    local remote_mem_kb_result=` su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_mem_kb'" `
     local mem_kb=`echo $remote_mem_kb_result | awk '{print $2}' `
     # local mem_mb_2=$(($mem_kb/512))  # XXX/1024*2
 
@@ -137,7 +137,7 @@ function update_hadoop_yarn_mem() {
     sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'" >>$temp_file   
 
     ### 6, 远程执行sed脚本
-    local remote_exec_sed_script="sudo sed -i -f $sed_script_file $filename"
+    local remote_exec_sed_script="sed -i -f $sed_script_file $filename"
     sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$temp_file
     return $?
 }
@@ -154,7 +154,7 @@ function update_hadoop_yarn_cpu() {
     local temp_file="/tmp/parafs_update_yarn_cpu$authorize_ip"
     ### 1 远程获取cpu
     local remote_cpus="grep processor /proc/cpuinfo |wc -l"
-    local remote_cpus_result=`sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_cpus'" `
+    local remote_cpus_result=`ssh "$authorize_user@$authorize_ip" "$remote_cpus"`
 
     ### 2,远程获取需要更新的行数， 更新本地的sed_script
     local xml_key="yarn.nodemanager.resource.cpu-vcores"
@@ -166,7 +166,7 @@ function update_hadoop_yarn_cpu() {
     sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'" >>$temp_file   
 
     ### 4, 远程执行sed脚本
-    local remote_exec_sed_script="sudo sed -i -f $sed_script_file $filename"
+    local remote_exec_sed_script="sed -i -f $sed_script_file $filename"
     sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$temp_file
     return $?
 }
@@ -186,7 +186,7 @@ function sed_shell_script() {
     local temp_file="/tmp/parafs_sed_shell_script${authorize_ip}"
     echo "================$filename" >>$temp_file
     local remote_line="grep -n '^export ' $filename |grep ${shell_key} "
-    local remote_line_ret=`sudo su - $local_user -c "ssh $authorize_user@$authorize_ip '$remote_line'"` 
+    local remote_line_ret=`"ssh $authorize_user@$authorize_ip '$remote_line'"` 
 #    echo "remote_line $remote_line_ret"
     if [ -z "$remote_line_ret" ]; then 
         echo "pls check $filename at $authorize_ip"
@@ -199,9 +199,9 @@ function sed_shell_script() {
     local sed_script="$(($line_num)),$(($line_num))c export $shell_key\=$shell_value"   
 #    echo $sed_script
     if [ x${is_append} = 'xtrue' ] ; then
-        echo $sed_script |sudo tee -a $sed_script_file >>$temp_file
+        echo $sed_script |tee -a $sed_script_file >>$temp_file
     else
-        echo $sed_script |sudo tee $sed_script_file >>$temp_file
+        echo $sed_script |tee $sed_script_file >>$temp_file
     fi
     #echo "sed_script_file=$sed_script_file" && cat $sed_script_file
     ### 修改sed文件 
@@ -240,7 +240,7 @@ function update_spark_env() {
     sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'" >>$temp_file   
  
     ### 3, 远程执行sed脚本
-    local remote_exec_sed_script="sudo sed -i -f $sed_script_file $filename"
+    local remote_exec_sed_script="sed -i -f $sed_script_file $filename"
     sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$temp_file
     
     return $?
@@ -260,7 +260,7 @@ function sed_conf_script() {
     local temp_file="/tmp/parafs_update_conig_sed${authorize_ip}"
     echo "================$filename" >>$temp_file
     local remote_line="grep -n ${property_key} $filename "
-    local remote_line_ret=`sudo su - $local_user -c "ssh $authorize_user@$authorize_ip '$remote_line'"` 
+    local remote_line_ret=`"ssh $authorize_user@$authorize_ip '$remote_line'"` 
 #    echo "remote_line $remote_line_ret"
     if [ -z "$remote_line_ret" ]; then 
         echo "pls check $filename at $authorize_ip"
@@ -273,9 +273,9 @@ function sed_conf_script() {
     local sed_script="$(($line_num)),$(($line_num))c  $property_key $property_value"   
 #    echo $sed_script
     if [ x${is_append} = 'xtrue' ] ; then
-        echo $sed_script |sudo tee -a $sed_script_file >>$temp_file
+        echo $sed_script |tee -a $sed_script_file >>$temp_file
     else
-        echo $sed_script |sudo tee $sed_script_file >>$temp_file
+        echo $sed_script |tee $sed_script_file >>$temp_file
     fi
     #echo "sed_script_file=$sed_script_file" && cat $sed_script_file
     ### 修改sed文件 
@@ -317,7 +317,7 @@ function update_spark_conf() {
     sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'" >>$temp_file   
 
     ### 2, 远程执行sed脚本
-    local remote_exec_sed_script="sudo sed -i -f $sed_script_file $filename"
+    local remote_exec_sed_script="sed -i -f $sed_script_file $filename"
     sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$temp_file
     
     return $?
@@ -347,15 +347,15 @@ function config_local_zookeeper_conf() {
     local cluster_ips=$4
     ###
     sed -i '/^dataDir/'d $zookeeper_config
-    echo "dataDir=$zookeeper_data_dir" | sudo tee -a $zookeeper_config >/dev/null
+    echo "dataDir=$zookeeper_data_dir" | tee -a $zookeeper_config >/dev/null
     sed -i '/^dataLogDir/'d $zookeeper_config 
-    echo "dataLogDir=$zookeeper_data_log_dir" | sudo tee -a $zookeeper_config >/dev/null
+    echo "dataLogDir=$zookeeper_data_log_dir" | tee -a $zookeeper_config >/dev/null
 
     ### 删除当前已有的server.xxx
     sed -i '/^server./'d $zookeeper_config
     ### 在文件尾增加新行
     for ip in $cluster_ips; do
-        echo "server.${ip##*.}=${ip}:2888:3888" |sudo tee -a $zookeeper_config >/dev/null
+        echo "server.${ip##*.}=${ip}:2888:3888" |tee -a $zookeeper_config >/dev/null
     done
 }
 
@@ -368,7 +368,7 @@ function update_zookeeper_myid() {
     
     echo "do update_zookeeper_myid at $authorize_ip"
     local temp_file="/tmp/parafs_update_zookeeper_myid$authorize_ip"
-    local remote_command="echo ${authorize_ip##*.} | sudo tee $filename"
+    local remote_command="echo ${authorize_ip##*.} |tee $filename"
     sudo su -  $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" >$temp_file
     return $?
 }
@@ -401,7 +401,7 @@ function update_hbase_config() {
     sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'" >>$temp_file   
     
     ### 3, 远程执行sed脚本
-    local remote_exec_sed_script="sudo sed -i -f $sed_script_file $filename"
+    local remote_exec_sed_script="sed -i -f $sed_script_file $filename"
     sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$temp_file
     return $?
 }
@@ -443,7 +443,7 @@ function update_hive_config() {
 
     sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'" >>$temp_file   
     ### 3, 远程执行sed脚本
-    local remote_exec_sed_script="sudo sed -i -f $sed_script_file $filename"
+    local remote_exec_sed_script="sed -i -f $sed_script_file $filename"
     sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$temp_file
 
     return $?
@@ -464,7 +464,7 @@ function sed_property_script() {
     local temp_file="/tmp/parafs_sed_property_script${authorize_ip}"
     echo "================$filename" >>$temp_file
     local remote_line="grep -n ${property_key}= $filename"
-    local remote_line_ret=`sudo su - $local_user -c "ssh $authorize_user@$authorize_ip '$remote_line'"` 
+    local remote_line_ret=`su - $local_user -c "ssh $authorize_user@$authorize_ip '$remote_line'"` 
 #    echo "remote_line $remote_line_ret"
     if [ -z "$remote_line_ret" ]; then 
         echo "pls check $filename at $authorize_ip"
@@ -478,9 +478,9 @@ function sed_property_script() {
 #    local sed_script="$(($line_num)),$(($line_num))"
 #    echo $sed_script
     if [ x${is_append} = 'xtrue' ] ; then
-        echo $sed_script |sudo tee -a $sed_script_file >>$temp_file
+        echo $sed_script |tee -a $sed_script_file >>$temp_file
     else
-        echo $sed_script |sudo tee $sed_script_file >>$temp_file
+        echo $sed_script |tee $sed_script_file >>$temp_file
     fi
     #echo "sed_script_file=$sed_script_file" && cat $sed_script_file
     ### 修改sed文件 
@@ -505,7 +505,7 @@ function update_azkaban_config() {
 
     sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'" >>$temp_file   
     ### 3, 远程执行sed脚本
-    local remote_exec_sed_script="sudo sed -i -f $sed_script_file $filename"
+    local remote_exec_sed_script="sed -i -f $sed_script_file $filename"
     sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$temp_file
 
     return $?
@@ -537,7 +537,7 @@ function update_kafka_config() {
     sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'" >>$temp_file   
 
     ### 3, 远程执行sed脚本
-    local remote_exec_sed_script="sudo sed -i -f $sed_script_file $filename"
+    local remote_exec_sed_script="sed -i -f $sed_script_file $filename"
     sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$temp_file
 
     return $?
