@@ -5,6 +5,7 @@
 ###############################################################################
 
 function tools_usage() {
+    
     echo "检查指定ip的node"
     echo "新建一个parauser";
     echo "同一用户免密"
@@ -14,33 +15,6 @@ function tools_usage() {
     echo "集群删除一台机器"
 }
 
-### userdel -r parauser
-### sed -i '/parauser/'d /etc/sudoers
-function __cluster_delete_user() {
-    echo -e "\t\t cluster_delete_user begin"
-    local username=$1
-    local delete_user="userdel -r $1"
-    local config_sudoer="sed -i '/$username/'d /etc/sudoers "
-
-    local fault_ips=""
-    local filename=$PASSWD_CONFIG_FILE
-    local IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
-    for ip in $IPS; do
-        if [ "x${ip}" = "x" ] ; then
-            break;
-        fi
-         
-        passwd=`grep ${ip} $filename |awk '{print $2 }'`
-        user='root'
-        echo "do delete_user at $ip"       
-        $SSH_REMOTE_EXEC "$ip" "$user" "$passwd" "$delete_user" >/dev/null
-        $SSH_REMOTE_EXEC "$ip" "$user" "$passwd" "$config_sudoer" >/dev/null
-
-    done
-    
-    echo -e "\t\t cluster_delete_user end"
-}
-
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 TOOLS_BASH_NAME=parafs_tools.sh
 if [ -z ${VARIABLE_BASH_NAME} ] ; then 
@@ -48,5 +22,4 @@ if [ -z ${VARIABLE_BASH_NAME} ] ; then
 fi
 ###++++++++++++++++++++++++      main end         ++++++++++++++++++++++++++###
 # ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
-# __cluster_delete_user parauser
 # ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

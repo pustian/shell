@@ -68,6 +68,33 @@ function __cluster_config_sudoers() {
     echo -e "\t\t __cluster_config_sudoers end"
 }
 
+### userdel -r parauser
+### sed -i '/parauser/'d /etc/sudoers
+function __cluster_delete_user() {
+    echo -e "\t\t cluster_delete_user begin"
+    local username=$1
+    local delete_user="userdel -r $1"
+    local config_sudoer="sed -i '/$username/'d /etc/sudoers "
+
+    local fault_ips=""
+    local filename=$PASSWD_CONFIG_FILE
+    local IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
+    for ip in $IPS; do
+        if [ "x${ip}" = "x" ] ; then
+            break;
+        fi
+         
+        passwd=`grep ${ip} $filename |awk '{print $2 }'`
+        user='root'
+        echo "do delete_user at $ip"       
+        $SSH_REMOTE_EXEC "$ip" "$user" "$passwd" "$delete_user" >/dev/null
+        $SSH_REMOTE_EXEC "$ip" "$user" "$passwd" "$config_sudoer" >/dev/null
+
+    done
+    
+    echo -e "\t\t cluster_delete_user end"
+}
+
 ###############################################################################
 ###### 以下函数执行前需要ssh免密才能顺利进行
 ###############################################################################
@@ -106,7 +133,7 @@ function __cluster_config_hosts() {
             #echo "config_hosts $USER_NAME $config_ip $USER_NAME $cluster_ip $hostname $hostalias"
             config_hosts $USER_NAME $config_ip $USER_NAME $cluster_ip $hostname $hostalias
             if [ $? -ne 0 ] ; then
-                echo -e "\033[31m\t\tfailed to config hostname at $config_ip \033[0m"
+                echo -e "\033[31m\t\tfailed to config hosts at $config_ip \033[0m"
                 fault_ips="$config_ip $fault_ips"
                 # break;
             fi
@@ -495,6 +522,7 @@ fi
 # __cluster_check_user parauser false
 # __cluster_create_user  "parauser" "YdwAWdHXqldYI" "/home/parauser"  "/bin/bash"
 # __cluster_config_sudoers parauser
+# __cluster_delete_user parauser
 # __cluster_file_dist  /opt/wotung parafs-install.tgz /opt/wotung
 # __cluster_zipfile_check parafs-install.tar.gz.md5sum parafs-install.tar.gz /opt/wotung
 # __cluster_unzipfile parafs-install.tgz /opt/wotung

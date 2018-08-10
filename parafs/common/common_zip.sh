@@ -29,7 +29,7 @@ function zip_dir() {
     local zippedfile=${zippedfile_dir}/${basename_dir}.tar.gz 
 
     local temp_file="/tmp/parafs_zip${basename_dir}$authoriz_ip"
-    local remote_command="sudo tar czf $zippedfile -C $dirname_dir $basename_dir"
+    local remote_command="tar czf $zippedfile -C $dirname_dir $basename_dir"
     sudo su - $local_user -c "ssh '$authorize_user@$authoriz_ip' '$remote_command'" >$temp_file
     return $?
 }
@@ -46,7 +46,7 @@ function file_md5sum() {
     local zipped_file_md5sum=${zipped_file}.md5sum
 
     local temp_file="/tmp/parafs_md5sum${zipped_file}$authoriz_ip"
-    local remote_command="sudo md5sum ${zipped_dir}/${zipped_file} |sudo tee ${zipped_dir}/${zipped_file_md5sum}"
+    local remote_command="md5sum ${zipped_dir}/${zipped_file} |tee ${zipped_dir}/${zipped_file_md5sum}"
     sudo su - $local_user -c "ssh '$authorize_user@$authoriz_ip' '$remote_command'" >$temp_file
     return $?
 }
@@ -93,7 +93,7 @@ function is_zip_file_ok() {
     local zippedfile=$6
     
     local temp_file="/tmp/parafs_zip_file_ok_$zippedfile$authoriz_ip"
-    local remote_zip_md5="sudo md5sum ${zippedfile_dir}/$zippedfile"
+    local remote_zip_md5="md5sum ${zippedfile_dir}/$zippedfile"
 
     echo "do is_zip_file_ok at $authoriz_ip"
     sudo su - $local_user -c "ssh '$authorize_user@$authoriz_ip' '$remote_zip_md5'" >$temp_file
@@ -117,7 +117,7 @@ function unzip_file() {
 
     local temp_file="/tmp/parafs_${zip_file}_unzip$ip"
     # local remote_command="sudo tar xzf $zippedfile_dir/$zip_file -C $zippedfile_dir"
-    local remote_command="sudo tar xzf $zippedfile_dir/$zip_file -C $zippedfile_dir"
+    local remote_command="tar xzf $zippedfile_dir/$zip_file -C $zippedfile_dir"
     echo "do unzip_file at $authoriz_ip"
     # echo "sudo su - $local_user -c \"ssh '$authorize_user@$authoriz_ip' '$remote_command'\" >$temp_file"
     sudo su - $local_user -c "ssh '$authorize_user@$authoriz_ip' '$remote_command'" >$temp_file

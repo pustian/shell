@@ -71,7 +71,7 @@ function cluster_config_network() {
     echo -e "\t\t cluster_config_network end"
 }
 
-####### 各机器上配置文件,/etc/hosts /etc/hostname
+####### 压缩脚本文件并生成md5 
 function local_script_zip() {
     echo -e "\t\t local_script_zip begin"
     zip_dir $USER_NAME $CLUSTER_LOCAL_IP $USER_NAME $SCRIPT_BASE_DIR `dirname $SCRIPT_BASE_DIR`

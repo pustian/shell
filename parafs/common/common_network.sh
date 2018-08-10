@@ -20,17 +20,17 @@ function config_hostname() {
     
     local temp_file="/tmp/parafs_config_hostname$authorize_ip"
     ## 检查hostname, /etc/hostname都对，否则设置hostname 修改/etc/hostname
-    local command_condition_1="sudo hostname | grep $set_hostname "
+    local command_condition_1="hostname | grep $set_hostname "
     local command_condition_2="grep $set_hostname /etc/hostname"
     local command_condition="$command_condition_1 || $command_condition_2"
-    local command_set_hostname="sudo hostname $set_hostname "
-    local command_bak_hostname="sudo cp /etc/hostname /etc/hostname.bak_para$authorize_ip"
-    local command_update_hostname="echo $set_hostname |sudo tee /etc/hostname "
+    local command_set_hostname="hostname $set_hostname "
+    local command_bak_hostname="cp /etc/hostname /etc/hostname.bak_para$authorize_ip"
+    local command_update_hostname="echo $set_hostname |tee /etc/hostname "
     local remote_hostname="$command_condition || $command_set_hostname \
         && $command_bak_hostname && $command_update_hostname "
     echo "do config_hostname at $authorize_ip"
-    #sudo su - $local_user  -c "ssh $authorize_user@$authorize_ip '$remote_hostname' ">$temp_file 
-    ssh $authorize_user@$authorize_ip '$remote_hostname'>$temp_file  
+    sudo su - $local_user  -c "ssh '$authorize_user@$authorize_ip' '$remote_hostname'">$temp_file 
+    #ssh "$authorize_user@$authorize_ip" "$remote_hostname" > $temp_file  
     return $?
 } 
 
@@ -52,13 +52,13 @@ function config_hosts() {
     local alias=$6
 
     local temp_file="/tmp/parafs_config_hosts$authorize_ip$hostname"
-    local command_condition="sudo cat /etc/hosts |grep -v '^#' |grep $ip |grep $hostname |grep $alias"
-    local command_bak_hosts="sudo cp /etc/hosts /etc/hosts.bak_$alias"
-    local command_update_hosts="echo '$ip $hostname $alias' |sudo tee -a /etc/hosts"
+    local command_condition="cat /etc/hosts |grep -v '^#' |grep $ip |grep $hostname |grep $alias"
+    local command_bak_hosts="cp /etc/hosts /etc/hosts.bak_$alias"
+    local command_update_hosts="echo '$ip $hostname $alias' |tee -a /etc/hosts"
     local remote_hosts="$command_condition || $command_bak_hosts && $command_update_hosts"
     echo "do config_hosts at $authorize_ip for $ip"
-#    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_hosts'" >$temp_file
-    ssh '$authorize_user@$authorize_ip' '$remote_hosts' >$temp_file
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_hosts'" >$temp_file
+#    ssh "$authorize_user@$authorize_ip" "$remote_hosts" >$temp_file 
 
     return $?
     ### 验证配置情况 grep ip /etc/hosts 如果有两条认为有问题
