@@ -1,5 +1,5 @@
 ###############################################################################
-###### parafs use path begin
+###### parafs_config_path_begin
 # HADOOP main path
 export HADOOP_PARAFS_HOME=/opt/wotung/hadoop-system
 
@@ -62,5 +62,5 @@ export PATH=$MAVEN_HOME/bin:$PATH
 # hypertable
 export PATH=$PATH:/opt/hypertable/current/bin
 
-###### parafs use path end 
+######  parafs_config_path_end 
 ###############################################################################

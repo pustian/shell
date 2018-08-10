@@ -68,6 +68,5 @@ COMMON_INSTALL_BASH_NAME=common_install.sh
 # echo $?
 # rpm_install parauser 192.168.138.71 parauser /opt/wotung/parafs-1.0.1-1.x86_64.rpm
 # echo $?
-# update_bashrc parauser 192.168.138.72 parauser /home/parauser /opt/wotung/parafs-install/conf/bashrc
 #echo $?
 ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

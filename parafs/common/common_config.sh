@@ -16,7 +16,11 @@ function update_bashrc() {
 
     echo "do update_bashrc at $authorize_ip"
     local temp_file="/tmp/parafs_update_bashrc$authorize_ip"
-    local remote_command="cat $bashrc_file|tee -a $authorize_home/.bashrc && source  $authorize_home/.bashrc"
+    ### parafs_config_path_begin 需要与 conf/bashrc 中的相同，表示配置文件中的唯一
+    local check_bashrc="grep parafs_config_path_begin $authorize_home/.bashrc"
+    local append_bashrc="cat $bashrc_file|tee -a $authorize_home/.bashrc "
+    local source_bashrc="source  $authorize_home/.bashrc"
+    local remote_command="$check_bashrc || $append_bashrc && $source_bashrc"
     
     sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" >$temp_file
     return $?
@@ -552,7 +556,7 @@ function update_kafka_config() {
 COMMON_CONFIG_BASH_NAME=common_config.sh
 ###++++++++++++++++++++++++      main end         ++++++++++++++++++++++++++###
 ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
-# update_bashrc parauser 192.168.138.72 parauser /home/parauser /opt/wotung/parafs-install/conf/bashrc
+ update_bashrc root 192.168.1.99 root /root /opt/wotung/parafs-install/conf/bashrc
 # update_hadoop_yarn_ip parauser 192.168.138.71 parauser \
 #     /opt/wotung/hadoop-parafs/hadoop-2.7.3/etc/hadoop/yarn-site.xml \
 #     /opt/wotung/parafs-install/conf/sed_script/hadoop/hadoop_yarn_ip \
