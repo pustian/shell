@@ -190,7 +190,7 @@ function sed_shell_script() {
     local temp_file="/tmp/parafs_sed_shell_script${authorize_ip}"
     echo "================$filename" >>$temp_file
     local remote_line="grep -n '^export ' $filename |grep ${shell_key} "
-    local remote_line_ret=`"ssh $authorize_user@$authorize_ip '$remote_line'"` 
+    local remote_line_ret=`su - $local_user -c "ssh $authorize_user@$authorize_ip '$remote_line'"` 
 #    echo "remote_line $remote_line_ret"
     if [ -z "$remote_line_ret" ]; then 
         echo "pls check $filename at $authorize_ip"
@@ -264,7 +264,7 @@ function sed_conf_script() {
     local temp_file="/tmp/parafs_update_conig_sed${authorize_ip}"
     echo "================$filename" >>$temp_file
     local remote_line="grep -n ${property_key} $filename "
-    local remote_line_ret=`"ssh $authorize_user@$authorize_ip '$remote_line'"` 
+    local remote_line_ret=`su - $local_user -c "ssh $authorize_user@$authorize_ip '$remote_line'"` 
 #    echo "remote_line $remote_line_ret"
     if [ -z "$remote_line_ret" ]; then 
         echo "pls check $filename at $authorize_ip"
@@ -556,7 +556,7 @@ function update_kafka_config() {
 COMMON_CONFIG_BASH_NAME=common_config.sh
 ###++++++++++++++++++++++++      main end         ++++++++++++++++++++++++++###
 ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
- update_bashrc root 192.168.1.99 root /root /opt/wotung/parafs-install/conf/bashrc
+# update_bashrc root 192.168.1.99 root /root /opt/wotung/parafs-install/conf/bashrc
 # update_hadoop_yarn_ip parauser 192.168.138.71 parauser \
 #     /opt/wotung/hadoop-parafs/hadoop-2.7.3/etc/hadoop/yarn-site.xml \
 #     /opt/wotung/parafs-install/conf/sed_script/hadoop/hadoop_yarn_ip \
@@ -568,8 +568,8 @@ COMMON_CONFIG_BASH_NAME=common_config.sh
 #     /opt/wotung/hadoop-parafs/hadoop-2.7.3/etc/hadoop/yarn-site.xml \
 #     /opt/wotung/parafs-install/conf/sed_script/hadoop/hadoop_yarn_cpus 
 ##
-# update_spark_env parauser 192.168.138.71 parauser \
-#     /opt/wotung/hadoop-parafs/spark-2.0.1/conf/spark-env.sh \
+# update_spark_env root 192.168.1.99 root \
+#     /opt/wotung/hadoop-system/spark-2.0.1/conf/spark-env.sh \
 #     /opt/wotung/parafs-install/conf/sed_script/spark/spark_env \
 #     192.168.138.29
 # update_spark_conf parauser 192.168.138.71 parauser \
