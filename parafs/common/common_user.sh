@@ -100,6 +100,19 @@ function ssh_user_authorize() {
         ${remote_ip} ${remote_user} ${remote_passwd} ${remote_userhome} >$temp_file
 }
 
+function ssh_user_login() {
+    local current_ip=$1
+    local current_user=$2
+    local current_passwd=$3
+    local remote_ip=$4
+    local remote_user=$5
+    local remote_passwd=$6
+
+    local temp_file="/tmp/parafs_ssh_user_login$ip"
+    echo "do ssh_user_login at $current_user@$current_ip to $remote_user@$remote_ip"
+    $SSH_EXP_SECOND_LOGIN ${current_ip} ${current_user} ${current_passwd} \
+        ${remote_ip} ${remote_user} ${remote_passwd} >$temp_file
+}
 ###############################################################################
 ###### parafs_tools.sh 
 ###############################################################################
@@ -174,4 +187,5 @@ fi
 #######
 # dirpath_root_chown 192.168.138.72 root Tianpusen@1 /opt/wotung parauser parauser
 # dirpath_root_chown 192.168.1.99 parafs tianpusen /opt/wotung parafs parafs
+#ssh_user_login "192.168.138.71" 'parauser' "hetong@2015" "192.168.138.71" 'parauser' "hetong@2015"
 ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

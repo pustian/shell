@@ -150,7 +150,7 @@ NETWORK_BASH_NAME=common_network.sh
 # config_hostname parauser 192.168.138.71 parauser ht1.r1.x71
 # echo $?
 # config_hosts parauser 192.168.138.71 parauser 192.168.138.72 ht1.r2.n73 hia73
- config_hosts root 192.168.1.15 root 192.168.138.72 ht1.r2.n73 hia73
+# config_hosts root 192.168.1.15 root 192.168.138.72 ht1.r2.n73 hia73
 # echo $?
 # config_ntpdate_boot parauser 192.168.138.71 parauser 192.168.1.151
 # config_ntpdate_cron parauser 192.168.138.71 parauser 192.168.1.151

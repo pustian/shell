@@ -17,6 +17,7 @@ fi
 
 ###### EXPECT 相关代码
 SSH_EXP_LOGIN=${SCRIPT_BASE_DIR}/parafs/expect_common/ssh_login.exp
+SSH_EXP_SECOND_LOGIN=${SCRIPT_BASE_DIR}/parafs/expect_common/ssh_second_login.exp
 SSH_EXP_COPY=${SCRIPT_BASE_DIR}/parafs/expect_common/ssh_copy.exp
 SSH_REMOTE_EXEC=${SCRIPT_BASE_DIR}/parafs/expect_common/ssh_remote_exec.exp
 SSH_EXP_AUTHORIZE=${SCRIPT_BASE_DIR}/parafs/expect_common/current_authorize.exp

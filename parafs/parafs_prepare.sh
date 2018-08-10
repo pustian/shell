@@ -42,7 +42,23 @@ function cluster_user_authorize() {
 
     echo -e "\t\t cluster_user_authorize end"
 }
+###### 用户hostname alias 登陆
+function cluster_each_user_login() {
+    local filename=$NETWORK_CONFIG_FILE
+    for outer_ip in $CLUSTER_IPS; do
+        for inner_ip in $CLUSTER_IPS; do
+            local hostname=`grep $inner_ip $filename | awk '{print $2}'`
+            local alias=`grep $inner_ip $filename | awk '{print $3}'`
+            echo "${outer_ip} ${user_name} ${user_passwd} ${hostname} ${user_name} ${user_passwd}"
+            #ssh_user_login ${outer_ip} ${user_name} ${user_passwd} \
+            #    ${hostname} ${user_name} ${user_passwd}  >/dev/null &
+            #ssh_user_login ${outer_ip} ${user_name} ${user_passwd} \
+            #    ${alias} ${user_name} ${user_passwd} >/dev/null &
+        done
+    done
+}
 
+###### 用户免密  n*n ssh_user_authorize==>common_user.sh
 function cluster_root_authorize() {
     echo -e "\t\t cluster_user_authorize begin"
 
@@ -60,6 +76,29 @@ function cluster_root_authorize() {
 
     echo -e "\t\t cluster_user_authorize end"
 }
+
+###### 用户hostname alias 登陆
+function cluster_each_root_login() {
+    local filename=$PASSWD_CONFIG_FILE
+    local network=$NETWORK_CONFIG_FILE
+    local user_name='root'
+    local user_home='/root'
+    for outer_ip in $CLUSTER_IPS; do
+        local outer_user_passwd=`grep ${outer_ip} $filename |awk '{print $2 }'`
+        for inner_ip in $CLUSTER_IPS; do
+            local hostname=`grep $inner_ip $network | awk '{print $2}'`
+            local alias=`grep $inner_ip $network | awk '{print $3}'`
+            local inner_user_passwd=`grep ${inner_ip} $filename |awk '{print $2 }'`
+            # echo "${outer_ip} ${user_name} ${outer_user_passwd} ${hostname} ${user_name} ${inner_user_passwd}"
+            ssh_user_login "192.168.138.71" 'parauser' "hetong@2015" "192.168.138.71" 'parauser' "hetong@2015"
+            ssh_user_login ${outer_ip} ${user_name} ${outer_user_passwd} \
+                ${hostname} ${user_name} ${inner_user_passwd} >/dev/null 
+            ssh_user_login ${outer_ip} ${user_name} ${outer_user_passwd} \
+                ${alias} ${user_name} ${inner_user_passwd} >/dev/null 
+        done
+    done
+}
+
 ####### 各机器上配置文件,/etc/hosts /etc/hostname
 function cluster_config_network() {
     echo -e "\t\t cluster_config_network begin"
@@ -136,6 +175,7 @@ fi
 # cluster_create_user
 # cluster_user_authorize
 # cluster_root_authorize
+# cluster_each_root_login
 # cluster_config_network
 # local_script_zip
 # cluster_script_dist
