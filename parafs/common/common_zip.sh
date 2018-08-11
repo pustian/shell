@@ -117,7 +117,7 @@ function unzip_file() {
 
     local temp_file="/tmp/parafs_${zip_file}_unzip$ip"
     # local remote_command="tar xzf $zippedfile_dir/$zip_file -C $zippedfile_dir"
-    local remote_command="tar xzf $zippedfile_dir/$zip_file -C $zippedfile_dir"
+    local remote_command="tar xzf $zippedfile_dir/$zip_file -C $zippedfile_dir "
     echo "do unzip_file at $authoriz_ip"
     # echo "sudo su - $local_user -c \"ssh '$authorize_user@$authoriz_ip' '$remote_command'\" >$temp_file"
     sudo su - $local_user -c "ssh '$authorize_user@$authoriz_ip' '$remote_command'" >$temp_file

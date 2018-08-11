@@ -55,7 +55,7 @@ function cluster_check_passwd() {
         is_passwd_ok "$ip" "$DEFAULT_USER" "$passwd" "$DEFAULT_USER_HOME"
         if [ $? -ne 0 ]; then
             fault_ips="$ip $fault_ips"
-            echo -e "\033[31m\t\t $ip $user passwd error\033[0m"
+            echo -e "\033[31m\t\tERROR: $ip $user passwd error\033[0m"
             # break;
         fi 
     done
@@ -68,7 +68,7 @@ function cluster_check_passwd() {
 }
 
 ######
-####### 根据配置文件network所有本机到所有机器 root免密登陆
+####### 检查/opt/wotung/node/0 目录，需要root免密登陆
 ####+++ return : 检查失败输出到屏幕，并且停止进行
 function cluster_check_nodes() {
     echo -e "\t\t cluster_check_nodes begin"
@@ -84,7 +84,7 @@ function cluster_check_nodes() {
         is_parafs_node_ok $ip $DEFAULT_USER $passwd
         if [ $? -eq 0 ]; then
             fault_ips="$ip $fault_ips"
-            echo -e "\033[31m\t\t $ip /opt/wotung/node/0 error\033[0m"
+            echo -e "\033[31m\t\tERROR: $ip /opt/wotung/node/0 error\033[0m"
             # break;
         fi 
     done

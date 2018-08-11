@@ -71,9 +71,13 @@ while [ x"${input}" != x"E" ]; do
     case ${input} in
         P|p) 
             echo -e "\033[40;34m\tpre-check begin\033[0m"
+            #检查本地安装文件是否齐全
             check_local_install_files
+            #检查各IP是否能够ping通
             check_ips
-            cluster_check_passwd #在root免密的情况下会直接通过，先重命名~/.ssh 使免密失效
+            #在root免密的情况下会直接通过，先重命名~/.ssh 使免密失效
+            cluster_check_passwd 
+            #检查/opt/wotung/node/0 目录 
             cluster_check_nodes
             echo -e "\033[40;32m\tpre-check done \033[0m"
             ;;
@@ -81,11 +85,15 @@ while [ x"${input}" != x"E" ]; do
             echo -e "\033[40;34m\tpre-installation begin\033[0m"
 #           # cluster_create_user
 #           # cluster_user_authorize
-#             cluster_root_authorize
+            #集群root用户免密，注意先配置conf/network和conf/passwd
+            cluster_root_authorize
+            #集群配置/etc/hostname, /etc/hosts。先要确保上述2文件存在
             cluster_config_network
-#            local_script_zip
-#            ### 远程机器需要同样存在 目录 `dirname $SCRIPT_BASE_DIR`
-#            cluster_script_dist
+            #本地压缩parafs-install/生成压缩包，并生成md5 
+            local_script_zip
+#            ### 远程机器需要同样存在目录 `dirname $SCRIPT_BASE_DIR`,即/opt/wotung
+            #集群分发压缩包、检查md5、解压缩
+            cluster_script_dist
 #            # cluster_root_chown
 #            # 删除 passwd user_passwd 文件 
             echo -e "\033[40;32m\tpre-installation done \033[0m"
@@ -120,14 +128,16 @@ while [ x"${input}" != x"E" ]; do
             ;;
         C|c)
             echo -e "\033[40;32m\tconfig begin \033[0m"
-#            cluster_config_bashrc
-#	           cluster_update_hadoop
+            #集群同步.bashrc，需要确保/root/.bashrc存在
+            cluster_config_bashrc
+            #TODO
+            #cluster_update_hadoop
 #            cluster_update_spark
 #            cluster_update_zookeeper
 #            cluster_update_hbase
 #             cluster_update_hive
 #            cluster_update_azkaban
-             cluster_update_kafka
+            # cluster_update_kafka
             echo -e "\033[40;32m\tconfig done \033[0m"
             ;;
         A|a) 

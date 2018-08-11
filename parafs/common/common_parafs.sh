@@ -109,7 +109,7 @@ function __cluster_config_hostname() {
         # config_hostname parauser 192.168.138.71 parauser ht1.r1.x71
         config_hostname $USER_NAME $ip $USER_NAME $hostname
         if [ $? -ne 0 ] ; then
-            echo -e "\033[31m\t\tfailed to config hostname at $ip \033[0m"
+            echo -e "\033[31m\t\tERROR: failed to config hostname at $ip \033[0m"
             fault_ips="$ip $fault_ips"
             # break;
         fi
@@ -133,7 +133,7 @@ function __cluster_config_hosts() {
             #echo "config_hosts $USER_NAME $config_ip $USER_NAME $cluster_ip $hostname $hostalias"
             config_hosts $USER_NAME $config_ip $USER_NAME $cluster_ip $hostname $hostalias
             if [ $? -ne 0 ] ; then
-                echo -e "\033[31m\t\tfailed to config hosts at $config_ip \033[0m"
+                echo -e "\033[31m\t\tERROR: failed to config hosts at $config_ip \033[0m"
                 fault_ips="$config_ip $fault_ips"
                 # break;
             fi
@@ -253,7 +253,7 @@ function __cluster_unzipfile() {
 ###############################################################################
 ###### slave配置
 function __cluster_hadoop_slave() {
-    echo -e "\t\t __cluster_hadoop_slave begin"
+    echo -e "\t\t __cluster_hadoop_slave begin !!!"
     config_local_hadoop_slaves $HADOOP_SLAVES "${CLUSTER_IPS[*]}"
     local dist_file_path=`dirname $HADOOP_SLAVES`
     local dist_zip_file=`basename $HADOOP_SLAVES`
@@ -512,10 +512,10 @@ fi
 if [ -z "$NETWORK_BASH_NAME" ]; then
     . ${SCRIPT_BASE_DIR}/parafs/common/common_network.sh
 fi
-if [ -z "$COMMON_CONFIG_BASH_NAME"]; then
+if [ -z "$COMMON_CONFIG_BASH_NAME" ]; then
     . ${SCRIPT_BASE_DIR}/parafs/common/common_config.sh
 fi
-if [ -z "$COMMON_INSTALL_BASH_NAME"]; then
+if [ -z "$COMMON_INSTALL_BASH_NAME" ]; then
     . ${SCRIPT_BASE_DIR}/parafs/common/common_install.sh
 fi
 # ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###

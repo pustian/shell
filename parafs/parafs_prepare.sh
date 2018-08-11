@@ -110,7 +110,7 @@ function cluster_config_network() {
     echo -e "\t\t cluster_config_network end"
 }
 
-####### 压缩脚本文件并生成md5 
+####### 本地压缩parafs-install/生成安装包，并生成md5 
 function local_script_zip() {
     echo -e "\t\t local_script_zip begin"
     zip_dir $USER_NAME $CLUSTER_LOCAL_IP $USER_NAME $SCRIPT_BASE_DIR `dirname $SCRIPT_BASE_DIR`
