@@ -130,9 +130,10 @@ while [ x"${input}" != x"E" ]; do
             echo -e "\033[40;32m\tconfig begin \033[0m"
             #集群同步.bashrc，需要确保/root/.bashrc存在
             cluster_config_bashrc
+            #集群同步hadoop，注意MASTER_IP在conf/MISC_config中配置
+            cluster_update_hadoop
             #TODO
-            #cluster_update_hadoop
-#            cluster_update_spark
+            cluster_update_spark
 #            cluster_update_zookeeper
 #            cluster_update_hbase
 #             cluster_update_hive

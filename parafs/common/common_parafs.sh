@@ -253,7 +253,7 @@ function __cluster_unzipfile() {
 ###############################################################################
 ###### slave配置
 function __cluster_hadoop_slave() {
-    echo -e "\t\t __cluster_hadoop_slave begin !!!"
+    echo -e "\t\t __cluster_hadoop_slave begin"
     config_local_hadoop_slaves $HADOOP_SLAVES "${CLUSTER_IPS[*]}"
     local dist_file_path=`dirname $HADOOP_SLAVES`
     local dist_zip_file=`basename $HADOOP_SLAVES`
