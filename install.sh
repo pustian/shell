@@ -83,8 +83,8 @@ while [ x"${input}" != x"E" ]; do
             ;;
         R|r) 
             echo -e "\033[40;34m\tpre-installation begin\033[0m"
-#           # cluster_create_user
-#           # cluster_user_authorize
+#           ## cluster_create_user
+#           ## cluster_user_authorize
             #集群root用户免密，注意先配置conf/network和conf/passwd
             cluster_root_authorize
             #集群配置/etc/hostname, /etc/hosts。先要确保上述2文件存在
@@ -94,7 +94,7 @@ while [ x"${input}" != x"E" ]; do
 #            ### 远程机器需要同样存在目录 `dirname $SCRIPT_BASE_DIR`,即/opt/wotung
             #集群分发压缩包、检查md5、解压缩
             cluster_script_dist
-#            # cluster_root_chown
+#            ## cluster_root_chown
 #            # 删除 passwd user_passwd 文件 
             echo -e "\033[40;32m\tpre-installation done \033[0m"
             ;;
@@ -107,15 +107,15 @@ while [ x"${input}" != x"E" ]; do
 #            cluster_yum
 #            cluster_pip
 #            cluster_rpm_install
-#            # cluster_sudoer_chown
+#            ## cluster_sudoer_chown
             echo -e "\033[40;32m\tdist and install done \033[0m"
             ;;
         D|d)
             echo -e "\033[40;34m\tdistribute begin\033[0m"
-#             local_dist_rpm
-#             cluster_dist_rpm
-#             local_dist_hadoop
-#             cluster_hadoop_dist
+             local_dist_rpm
+             cluster_dist_rpm
+             local_dist_hadoop
+             cluster_hadoop_dist
             echo -e "\033[40;34m\tdistribute end\033[0m"
             ;;
         I|i)
@@ -123,7 +123,7 @@ while [ x"${input}" != x"E" ]; do
              cluster_yum
              cluster_pip
              cluster_rpm_install
-#            cluster_sudoer_chown
+            ##cluster_sudoer_chown
             echo -e "\033[40;32m\tinstallation done \033[0m"
             ;;
         C|c)

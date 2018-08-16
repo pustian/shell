@@ -66,13 +66,21 @@ function cluster_root_authorize() {
     local user_name='root'
     local user_home='/root'
     
-    for outer_ip in $CLUSTER_IPS; do
-        user_passwd=`grep ${outer_ip} $filename |awk '{print $2 }'`
-        for inner_ip in $CLUSTER_IPS; do
-        ssh_user_authorize ${outer_ip} ${user_name} ${user_passwd} ${user_home} \
-                ${inner_ip} ${user_name} ${user_passwd} ${user_home} 
-        done
+    master_ip=$CLUSTER_LOCAL_IP
+    user_passwd=`grep ${master_ip} $filename |awk '{print $2 }'`
+    for each_ip in $CLUSTER_IPS; do
+		#master to each
+        ssh_user_authorize ${master_ip} ${user_name} ${user_passwd} ${user_home} \
+               			   ${each_ip} ${user_name} ${user_passwd} ${user_home} 
+		#each to master
+		ssh_user_authorize ${each_ip} ${user_name} ${user_passwd} ${user_home} \
+						   ${master_ip} ${user_name} ${user_passwd} ${user_home}
     done
+	
+	for each_ip in $CLUSTER_IPS; do
+		copy_authorized_keys $master_ip $each_ip
+		copy_known_hosts $master_ip $each_ip
+	done
 
     echo -e "\t\t cluster_user_authorize end"
 }
@@ -174,7 +182,7 @@ fi
 # install_usage
 # cluster_create_user
 # cluster_user_authorize
-# cluster_root_authorize
+ cluster_root_authorize
 # cluster_each_root_login
 # cluster_config_network
 # local_script_zip
