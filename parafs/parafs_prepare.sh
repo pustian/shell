@@ -58,7 +58,7 @@ function cluster_each_user_login() {
     done
 }
 
-###### 用户免密  n*n ssh_user_authorize==>common_user.sh
+###### 用户免密   ssh_user_authorize==>common_user.sh
 function cluster_root_authorize() {
     echo -e "\t\t cluster_user_authorize begin"
 
@@ -68,15 +68,33 @@ function cluster_root_authorize() {
     
     master_ip=$CLUSTER_LOCAL_IP
     user_passwd=`grep ${master_ip} $filename |awk '{print $2 }'`
+
+	# 从master到各机器，再从各机器到master免密
     for each_ip in $CLUSTER_IPS; do
 		#master to each
         ssh_user_authorize ${master_ip} ${user_name} ${user_passwd} ${user_home} \
                			   ${each_ip} ${user_name} ${user_passwd} ${user_home} 
-		#each to master
-		ssh_user_authorize ${each_ip} ${user_name} ${user_passwd} ${user_home} \
-						   ${master_ip} ${user_name} ${user_passwd} ${user_home}
     done
+
+	for each_ip in $CLUSTER_IPS; do
+		#each to master, exclude master->master
+		if test $master_ip != $each_ip; then
+			ssh_user_authorize ${each_ip} ${user_name} ${user_passwd} ${user_home} \
+						 	   ${master_ip} ${user_name} ${user_passwd} ${user_home}
+		fi
+	done
 	
+	# 长名、短名的免密
+	ip_longname=`cat ${NETWORK_CONFIG_FILE} |grep -v '^#' | awk -F " " '{print $2}'`
+	ip_shortname=`cat ${NETWORK_CONFIG_FILE} |grep -v '^#' | awk -F " " '{print $3}'`
+	for each_longname in $ip_longname; do
+		expect_common/ssh_alias_login.exp $each_longname
+	done
+	for each_shortname in $ip_shortname; do
+		expect_common/ssh_alias_login.exp $each_shortname
+	done
+	
+	#复制authorized_keys和known_hosts 
 	for each_ip in $CLUSTER_IPS; do
 		copy_authorized_keys $master_ip $each_ip
 		copy_known_hosts $master_ip $each_ip
@@ -182,7 +200,7 @@ fi
 # install_usage
 # cluster_create_user
 # cluster_user_authorize
- cluster_root_authorize
+# cluster_root_authorize
 # cluster_each_root_login
 # cluster_config_network
 # local_script_zip
