@@ -36,4 +36,6 @@ fi
 . ./common/common_utils.sh
 ###++++++++++++++++++++++++      main end         ++++++++++++++++++++++++++###
 # ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
+cluster_cmd "mkdir /tmp/hello_world"
+cluster_cmd "rmdir /tmp/hello_world"
 # ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

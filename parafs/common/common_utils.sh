@@ -97,6 +97,7 @@ function remote_excute_cmd() {
 	local remote_cmd=$4
 	
 	local log_file="/tmp/parafs_remote_excute_cmd"
+	echo excute remote command:   "$remote_cmd"  at $remote_ip
 	sudo su - $local_user -c "ssh '$remote_user@$remote_ip' '$remote_cmd'" >>$log_file
 }
 
