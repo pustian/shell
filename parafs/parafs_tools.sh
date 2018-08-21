@@ -5,7 +5,7 @@
 ###############################################################################
 
 function tools_usage() {
-    
+	echo "在集群上执行指定命令"  #TODO
     echo "检查指定ip的node"
     echo "新建一个parauser";
     echo "同一用户免密"
@@ -15,11 +15,25 @@ function tools_usage() {
     echo "集群删除一台机器"
 }
 
+### 在集群上执行某个命令
+### $1:	command to be excuted
+### 注意：调用时command要用双引号括起来,否则$1传输会出错
+function cluster_cmd() {
+	local command=$1
+
+	local local_user="root"
+	local remote_user="root"
+	for each_ip in $CLUSTER_IPS; do
+		remote_excute_cmd $local_user $remote_user $each_ip "$command"
+	done
+}
+
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 TOOLS_BASH_NAME=parafs_tools.sh
 if [ -z ${VARIABLE_BASH_NAME} ] ; then 
     . ../variable.sh
 fi
+. ./common/common_utils.sh
 ###++++++++++++++++++++++++      main end         ++++++++++++++++++++++++++###
 # ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
 # ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###
