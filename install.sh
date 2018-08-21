@@ -100,29 +100,29 @@ while [ x"${input}" != x"E" ]; do
             ;;
         U|u)
             echo -e "\033[40;32m\tdist and install begin \033[0m"
-#            cluster_dist_rpm
-#            local_dist_rpm
-#            cluster_hadoop_dist
-#            local_dist_hadoop
-#            cluster_yum
-#            cluster_pip
-#            cluster_rpm_install
+            cluster_dist_rpm
+            local_dist_rpm
+            cluster_hadoop_dist
+            local_dist_hadoop
+            cluster_yum
+            cluster_pip
+            cluster_rpm_install
 #            ## cluster_sudoer_chown
             echo -e "\033[40;32m\tdist and install done \033[0m"
             ;;
         D|d)
             echo -e "\033[40;34m\tdistribute begin\033[0m"
-             local_dist_rpm
-             cluster_dist_rpm
-             local_dist_hadoop
-             cluster_hadoop_dist
+            local_dist_rpm
+            cluster_dist_rpm
+            local_dist_hadoop
+            cluster_hadoop_dist
             echo -e "\033[40;34m\tdistribute end\033[0m"
             ;;
         I|i)
             echo -e "\033[40;34m\tinstallation begin\033[0m"
-             cluster_yum
-             cluster_pip
-             cluster_rpm_install
+            cluster_yum
+            cluster_pip
+            cluster_rpm_install
             ##cluster_sudoer_chown
             echo -e "\033[40;32m\tinstallation done \033[0m"
             ;;
@@ -134,10 +134,10 @@ while [ x"${input}" != x"E" ]; do
             cluster_update_hadoop
             #TODO
             cluster_update_spark
-#            cluster_update_zookeeper
-#            cluster_update_hbase
-#             cluster_update_hive
-#            cluster_update_azkaban
+            cluster_update_zookeeper
+            cluster_update_hbase
+            cluster_update_hive
+            cluster_update_azkaban
             # cluster_update_kafka
             echo -e "\033[40;32m\tconfig done \033[0m"
             ;;
