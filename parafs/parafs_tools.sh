@@ -5,7 +5,8 @@
 ###############################################################################
 
 function tools_usage() {
-	echo "在集群上执行指定命令"  #TODO
+	echo "在集群上执行指定命令"  
+	echo "在集群上同步指定文件" #TODO
     echo "检查指定ip的node"
     echo "新建一个parauser";
     echo "同一用户免密"
@@ -17,7 +18,7 @@ function tools_usage() {
 
 ### 在集群上执行某个命令
 ### $1:	command to be excuted
-### 注意：调用时command要用双引号括起来,否则$1传输会出错
+### 注意：调用时,command要用双引号括起来,否则$1传输会出错
 function cluster_cmd() {
 	local command=$1
 
@@ -25,6 +26,18 @@ function cluster_cmd() {
 	local remote_user="root"
 	for each_ip in $CLUSTER_IPS; do
 		remote_excute_cmd $local_user $remote_user $each_ip "$command"
+	done
+}
+
+### 在集群上同步指定文件
+### $1: 要同步文件的完整路径
+function cluster_sync_file() {
+	local filename=$1
+
+	local local_user="root"
+	local remote_user="root"
+	for each_ip in $CLUSTER_IPS; do
+		sync_file $local_user $remote_user $each_ip $filename
 	done
 }
 
@@ -36,6 +49,10 @@ fi
 . ./common/common_utils.sh
 ###++++++++++++++++++++++++      main end         ++++++++++++++++++++++++++###
 # ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
-cluster_cmd "mkdir /tmp/hello_world"
-cluster_cmd "rmdir /tmp/hello_world"
+#cluster_cmd "touch /tmp/hello_111"
+#cluster_cmd "rm -f /tmp/hello_111"
+#
+#touch /tmp/hello_111
+#cluster_sync_file /tmp/hello_111
+#cluster_cmd "rm -f /tmp/hello_111"
 # ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###
