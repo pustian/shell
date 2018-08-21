@@ -1,0 +1,49 @@
+#!/usr/bin/expect 
+###########################################################################
+###  用法
+###      ./ssh_copy.exp ${local_file}  ${remote_ip} ${remote_user} ${remote_passwd} ${remote_path}
+###  功能：
+###     模拟远程登录机器，退出
+###  参数：
+###         local_file
+###         remote_ip      
+###         remote_user    
+###         remote_passwd  
+###         remote_path ## 可以为目录或是文件名
+###  使用示例
+###########################################################################
+set local_file     [lindex $argv 0]  
+set remote_ip      [lindex $argv 1]  
+set remote_user    [lindex $argv 2]  
+set remote_passwd  [lindex $argv 3]
+set remote_path    [lindex $argv 4]
+# set local_file    "/etc/passwd"
+# set remote_ip     "192.168.138.73" 
+# set remote_user   "root"
+# set remote_passwd "Tianpusen@1"
+# set remote_home   "/root"
+#set ssh_port       "22"
+###  密码不对超时退出
+set timeout -1
+
+puts "----------+---------- begin ----------+----------"
+###############################################################################
+### 通过spawn 启动进程执行 类似 scp XXX root@192.168.138.71:/opt/wotung
+spawn scp ${local_file} ${remote_user}@${remote_ip}:${remote_path}
+### 对ssh 操作的出现提示信息捕获，并通过 exp_send 发送响应结果
+expect {
+    #first connect, no public key in ~/.ssh/known_hosts
+    "Are you sure you want to continue connecting (yes/no)?" {
+        exp_send "yes\r"
+        expect "password:" {
+            exp_send "$remote_passwd\r"
+        }
+    }
+    #already has public key in ~/.ssh/known_hosts
+    "password:" {
+        exp_send "$remote_passwd\r"
+        ### 登录成功后响应
+    }
+}
+expect eof
+puts "\n----------+----------  end  ----------+----------"

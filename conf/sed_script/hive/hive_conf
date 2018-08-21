@@ -1,0 +1,4 @@
+5,5c \<value\>jdbc:mysql://192.168.138.10:3306/hive?createDatabaseIfNotExist=true&amp;useSSL=false\</value\>
+93,93c \<value\>192.168.138.10\</value\>
+109,109c \<value\>192.168.138.10\</value\>
+126,126c \<value\>192.168.138.10\</value\>

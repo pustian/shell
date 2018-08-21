@@ -1,0 +1,21 @@
+### cluster执行的默认用户和用户目录，至少需要能够sudo免密
+default_user=root
+default_user_home=/root
+### 以下配置不可以缺少
+source_dir              =/opt/wotung/package
+master_ip               =192.168.1.15
+parafs_rpm              =parafs-2.0.0-1.x86_64.rpm
+md5_parafs_rpm          =parafs-2.0.0-1.x86_64.md5sum
+llog_rpm                =llog-1.0.1-1.x86_64-centos7-x86-20180426.rpm
+md5_llog_rpm            =llog-1.0.1-1.x86_64-centos7-x86-20180426.rpm.md5sum
+parafs_hadoop_file      =hadoop-system.tar.gz
+md5_parafs_hadoop_file  =hadoop-system.md5sum
+### pip源
+# pip install -i https://pypi.tuna.tsinghua.edu.cn/simple pyspider，这样就会从清华这边的镜像去安装pyspider库
+# 清华：https://pypi.tuna.tsinghua.edu.cn/simple
+# 阿里云：http://mirrors.aliyun.com/pypi/simple/
+# 中国科技大学 https://pypi.mirrors.ustc.edu.cn/simple/
+# 华中理工大学：http://pypi.hustunique.com/
+# 山东理工大学：http://pypi.sdutlinux.org/ 
+# 豆瓣：http://pypi.douban.com/simple/
+pip_source=http://pypi.hustunique.com/

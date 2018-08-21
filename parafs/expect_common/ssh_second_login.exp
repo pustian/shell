@@ -1,26 +1,34 @@
 #!/usr/bin/expect 
 ###########################################################################
 ###  用法
-###      ./ssh_login.exp ${current_ip} ${current_user} ${current_passwd} ${current_home}
+###      ./ssh_second_login.exp ${current_ip} ${current_user} ${current_passwd} ${remote_ip} ${remote_user} ${remote_passwd}
 ###  功能：
-###     模拟远程登录机器，退出
+###     模拟远程登录机器互相登陆
 ###  参数：
 ###         current_ip      
 ###         current_user    
 ###         current_passwd  
 ###         current_home    
+###         remote_ip      
+###         remote_user    
+###         remote_passwd  
+###         remote_home    
 ###  使用示例
-###        ./ssh_login.exp 192.168.138.70 'root' '888888' '/root'
-###        ./ssh_login.exp ht1.r1.n70     'parause' 'ParaUse@123&' '/home/parauser'
+###      ./ssh_second_login.exp "ht2.r2.n71" 'parauser' "hetong@2015"  \
+###          "ht2.r2.n72" "parauser" "hetong@2015" 
 ###########################################################################
 set current_ip      [lindex $argv 0]  
 set current_user    [lindex $argv 1]  
 set current_passwd  [lindex $argv 2]
-set current_home    [lindex $argv 3]
-# set current_ip     "192.168.138.73" 
+set remote_ip      [lindex $argv 3]  
+set remote_user    [lindex $argv 4]  
+set remote_passwd  [lindex $argv 5]
+# set current_ip     "192.168.138.71" 
 # set current_user   "root"
 # set current_passwd "Tianpusen@1"
-# set current_home   "/root"
+# set remote_ip     "192.168.138.72" 
+# set remote_user   "root"
+# set remote_passwd "Tianpusen@1"
 set ssh_port       "22"
 ###  密码不对超时退出
 set timeout 1
@@ -29,6 +37,7 @@ puts "----------+---------- begin ----------+----------"
 ###############################################################################
 ### 通过spawn 启动进程执行 类似 ssh 192.168.138.70 -l root -p 22 操作
 spawn ssh ${current_ip} -l ${current_user} -p ${ssh_port}
+set spawn_id_1 $spawn_id
 ### 对ssh 操作的出现提示信息捕获，并通过 exp_send 发送响应结果
 expect {
     #first connect, no public key in ~/.ssh/known_hosts
@@ -53,10 +62,31 @@ expect {
     # has do authorize 直接成功登录
     "Last login" { puts "$current_user login $current_ip successfully" }
 }
-# sleep 1
-
-### 退出进程登录
+sleep 1
+exp_send "ssh ${remote_ip} -l ${remote_user} -p ${ssh_port}\r"
+expect {
+    #first connect, no public key in ~/.ssh/known_hosts
+    "Are you sure you want to continue connecting (yes/no)?" {
+        exp_send "yes\r"
+        expect "password:" {
+            exp_send "$remote_passwd\r"
+            ### 登录成功后响应
+            expect {
+                "Last login" { puts "$remote_user login $remote_ip successfully" }
+            }
+        }
+    }
+    #already has public key in ~/.ssh/known_hosts
+    "password:" {
+        exp_send "$remote_passwd\r"
+        ### 登录成功后响应
+        expect {
+            "Last login" { puts "$remote_user login $remote_ip successfully" }
+        }
+    }
+    # has do authorize 直接成功登录
+    "Last login" { puts "$remote_user login $remote_ip successfully" }
+}
+sleep 1
 exp_send "exit\r"
-# exp_send "exit\r"
-# expect eof
 puts "\n----------+----------  end  ----------+----------"

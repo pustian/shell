@@ -23,25 +23,24 @@
 ###  1 登陆同ssh_login.sh 代码
 ###  2 生成 ssh-keygen，如果存在则有问题。给出错误提示
 ###  3 ssh-copy-id 当前机器到指定的ip 实现当前机器免密登陆到指定ip
-# set current_ip      [lindex $argv 0]  
-# set current_user    [lindex $argv 1]  
-# set current_passwd  [lindex $argv 2]
-# set current_home    [lindex $argv 3]
-# set remote_ip      [lindex $argv 0]  
-# set remote_user    [lindex $argv 1]  
-# set remote_passwd  [lindex $argv 2]
-# set remote_home    [lindex $argv 3]
-set current_ip     "192.168.138.71" 
-set current_user   "root"
-set current_passwd "Tianpusen@1"
-set current_home   "/root"
+set current_ip      [lindex $argv 0]  
+set current_user    [lindex $argv 1]  
+set current_passwd  [lindex $argv 2]
+set current_home    [lindex $argv 3]
+set remote_ip      [lindex $argv 4]  
+set remote_user    [lindex $argv 5]  
+set remote_passwd  [lindex $argv 6]
+set remote_home    [lindex $argv 7]
+# set current_ip     "192.168.138.71" 
+# set current_user   "root"
+# set current_passwd "Tianpusen@1"
+# set current_home   "/root"
+# set remote_ip     "192.168.138.72" 
+# set remote_user   "root"
+# set remote_passwd "Tianpusen@1"
+# set remote_home   "/root"
 set ssh_port       "22"
-set remote_ip     "192.168.138.72" 
-set remote_user   "root"
-set remote_passwd "Tianpusen@1"
-set remote_home   "/root"
-set ssh_port       "22"
-set timeout -1
+set timeout 15
 
 puts "----------+---------- begin ----------+----------"
 ###############################################################################
@@ -73,7 +72,7 @@ expect {
         puts "++++++ $current_user login $current_ip successfully with spawn_id=$spawn_id"
     }
 }
-sleep 1
+# sleep 1
 # sh脚本保证本机已经生成过了
 ###############################################################################
 ### ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
@@ -86,7 +85,7 @@ expect {
         exp_send "n\r"
     }
 }
-sleep 1
+# sleep 1
 ###############################################################################
 
 ### 192.168.138.70 ssh免密登陆 192.168.138.71
@@ -113,5 +112,5 @@ sleep 1
 
 ### 退出进程登录
 exp_send "exit\r"
-puts "----------+----------  end  ----------+----------"
+puts "\n----------+----------  end  ----------+----------"
 

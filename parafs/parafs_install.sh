@@ -3,58 +3,95 @@
 #-*- coding: utf-8 -*-
 # Copyright (C) 2015-2050 Wotung.com.
 ###############################################################################
-INSTALL_BASH_NAME=parafs_install.sh
+
 function install_usage() {
-#    echo "cluster-parafs"
-    echo "cluster-parafs-client"
-    echo "cluster-llog"
-    echo "cluster-hadoop"
+    echo "cluster-yum"
+    echo "cluster-pip"
+    echo "cluster-rpm-install"
+    echo "cluster-sudoer-chown"
 }
 
-####### 检查配置文件 network 是否存在并且network ip相同
-####+++ return : 不存在直接退出,并给出提示信息。否则无返回信息
-function cluster_parafs() {
-    local ip_filename=
-    local install_filename=
-    # IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
-    ### 检查ips相同
-    echo -e "\t\t cluster_parafs done"
+###### 免密后yum 安装
+function cluster_yum() {
+    echo -e "\t\t cluster_yum begin"
+    local fault_ips=""
+    for ip in $CLUSTER_IPS; do
+        yum_install $USER_NAME $ip $USER_NAME
+        if [ $? -ne 0 ] ; then
+            echo -e "\033[31m\t\tfailed to yum file at $ip \033[0m"
+            fault_ips="$config_ip $fault_ips"
+            # break;
+        fi
+    done
+    echo -e "\t\t cluster_yum end"
 }
 
-####### 检查配置文件 network 是否存在并且network ip相同
-####+++ return : 不存在直接退出,并给出提示信息。否则无返回信息
-function cluster_llog() {
-    local ip_filename=
-    local install_filename=
-    # IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
-    ### 检查ips相同
-    echo -e "\t\t cluster_llog done"
+###### 免密后pip 安装
+function cluster_pip() {
+    echo -e "\t\t cluster_pip begin"
+    local fault_ips=""
+    for ip in $CLUSTER_IPS; do
+        pip_install $USER_NAME $ip $USER_NAME
+        if [ $? -ne 0 ] ; then
+            echo -e "\033[31m\t\tfailed to pip install paramiko at $ip \033[0m"
+            fault_ips="$config_ip $fault_ips"
+            # break;
+        fi
+    done
+    if [ ! -z "$fault_ips" ]; then
+        echo -e "\033[31m\t\tmake sure pip install paramiko \033[0m"
+    #    exit 1
+    fi
+    echo -e "\t\t cluster_pip end"
 }
 
-####### 检查配置文件 network 是否存在并且network ip相同
-####+++ return : 不存在直接退出,并给出提示信息。否则无返回信息
-function cluster_parafs_client() {
-    local ip_filename=
-    local install_filename=
-    # IPS=`cat $filename | grep -v '^#' | awk '{print $1}' `
-    ### 检查ips相同
-    echo -e "\t\t cluster_parafs_client done"
+###### 免密后rpm 安装
+function cluster_rpm_install() {
+    echo -e "\t\t __cluster_install_rpm begin"
+    for ip in $CLUSTER_IPS; do
+        rpm_install $USER_NAME $ip $USER_NAME ${INSTALL_DIR}/$PARAFS_RPM
+        rpm_install $USER_NAME $ip $USER_NAME ${INSTALL_DIR}/$LLOG_RPM
+    done
+    echo -e "\t\t __cluster_install_rpm end"
 }
 
-function cluster_hadoop() {
-    echo -e "\t\t cluster_hadoop done"
+###### 免密，修改解压后的hadoop-parafs 用户
+function cluster_sudoer_chown() {
+    local dirpath=$1
+    echo -e "\t\t cluster_sudoer_chown begin"
+    local fault_ips=""
+    for ip in $CLUSTER_IPS; do
+        dirpath_sudoer_chown $USER_NAME $ip $USER_NAME ${HADOOP_PARAFS_HOME} $USER_NAME $USER_NAME
+        if [ $? -ne 0 ] ; then
+            echo -e "\033[31m\t\tfailed to config bashrc at $ip \033[0m"
+            fault_ips="$config_ip $fault_ips"
+            # break;
+        fi
+    done
+    if [ ! -z "$fault_ips" ]; then
+        echo -e "\033[31m\t\tmake sure bashrc \033[0m"
+    #    exit 1
+    fi
+    echo -e "\t\t cluster_sudoer_chown end"
 }
+
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 INSTALL_BASH_NAME=parafs_install.sh
 if [ -z ${VARIABLE_BASH_NAME} ] ; then 
-    . /opt/wotung/parafs-install/variable.sh
+    . ../variable.sh
 fi
-if [ -z ${UTILS_BASH_NAME} ] ; then 
-    . /opt/wotung/parafs-install/common/common_utils.sh
+if [ -z ${COMMON_BASH_NAME} ] ; then
+    . ${SCRIPT_BASE_DIR}/parafs/common/common_parafs.sh
 fi
-
 
 ###++++++++++++++++++++++++      main end         ++++++++++++++++++++++++++###
-# ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
+###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
 # install_usage
-# ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###
+#set -x
+# cluster_yum
+# cluster_pip
+# cluster_rpm_install
+# cluster_sudoer_chown
+# echo $?
+#set +x
+###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

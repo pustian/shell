@@ -1,0 +1,12 @@
+### cluster新建的用户
+user=parauser
+passwd_plain=hetong@2015
+passwd_ssl=YdwAWdHXqldYI
+home=/home/parauser
+shell=/bin/bash
+# 新建用户密码使用以下方法
+# [root@ht1.r1.n71 ~]# openssl passwd -stdin
+# hetong@2015
+# YdwAWdHXqldYI
+# [root@ht1.r1.n71 ~]# useradd -d /home/parauser -m -U -p 'YdwAWdHXqldYI' -s '/bin/bash'  parauser
+# [root@ht1.r1.n71 ~]# userdel -r parauser
