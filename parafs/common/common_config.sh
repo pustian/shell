@@ -285,45 +285,45 @@ function sed_conf_script() {
     ### 修改sed文件 
     return $?
 }
-###### 远程 更改spark配置 spark-defaults.conf
+###### 远程 更改spark配置 spark-defaults.conf,暂时手工配置。。。
 function update_spark_conf() {
-    local local_user=$1
-    local authorize_ip=$2
-    local authorize_user=$3
-    local filename=$4
-    local sed_script_file=$5
-#    local memory=
-#    local instances=
-#    local cores=
-    
-    echo "do update_spark_conf at $authorize_ip"
-    local temp_file="/tmp/parafs_update_spark_conf$authorize_ip"
-    ### 0 远程获取并在本地保存sed脚本
-    ### spark.executor.memory 1G 默认就是1G
-    local property_key="spark.executor.memory"
-    local property_value="256M"
-    sed_conf_script "$local_user" "$authorize_ip" "$authorize_user" \
-        "$filename" "$sed_script_file" "$property_key" "$property_value" 
- 
-    ### spark.executor.instances  8  默认是2个
-    local property_key="spark.executor.instances"
-    local property_value="3"
-    sed_conf_script "$local_user" "$authorize_ip" "$authorize_user" \
-        "$filename" "$sed_script_file" "$property_key" "$property_value" "true"
-
-    ### spark.executor.cores 1   执行cpu核数
-    local property_key="spark.executor.cores"
-    local property_value="3"
-    sed_conf_script "$local_user" "$authorize_ip" "$authorize_user" \
-        "$filename" "$sed_script_file" "$property_key" "$property_value" "true"
-
-    ### 1, 同步sed脚本
-    sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'" >>$temp_file   
-
-    ### 2, 远程执行sed脚本
-    local remote_exec_sed_script="sed -i -f $sed_script_file $filename"
-    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$temp_file
-    
+#    local local_user=$1
+#    local authorize_ip=$2
+#    local authorize_user=$3
+#    local filename=$4
+#    local sed_script_file=$5
+##    local memory=
+##    local instances=
+##    local cores=
+#    
+#    echo "do update_spark_conf at $authorize_ip"
+#    local temp_file="/tmp/parafs_update_spark_conf$authorize_ip"
+#    ### 0 远程获取并在本地保存sed脚本
+#    ### spark.executor.memory 1G 默认就是1G
+#    local property_key="spark.executor.memory"
+#    local property_value="5G"
+#    sed_conf_script "$local_user" "$authorize_ip" "$authorize_user" \
+#        "$filename" "$sed_script_file" "$property_key" "$property_value" 
+# 
+#    ### spark.executor.instances  8  默认是2个
+#    local property_key="spark.executor.instances"
+#    local property_value="1"
+#    sed_conf_script "$local_user" "$authorize_ip" "$authorize_user" \
+#        "$filename" "$sed_script_file" "$property_key" "$property_value" "true"
+#
+#    ### spark.executor.cores 1   执行cpu核数
+#    local property_key="spark.executor.cores"
+#    local property_value="1"
+#    sed_conf_script "$local_user" "$authorize_ip" "$authorize_user" \
+#        "$filename" "$sed_script_file" "$property_key" "$property_value" "true"
+#
+#    ### 1, 同步sed脚本
+#    sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'" >>$temp_file   
+#
+#    ### 2, 远程执行sed脚本
+#    local remote_exec_sed_script="sed -i -f $sed_script_file $filename"
+#    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$temp_file
+#    
     return $?
 }
 
@@ -545,6 +545,34 @@ function update_kafka_config() {
     sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$temp_file
 
     return $?
+}
+
+function update_kafka_broker_id() {
+	local local_user=$1
+	local authorize_ip=$2
+	local authorize_user=$3
+	local filename=$4
+	local sed_script_file=$5
+	local broker_id=$6
+	
+	echo "do update_kafka_broker_id at $authorize_ip"
+	###master 1.1, 远程获取需要更新的行数，
+    local temp_file="/tmp/parafs_update_kafka_config${authorize_ip}"
+    local property_key="broker.id"
+    local property_value=$broker_id
+    sed_property_script "$local_user" "$authorize_ip" "$authorize_user" \
+        "$filename" "$sed_script_file" "$property_key" "$property_value"
+
+    ###
+    sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'" >>$temp_file   
+
+    ### 3, 远程执行sed脚本
+    local remote_exec_sed_script="sed -i -f $sed_script_file $filename"
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$temp_file
+
+    return $?
+
+
 }
 
 # ###### 远程 更改ycsb配置

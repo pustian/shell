@@ -75,7 +75,7 @@ while [ x"${input}" != x"E" ]; do
             check_local_install_files
             #检查各IP是否能够ping通
             check_ips
-            #在root免密的情况下会直接通过，先重命名~/.ssh 使免密失效
+            #在root免密的情况下会直接通过
             cluster_check_passwd 
             #检查/opt/wotung/node/0 目录 
             cluster_check_nodes
@@ -128,17 +128,22 @@ while [ x"${input}" != x"E" ]; do
             ;;
         C|c)
             echo -e "\033[40;32m\tconfig begin \033[0m"
-            #集群同步.bashrc，需要确保/root/.bashrc存在
+            # 集群同步.bashrc，需要确保/root/.bashrc存在
             cluster_config_bashrc
-            #集群同步hadoop，注意MASTER_IP在conf/MISC_config中配置
+            # 集群同步hadoop，注意MASTER_IP在conf/MISC_config中配置
             cluster_update_hadoop
-            #TODO
+            # 集群同步spark
             cluster_update_spark
+			# 集群同步zookeeper
             cluster_update_zookeeper
+			# 集群同步hbase
             cluster_update_hbase
+			# 集群同步hive
             cluster_update_hive
+			# 集群同步azkaban
             cluster_update_azkaban
-            # cluster_update_kafka
+			# 集群同步kafka
+            cluster_update_kafka
             echo -e "\033[40;32m\tconfig done \033[0m"
             ;;
         A|a) 
