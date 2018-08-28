@@ -35,6 +35,21 @@ function cluster_config_bashrc() {
     echo -e "\t\t cluster_config_bashrc end"
 }
 
+###### 赋予hadoop-system下的bin/和sbin/ 执行权限
+function cluster_chmod() {
+	echo -e "\t\t cluster_chmod_begin"
+	bin_cmd="find /opt/wotung/hadoop-system -name bin |xargs chmod -R +x"
+	sbin_cmd="find /opt/wotung/hadoop-system -name sbin |xargs chmod -R +x"
+	local_user="root"
+	remote_user="root"
+	for each_ip in $CLUSTER_IPS; do
+		remote_excute_cmd $local_user $remote_user $each_ip "$bin_cmd"
+		remote_excute_cmd $local_user $remote_user $each_ip "$sbin_cmd"
+
+	done
+	echo -e "\t\t cluster_chmod_end"
+}
+
 function cluster_update_hadoop() {
     echo -e "\t\t cluster_update_hadoop begin"
 

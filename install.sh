@@ -25,7 +25,6 @@ function usage() {
 #    echo -e "\033[40;35m##                                                                      ##\033[0m" ; 
     echo -e "\033[40;37mpre-check -----------------------------------------------------------------[P]\033[0m" ;
     echo -e "\033[40;37mpre-installation-----------------------------------------------------------[R]\033[0m" ;
-    echo -e "\033[40;37mdist and install---------------------------------------------------------- [U]\033[0m" ;
     echo -e "\033[40;37mpackage-dist ------------------------------------------------------------- [D]\033[0m" ;
     echo -e "\033[40;37minstallation-------------------------------------------------------------- [I]\033[0m" ;
     echo -e "\033[40;37mconfig-------------------------------------------------------------------- [C]\033[0m" ;
@@ -100,7 +99,8 @@ while [ x"${input}" != x"E" ]; do
 #            # 删除 passwd user_passwd 文件 
             echo -e "\033[40;32m\tpre-installation done \033[0m"
             ;;
-        U|u)
+		#此选项没有在提示中显示，执行U选项相当于执行D和I
+        U|u) 
             echo -e "\033[40;32m\tdist and install begin \033[0m"
             cluster_dist_rpm
             local_dist_rpm
@@ -132,6 +132,8 @@ while [ x"${input}" != x"E" ]; do
             echo -e "\033[40;32m\tconfig begin \033[0m"
             # 集群同步.bashrc，需要确保/root/.bashrc存在
             cluster_config_bashrc
+			# 集群操作，给hadoop-system的bin/和sbin/ +x
+			cluster_chmod
             # 集群同步hadoop，注意MASTER_IP在conf/MISC_config中配置
             cluster_update_hadoop
             # 集群同步spark
