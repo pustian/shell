@@ -1,3 +1,0 @@
-32,32c spark.executor.memory 256M
-33,33c spark.executor.instances 3
-34,34c spark.executor.cores 3
