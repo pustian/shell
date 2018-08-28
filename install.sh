@@ -87,8 +87,10 @@ while [ x"${input}" != x"E" ]; do
 #           ## cluster_user_authorize
             #集群root用户免密，注意先配置conf/network和conf/passwd
             cluster_root_authorize
-            #集群配置/etc/hostname, /etc/hosts。先要确保上述2文件存在
+            #集群配置/etc/hostname, /etc/hosts。
             cluster_config_network
+		    #集群配置长名、短名的免密,这一步要在cluster_config_network之后
+		    cluster_alias_authorize
             #本地压缩parafs-install/生成压缩包，并生成md5 
             local_script_zip
 #            ### 远程机器需要同样存在目录 `dirname $SCRIPT_BASE_DIR`,即/opt/wotung

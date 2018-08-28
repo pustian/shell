@@ -23,7 +23,7 @@ set current_home    [lindex $argv 3]
 # set current_home   "/root"
 set ssh_port       "22"
 ###  密码不对超时退出
-set timeout 1
+set timeout 10
 
 puts "----------+---------- begin ----------+----------"
 ###############################################################################
