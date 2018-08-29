@@ -109,7 +109,7 @@ function sync_file() {
 	local file_name=$4
 
 	local log_file="/tmp/parafs_sync_file"
-	echo synchronize file: $file_name
+	echo synchronize file: $file_name to $remote_ip
 	scp $file_name $remote_user@$remote_ip:$file_name >>$log_file
 
 }

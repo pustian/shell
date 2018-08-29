@@ -48,9 +48,17 @@ function cluster_update_parafs(){
     local update_dir=$INSTALL_DIR/package/update
     local parafs_rpm=`ls $update_dir | grep parafs`
     local llog_rpm=`ls $update_dir | grep llog`
+    cluster_cmd "mkdir -p $update_dir"
 
-    echo $parafs_rpm 
-    echo $llog_rpm
+    local para_fullpath=$update_dir/$parafs_rpm
+    local llog_fullpath=$update_dir/$llog_rpm
+    cluster_sync_file "$para_fullpath"
+    cluster_sync_file "$llog_fullpath"
+
+    local cmd_update_para="rpm -ivh $para_fullpath --force"
+    local cmd_update_llog="rpm -ivh $llog_fullpath --force"
+    cluster_cmd "$cmd_update_para"
+    cluster_cmd "$cmd_update_llog"
 }
 
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
@@ -66,5 +74,5 @@ fi
 #touch /tmp/hello_111
 #cluster_sync_file /tmp/hello_111
 #cluster_cmd "rm -f /tmp/hello_111"
-#cluster_update_parafs
+cluster_update_parafs
 # ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###
