@@ -11,13 +11,18 @@
 ###       	./ssh_alias_login.exp ht1.r1.n11 
 ###########################################################################
 set ip_alias	[lindex $argv 0]
-set timeout 2
-
-spawn ssh ${ip_alias}
+set timeout 10
+set ssh_port "22"
+spawn ssh ${ip_alias} -p ${ssh_port}
 expect {
+	# 还没有做别名免密
 	"Are you sure you want to continue connecting (yes/no)?" { 
 		exp_send "yes\r"
 		expect "Last login" {puts "success"} 
+	}
+	# 已经做好别名免密
+	"Last login" {
+		exp_send {puts "success"}
 	}
 }
 exp_send "exit\r"

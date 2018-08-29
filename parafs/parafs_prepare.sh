@@ -66,7 +66,7 @@ function cluster_root_authorize() {
     local user_name='root'
     local user_home='/root'
     
-    master_ip=$CLUSTER_LOCAL_IP
+    master_ip=$MASTER_IP
     user_passwd=`grep ${master_ip} $filename |awk '{print $2 }'`
 
 	# 从master到各机器，再从各机器到master免密
@@ -84,16 +84,6 @@ function cluster_root_authorize() {
 		fi
 	done
 	
-	# 长名、短名的免密
-	ip_longname=`cat ${NETWORK_CONFIG_FILE} |grep -v '^#' | awk -F " " '{print $2}'`
-	ip_shortname=`cat ${NETWORK_CONFIG_FILE} |grep -v '^#' | awk -F " " '{print $3}'`
-	for each_longname in $ip_longname; do
-		expect_common/ssh_alias_login.exp $each_longname
-	done
-	for each_shortname in $ip_shortname; do
-		expect_common/ssh_alias_login.exp $each_shortname
-	done
-	
 	#复制authorized_keys和known_hosts 
 	for each_ip in $CLUSTER_IPS; do
 		copy_authorized_keys $master_ip $each_ip
@@ -101,6 +91,29 @@ function cluster_root_authorize() {
 	done
 
     echo -e "\t\t cluster_user_authorize end"
+}
+
+### 这一步要在配置好/etc/hosts和/etc/hostname之后
+function cluster_alias_authorize(){
+	echo -e "\t\t cluster_alias_authorize start"
+	
+	local master_ip=$MASTER_IP
+	# 长名、短名的免密
+	ip_longname=`cat ${NETWORK_CONFIG_FILE} |grep -v '^#' | awk -F " " '{print $2}'`
+	ip_shortname=`cat ${NETWORK_CONFIG_FILE} |grep -v '^#' | awk -F " " '{print $3}'`
+	for each_longname in $ip_longname; do
+		$SCRIPT_BASE_DIR/parafs/expect_common/ssh_alias_login.exp $each_longname
+	done
+	for each_shortname in $ip_shortname; do
+		$SCRIPT_BASE_DIR/parafs/expect_common/ssh_alias_login.exp $each_shortname
+	done
+	
+	#复制authorized_keys和known_hosts 
+	for each_ip in $CLUSTER_IPS; do
+		copy_authorized_keys $master_ip $each_ip
+		copy_known_hosts $master_ip $each_ip
+	done
+	echo -e "\t\t cluster_alias_authorize end"
 }
 
 ###### 用户hostname alias 登陆

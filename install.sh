@@ -25,7 +25,6 @@ function usage() {
 #    echo -e "\033[40;35m##                                                                      ##\033[0m" ; 
     echo -e "\033[40;37mpre-check -----------------------------------------------------------------[P]\033[0m" ;
     echo -e "\033[40;37mpre-installation-----------------------------------------------------------[R]\033[0m" ;
-    echo -e "\033[40;37mdist and install---------------------------------------------------------- [U]\033[0m" ;
     echo -e "\033[40;37mpackage-dist ------------------------------------------------------------- [D]\033[0m" ;
     echo -e "\033[40;37minstallation-------------------------------------------------------------- [I]\033[0m" ;
     echo -e "\033[40;37mconfig-------------------------------------------------------------------- [C]\033[0m" ;
@@ -75,7 +74,7 @@ while [ x"${input}" != x"E" ]; do
             check_local_install_files
             #检查各IP是否能够ping通
             check_ips
-            #在root免密的情况下会直接通过，先重命名~/.ssh 使免密失效
+            #在root免密的情况下会直接通过
             cluster_check_passwd 
             #检查/opt/wotung/node/0 目录 
             cluster_check_nodes
@@ -87,8 +86,10 @@ while [ x"${input}" != x"E" ]; do
 #           ## cluster_user_authorize
             #集群root用户免密，注意先配置conf/network和conf/passwd
             cluster_root_authorize
-            #集群配置/etc/hostname, /etc/hosts。先要确保上述2文件存在
+            #集群配置/etc/hostname, /etc/hosts。
             cluster_config_network
+		    #集群配置长名、短名的免密,这一步要在cluster_config_network之后
+		    cluster_alias_authorize
             #本地压缩parafs-install/生成压缩包，并生成md5 
             local_script_zip
 #            ### 远程机器需要同样存在目录 `dirname $SCRIPT_BASE_DIR`,即/opt/wotung
@@ -98,47 +99,55 @@ while [ x"${input}" != x"E" ]; do
 #            # 删除 passwd user_passwd 文件 
             echo -e "\033[40;32m\tpre-installation done \033[0m"
             ;;
-        U|u)
+		#此选项没有在提示中显示，执行U选项相当于执行D和I
+        U|u) 
             echo -e "\033[40;32m\tdist and install begin \033[0m"
-#            cluster_dist_rpm
-#            local_dist_rpm
-#            cluster_hadoop_dist
-#            local_dist_hadoop
-#            cluster_yum
-#            cluster_pip
-#            cluster_rpm_install
+            cluster_dist_rpm
+            local_dist_rpm
+            cluster_hadoop_dist
+            local_dist_hadoop
+            cluster_yum
+            cluster_pip
+            cluster_rpm_install
 #            ## cluster_sudoer_chown
             echo -e "\033[40;32m\tdist and install done \033[0m"
             ;;
         D|d)
             echo -e "\033[40;34m\tdistribute begin\033[0m"
-             local_dist_rpm
-             cluster_dist_rpm
-             local_dist_hadoop
-             cluster_hadoop_dist
+            local_dist_rpm
+            cluster_dist_rpm
+            local_dist_hadoop
+            cluster_hadoop_dist
             echo -e "\033[40;34m\tdistribute end\033[0m"
             ;;
         I|i)
             echo -e "\033[40;34m\tinstallation begin\033[0m"
-             cluster_yum
-             cluster_pip
-             cluster_rpm_install
+            cluster_yum
+            cluster_pip
+            cluster_rpm_install
             ##cluster_sudoer_chown
             echo -e "\033[40;32m\tinstallation done \033[0m"
             ;;
         C|c)
             echo -e "\033[40;32m\tconfig begin \033[0m"
-            #集群同步.bashrc，需要确保/root/.bashrc存在
+            # 集群同步.bashrc，需要确保/root/.bashrc存在
             cluster_config_bashrc
-            #集群同步hadoop，注意MASTER_IP在conf/MISC_config中配置
+			# 集群操作，给hadoop-system的bin/和sbin/ +x
+			cluster_chmod
+            # 集群同步hadoop，注意MASTER_IP在conf/MISC_config中配置
             cluster_update_hadoop
-            #TODO
+            # 集群同步spark
             cluster_update_spark
-#            cluster_update_zookeeper
-#            cluster_update_hbase
-#             cluster_update_hive
-#            cluster_update_azkaban
-            # cluster_update_kafka
+			# 集群同步zookeeper
+            cluster_update_zookeeper
+			# 集群同步hbase
+            cluster_update_hbase
+			# 集群同步hive
+            cluster_update_hive
+			# 集群同步azkaban
+            cluster_update_azkaban
+			# 集群同步kafka
+            cluster_update_kafka
             echo -e "\033[40;32m\tconfig done \033[0m"
             ;;
         A|a) 

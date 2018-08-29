@@ -50,6 +50,7 @@ SED_SCRIPT_HBASE_CONF=${SCRIPT_BASE_DIR}/conf/sed_script/hbase/hbase_conf
 SED_SCRIPT_HIVE_CONF=${SCRIPT_BASE_DIR}/conf/sed_script/hive/hive_conf
 SED_SCRIPT_AZKABAN_CONF=${SCRIPT_BASE_DIR}/conf/sed_script/azkaban/azkaban_conf 
 SED_SCRIPT_KAFKA_CONF=${SCRIPT_BASE_DIR}/conf/sed_script/kafka/kafka_conf
+SED_SCRIPT_KAFKA_BROKER_ID=${SCRIPT_BASE_DIR}/conf/sed_script/kafka/kafka_broker_id
 
 if test ! -d $SCRIPT_BASE_DIR/conf/sed_script || test ! -f $SED_SCRIPT_HADOOP_YARN_IP \
     || test ! -f $SED_SCRIPT_HADOOP_YARN_MEM || test ! -f $SED_SCRIPT_HADOOP_YARN_CPUS \
@@ -148,7 +149,7 @@ SPARK_CONF=${HADOOP_PARAFS_HOME}/spark-2.0.1/conf/spark-defaults.conf
 ZOOKEEPER_CONF=${HADOOP_PARAFS_HOME}/zookeeper-3.4.10/conf/zoo.cfg
 ZOOKEEPER_MY_ID=${HADOOP_PARAFS_HOME}/zookeeper-3.4.10/zk-data/myid
 ZOOKEEPER_DATA=${HADOOP_PARAFS_HOME}/zookeeper-3.4.10/zk-data
-ZOOKEEPER_DATA_LOG=${HADOOP_PARAFS_HOME}/zookeeper-3.4.10/zk-log
+ZOOKEEPER_DATA_LOG=${HADOOP_PARAFS_HOME}/zookeeper-3.4.10/zk-logs
 HBASE_REGEION_SERVERS=${HADOOP_PARAFS_HOME}/hbase-1.2.5/conf/regionservers
 HBASE_CONF=${HADOOP_PARAFS_HOME}/hbase-1.2.5/conf/hbase-site.xml
 HIVE_CONF=${HADOOP_PARAFS_HOME}/hive-2.1.1/conf/hive-site.xml

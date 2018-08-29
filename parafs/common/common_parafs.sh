@@ -315,8 +315,8 @@ function __cluster_spark_env() {
         # update_spark_conf parauser 192.168.138.71 parauser \
         #     /opt/wotung/hadoop-parafs/spark-2.0.1/conf/spark-defaults.conf \
         #     /opt/wotung/parafs-install/conf/sed_script/spark/spark_defaults
-        update_spark_env $USER_NAME $ip $USER_NAME $SPARK_ENV $SED_SCRIPT_SPARK_ENV \
-        && update_spark_conf $USER_NAME $ip $USER_NAME $SPARK_CONF $SED_SCRIPT_SPARK_CONF
+        update_spark_env $USER_NAME $ip $USER_NAME $SPARK_ENV $SED_SCRIPT_SPARK_ENV $MASTER_IP\
+        && update_spark_conf $USER_NAME $ip $USER_NAME $SPARK_CONF $SED_SCRIPT_SPARK_CONF 
         if [ $? -ne 0 ] ; then
             echo -e "\033[31m\t\tfailed to config ${HADOOP_YARN_XML} at $ip \033[0m"
             fault_ips="$ip $fault_ips"
@@ -480,17 +480,13 @@ echo "++++++++++++++++++++++++++++++++"
 function __cluster_kafka_broker_id() {
 echo "++++++++++++++++++++++++++++++++"
     echo -e "\t\t __cluster_kafka_broker_id begin"
-    echo "+++++++++ do nothing +++++++"
     local broker_id=0
     for ip in $CLUSTER_IPS; do
-        if [ ${ip} = $CLUSTER_LOCAL_IP ] ; then
-           continue 
+        if [ ${ip} != $MASTER_IP ] ; then
+			update_kafka_broker_id $USER_NAME $ip $USER_NAME $KAFKA_CONF $SED_SCRIPT_KAFKA_BROKER_ID $broker_id
         fi
         broker_id=$(($broker_id+1))
-        #1, 修改本地的 broker_id
-        #2, 复制文件到ip 
     done
-    # 本地配置为broker_id 0 不再复制
 
     echo -e "\t\t __cluster_kafka_broker_id end"
 }

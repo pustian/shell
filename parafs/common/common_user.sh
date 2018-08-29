@@ -104,16 +104,20 @@ function ssh_user_authorize() {
 function copy_authorized_keys(){
 	local master_ip=$1
 	local each_ip=$2
+
 	echo "do copy_authorized_keys to $each_ip"
-	scp ~/.ssh/authorized_keys root@$each_ip:~/.ssh/authorized_keys
+	local temp_file="/tmp/parafs_copy_authorized_keys$each_ip"
+	scp ~/.ssh/authorized_keys root@$each_ip:~/.ssh/authorized_keys >$temp_file
 }
 
 #####复制master机器上的known_hosts到远程的机器
 function copy_known_hosts(){
 	local master_ip=$1
 	local each_ip=$2
+
 	echo "do copy_known_hosts to $each_ip"
-	scp ~/.ssh/known_hosts root@$each_ip:~/.ssh/known_hosts
+	local temp_file="/tmp/parafs_copy_known_hosts$each_ip"
+	scp ~/.ssh/known_hosts root@$each_ip:~/.ssh/known_hosts >$temp_file
 }
 
 function ssh_user_login() {

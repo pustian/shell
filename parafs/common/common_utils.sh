@@ -89,6 +89,31 @@ function dirpath_sudoer_chown() {
     return $?
 }
 
+### 远程执行某个命令
+function remote_excute_cmd() {
+	local local_user=$1
+	local remote_user=$2
+	local remote_ip=$3
+	local remote_cmd=$4
+	
+	local log_file="/tmp/parafs_remote_excute_cmd"
+	echo excute remote command:   "$remote_cmd"  at $remote_ip
+	sudo su - $local_user -c "ssh '$remote_user@$remote_ip' '$remote_cmd'" >>$log_file
+}
+
+### 同步文件，单次
+function sync_file() {
+	local local_user=$1
+	local remote_user=$2
+	local remote_ip=$3
+	local file_name=$4
+
+	local log_file="/tmp/parafs_sync_file"
+	echo synchronize file: $file_name
+	scp $file_name $remote_user@$remote_ip:$file_name >>$log_file
+
+}
+
 ###===========================================================================
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 UTILS_BASH_NAME=common_utils.sh
