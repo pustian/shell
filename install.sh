@@ -106,8 +106,8 @@ while [ x"${input}" != x"E" ]; do
             local_dist_rpm
             cluster_hadoop_dist
             local_dist_hadoop
-            cluster_yum
-            cluster_pip
+            #cluster_yum
+            #cluster_pip
             cluster_rpm_install
 #            ## cluster_sudoer_chown
             echo -e "\033[40;32m\tdist and install done \033[0m"
@@ -122,8 +122,8 @@ while [ x"${input}" != x"E" ]; do
             ;;
         I|i)
             echo -e "\033[40;34m\tinstallation begin\033[0m"
-            cluster_yum
-            cluster_pip
+            #cluster_yum
+            #cluster_pip
             cluster_rpm_install
             ##cluster_sudoer_chown
             echo -e "\033[40;32m\tinstallation done \033[0m"
