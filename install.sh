@@ -88,8 +88,8 @@ while [ x"${input}" != x"E" ]; do
             cluster_root_authorize
             #集群配置/etc/hostname, /etc/hosts。
             cluster_config_network
-		    #集群配置长名、短名的免密,这一步要在cluster_config_network之后
-		    cluster_alias_authorize
+            #集群配置长名、短名的免密,这一步要在cluster_config_network之后
+            cluster_alias_authorize
             #本地压缩parafs-install/生成压缩包，并生成md5 
             local_script_zip
 #            ### 远程机器需要同样存在目录 `dirname $SCRIPT_BASE_DIR`,即/opt/wotung
@@ -99,7 +99,7 @@ while [ x"${input}" != x"E" ]; do
 #            # 删除 passwd user_passwd 文件 
             echo -e "\033[40;32m\tpre-installation done \033[0m"
             ;;
-		#此选项没有在提示中显示，执行U选项相当于执行D和I
+        #此选项没有在提示中显示，执行U选项相当于执行D和I
         U|u) 
             echo -e "\033[40;32m\tdist and install begin \033[0m"
             cluster_dist_rpm
@@ -132,21 +132,21 @@ while [ x"${input}" != x"E" ]; do
             echo -e "\033[40;32m\tconfig begin \033[0m"
             # 集群同步.bashrc，需要确保/root/.bashrc存在
             cluster_config_bashrc
-			# 集群操作，给hadoop-system的bin/和sbin/ +x
-			cluster_chmod
+            # 集群操作，给hadoop-system的bin/和sbin/ +x
+            cluster_chmod
             # 集群同步hadoop，注意MASTER_IP在conf/MISC_config中配置
             cluster_update_hadoop
             # 集群同步spark
             cluster_update_spark
-			# 集群同步zookeeper
+            # 集群同步zookeeper
             cluster_update_zookeeper
-			# 集群同步hbase
+            # 集群同步hbase
             cluster_update_hbase
-			# 集群同步hive
+            # 集群同步hive
             cluster_update_hive
-			# 集群同步azkaban
+            # 集群同步azkaban
             cluster_update_azkaban
-			# 集群同步kafka
+            # 集群同步kafka
             cluster_update_kafka
             echo -e "\033[40;32m\tconfig done \033[0m"
             ;;

@@ -62,5 +62,7 @@ export PATH=$MAVEN_HOME/bin:$PATH
 # hypertable
 export PATH=$PATH:/opt/hypertable/current/bin
 
+# show the entire long name
+PS1='[\u@\H \W]$'
 ######  parafs_config_path_end 
 ###############################################################################
