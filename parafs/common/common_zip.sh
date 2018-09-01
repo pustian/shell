@@ -69,9 +69,15 @@ function file_dist() {
     # local remote_file=$7
     
     local temp_file="/tmp/parafs_file_dist${local_file}$authoriz_ip"
-    echo "do dist $local_file to $authoriz_ip"
-    sudo su - $local_user -c "scp '${local_file_dir}/$local_file' '$authorize_user@$authoriz_ip:$remote_path'" >$temp_file
+    #if authoriz_ip is $CLUSTER_LOCAL_IP, execute 'cp'
+    if [[ $authoriz_ip = $CLUSTER_LOCAL_IP ]]; then
+        echo "do local file dist"
+        sudo su - $local_user -c "cp '${local_file_dir}/$local_file' '$remote_path'" >$temp_file
 
+    else
+        echo "do dist $local_file to $authoriz_ip"
+        sudo su - $local_user -c "scp '${local_file_dir}/$local_file' '$authorize_user@$authoriz_ip:$remote_path'" >$temp_file
+    fi
     return $?
 }
 
