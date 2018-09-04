@@ -25,8 +25,8 @@ function usage() {
 #    echo -e "\033[40;35m##                                                                      ##\033[0m" ; 
     echo -e "\033[40;37mpre-check -----------------------------------------------------------------[P]\033[0m" ;
     echo -e "\033[40;37mpre-installation-----------------------------------------------------------[R]\033[0m" ;
-    echo -e "\033[40;37mpackage-dist ------------------------------------------------------------- [D]\033[0m" ;
     echo -e "\033[40;37minstallation-------------------------------------------------------------- [I]\033[0m" ;
+    echo -e "\033[40;37mpackage-dist ------------------------------------------------------------- [D]\033[0m" ;
     echo -e "\033[40;37mconfig-------------------------------------------------------------------- [C]\033[0m" ;
     echo -e "\033[40;37mafter-check----------------------------------------------------------------[A]\033[0m" ;
     echo -e "\033[40;37mExit ----------------------------------------------------------------------[E]\033[0m" ;
@@ -82,21 +82,23 @@ while [ x"${input}" != x"E" ]; do
             ;;
         R|r) 
             echo -e "\033[40;34m\tpre-installation begin\033[0m"
-#           ## cluster_create_user
-#           ## cluster_user_authorize
+            ## cluster_create_user
+            ## cluster_user_authorize
             #集群root用户免密，注意先配置conf/network和conf/passwd
             cluster_root_authorize
             #集群配置/etc/hostname, /etc/hosts。
             cluster_config_network
             #集群配置长名、短名的免密,这一步要在cluster_config_network之后
             cluster_alias_authorize
+            #关闭防火墙
+            cluster_close_firewall #TODO
             #本地压缩parafs-install/生成压缩包，并生成md5 
             local_script_zip
-#            ### 远程机器需要同样存在目录 `dirname $SCRIPT_BASE_DIR`,即/opt/wotung
+             ### 远程机器需要同样存在目录 `dirname $SCRIPT_BASE_DIR`,即/opt/wotung
             #集群分发压缩包、检查md5、解压缩
             cluster_script_dist
-#            ## cluster_root_chown
-#            # 删除 passwd user_passwd 文件 
+             ## cluster_root_chown
+             # 删除 passwd user_passwd 文件 
             echo -e "\033[40;32m\tpre-installation done \033[0m"
             ;;
         #此选项没有在提示中显示，执行U选项相当于执行D和I
@@ -104,26 +106,27 @@ while [ x"${input}" != x"E" ]; do
             echo -e "\033[40;32m\tdist and install begin \033[0m"
             cluster_dist_rpm
             local_dist_rpm
+            cluster_yum
+            cluster_pip
+            cluster_rpm_install
+	    ## hadoop-system
             cluster_hadoop_dist
             local_dist_hadoop
-            #cluster_yum
-            #cluster_pip
-            cluster_rpm_install
 #            ## cluster_sudoer_chown
             echo -e "\033[40;32m\tdist and install done \033[0m"
             ;;
         D|d)
             echo -e "\033[40;34m\tdistribute begin\033[0m"
-            local_dist_rpm
-            cluster_dist_rpm
             local_dist_hadoop
             cluster_hadoop_dist
             echo -e "\033[40;34m\tdistribute end\033[0m"
             ;;
         I|i)
             echo -e "\033[40;34m\tinstallation begin\033[0m"
-            #cluster_yum
-            #cluster_pip
+            local_dist_rpm
+            cluster_dist_rpm
+            cluster_yum
+            cluster_pip
             cluster_rpm_install
             ##cluster_sudoer_chown
             echo -e "\033[40;32m\tinstallation done \033[0m"
