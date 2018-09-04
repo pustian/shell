@@ -155,7 +155,8 @@ while [ x"${input}" != x"E" ]; do
             ;;
         A|a) 
             echo -e "\033[40;34m\tafter-check begin\033[0m"
-            
+            # 删除conf/passwd、/opt/wotung下的各类临时文件
+            cluster_delete
             echo -e "\033[40;32m\tafter-check done \033[0m"
             ;;
         E|e|Q|q|exit) echo "exit"

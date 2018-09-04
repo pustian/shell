@@ -61,6 +61,23 @@ function cluster_update_parafs(){
     cluster_cmd "$cmd_update_llog"
 }
 
+###删除conf/passwd以及/opt/wotung下的多余文件
+function cluster_delete(){
+    local f_passwd="${SCRIPT_BASE_DIR}/conf/passwd"
+    local f_hadoop_tar="${INSTALL_DIR}/hadoop-system.tar.gz"
+    local f_all_tar="${INSTALL_DIR}/install_all.tar.gz"
+    local f_script_tar="${INSTALL_DIR}/parafs-install.tar.gz"
+    local f_script_md5="${INSTALL_DIR}/parafs-install.tar.gz.md5sum"
+    
+    local name_parafs_rpm=`grep '^parafs_rpm' $SCRIPT_BASE_DIR/conf/misc_config | awk -F '=' '{print $2}'`
+    local name_llog_rpm=`grep '^llog_rpm' $SCRIPT_BASE_DIR/conf/misc_config | awk -F '=' '{print $2}'`
+    local f_parafs_rpm="${INSTALL_DIR}/${name_parafs_rpm}"
+    local f_llog_rpm="${INSTALL_DIR}/${name_llog_rpm}"
+
+    local rm_cmd="rm -f $f_passwd $f_hadoop_tar $f_all_tar $f_script_tar $f_script_md5 $f_parafs_rpm $f_llog_rpm"
+    cluster_cmd "$rm_cmd"
+}
+
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 TOOLS_BASH_NAME=parafs_tools.sh
 if [ -z ${VARIABLE_BASH_NAME} ] ; then 
