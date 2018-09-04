@@ -90,6 +90,8 @@ while [ x"${input}" != x"E" ]; do
             cluster_config_network
             #集群配置长名、短名的免密,这一步要在cluster_config_network之后
             cluster_alias_authorize
+            #关闭防火墙
+            cluster_close_firewall #TODO
             #本地压缩parafs-install/生成压缩包，并生成md5 
             local_script_zip
              ### 远程机器需要同样存在目录 `dirname $SCRIPT_BASE_DIR`,即/opt/wotung
@@ -104,8 +106,8 @@ while [ x"${input}" != x"E" ]; do
             echo -e "\033[40;32m\tdist and install begin \033[0m"
             cluster_dist_rpm
             local_dist_rpm
-            #cluster_yum
-            #cluster_pip
+            cluster_yum
+            cluster_pip
             cluster_rpm_install
 	    ## hadoop-system
             cluster_hadoop_dist
@@ -123,8 +125,8 @@ while [ x"${input}" != x"E" ]; do
             echo -e "\033[40;34m\tinstallation begin\033[0m"
             local_dist_rpm
             cluster_dist_rpm
-            #cluster_yum
-            #cluster_pip
+            cluster_yum
+            cluster_pip
             cluster_rpm_install
             ##cluster_sudoer_chown
             echo -e "\033[40;32m\tinstallation done \033[0m"

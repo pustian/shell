@@ -116,6 +116,19 @@ function cluster_alias_authorize(){
 	echo -e "\t\t cluster_alias_authorize end"
 }
 
+### 
+function cluster_close_firewall(){
+    echo -e "\t\t cluster_close_firewall start"
+
+    #执行两条命令
+    cmd_disable="systemctl disable firewalld"
+    cmd_stop="systemctl disable firewalld"
+    cluster_cmd #TODO
+    #本地执行sed，复制到远程
+    
+    echo -e "\t\t cluster_close_firewall end"
+}
+
 ###### 用户hostname alias 登陆
 function cluster_each_root_login() {
     local filename=$PASSWD_CONFIG_FILE
