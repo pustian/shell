@@ -82,8 +82,8 @@ while [ x"${input}" != x"E" ]; do
             ;;
         R|r) 
             echo -e "\033[40;34m\tpre-installation begin\033[0m"
-            ## cluster_create_user
-            ## cluster_user_authorize
+            # cluster_create_user
+            # cluster_user_authorize
             #集群root用户免密，注意先配置conf/network和conf/passwd
             cluster_root_authorize
             #集群配置/etc/hostname, /etc/hosts。
@@ -91,7 +91,7 @@ while [ x"${input}" != x"E" ]; do
             #集群配置长名、短名的免密,这一步要在cluster_config_network之后
             cluster_alias_authorize
             #关闭防火墙
-            cluster_close_firewall #TODO
+            cluster_close_firewall
             #本地压缩parafs-install/生成压缩包，并生成md5 
             local_script_zip
              ### 远程机器需要同样存在目录 `dirname $SCRIPT_BASE_DIR`,即/opt/wotung

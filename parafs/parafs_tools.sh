@@ -64,9 +64,9 @@ function cluster_update_parafs(){
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 TOOLS_BASH_NAME=parafs_tools.sh
 if [ -z ${VARIABLE_BASH_NAME} ] ; then 
-    . ../variable.sh
+    . ${SCRIPT_BASE_DIR}/variable.sh
 fi
-. ./common/common_utils.sh
+. ${SCRIPT_BASE_DIR}/parafs/common/common_utils.sh
 ###++++++++++++++++++++++++      main end         ++++++++++++++++++++++++++###
 # ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
 #cluster_cmd "touch /tmp/hello_111"
@@ -74,5 +74,5 @@ fi
 #touch /tmp/hello_111
 #cluster_sync_file /tmp/hello_111
 #cluster_cmd "rm -f /tmp/hello_111"
-cluster_update_parafs
+#cluster_update_parafs
 # ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

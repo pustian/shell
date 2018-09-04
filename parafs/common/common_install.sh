@@ -15,7 +15,7 @@ function yum_install() {
     echo "do yum at $authorize_ip"
     local temp_file="/tmp/parafs_yum_install$authorize_ip"
     local remote_command="yum -y install ntp ntpdate net-tools redhat-lsb gcc libffi-devel \
-        python python-devel openssl-devel numactl epel-release && yum -y install python-pip "
+        python python-devel openssl-devel numactl epel-release rsync && yum -y install python-pip "
     sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" >$temp_file
     return $?
 }

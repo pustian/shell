@@ -121,10 +121,14 @@ function cluster_close_firewall(){
     echo -e "\t\t cluster_close_firewall start"
 
     #执行两条命令
-    cmd_disable="systemctl disable firewalld"
-    cmd_stop="systemctl disable firewalld"
-    cluster_cmd #TODO
+    local cmd_disable="systemctl disable firewalld"
+    local cmd_stop="systemctl stop firewalld"
+    cluster_cmd "$cmd_disable"
+    cluster_cmd "$cmd_stop"
     #本地执行sed，复制到远程
+    local firewall_file="/etc/selinux/config"
+    config_SELINUX
+    cluster_sync_file $firewall_file 
     
     echo -e "\t\t cluster_close_firewall end"
 }
@@ -221,6 +225,9 @@ fi
 if [ -z ${COMMON_BASH_NAME} ] ; then
     . ${SCRIPT_BASE_DIR}/parafs/common/common_parafs.sh
 fi
+
+# use the parafs_tools.sh
+. ${SCRIPT_BASE_DIR}/parafs/parafs_tools.sh
 ###++++++++++++++++++++++++      main end         ++++++++++++++++++++++++++###
 # ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
 # install_usage

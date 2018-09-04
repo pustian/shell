@@ -575,6 +575,10 @@ function update_kafka_broker_id() {
 
 }
 
+function config_SELINUX(){
+    sed -i '7,7c SELINUX=disabled' /etc/selinux/config 
+}
+
 # ###### 远程 更改ycsb配置
 # function update_ycsb_config() {
 #     echo $?
