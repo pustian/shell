@@ -57,12 +57,6 @@ fi
 #    . $SCRIPT_BASE_DIR/parafs/parafs_check.sh
 #fi
 
-EXPECT=`which expect`
-if [ $? -ne 0 ] ; then
-    echo -e "\033[40;31m\texpect must support, please run 'yum install expect'\033[0m"
-    exit 1
-fi
-
 input="?"
 while [ x"${input}" != x"E" ]; do 
     usage
@@ -73,7 +67,7 @@ while [ x"${input}" != x"E" ]; do
             #检查本地安装文件是否齐全
             check_local_install_files
             #检查各IP是否能够ping通
-            check_ips
+            check_address
             #在root免密的情况下会直接通过
             cluster_check_passwd 
             #检查/opt/wotung/node/0 目录 
@@ -84,17 +78,21 @@ while [ x"${input}" != x"E" ]; do
             echo -e "\033[40;34m\tpre-installation begin\033[0m"
             # cluster_create_user
             # cluster_user_authorize
+            #本地安装expect，免密需要用到。
+            local_install_expect
             #集群root用户免密，注意先配置conf/network和conf/passwd
             cluster_root_authorize
             #集群配置/etc/hostname, /etc/hosts。
             cluster_config_network
             #集群配置长名、短名的免密,这一步要在cluster_config_network之后
             cluster_alias_authorize
+            #检查集群internet能否连通
+            cluster_check_internet
             #关闭防火墙
             cluster_close_firewall
             #本地压缩parafs-install/生成压缩包，并生成md5 
             local_script_zip
-             ### 远程机器需要同样存在目录 `dirname $SCRIPT_BASE_DIR`,即/opt/wotung
+            ### 远程机器需要同样存在目录 `dirname $SCRIPT_BASE_DIR`,即/opt/wotung
             #集群分发压缩包、检查md5、解压缩
             cluster_script_dist
              ## cluster_root_chown
@@ -159,6 +157,11 @@ while [ x"${input}" != x"E" ]; do
             cluster_delete
             echo -e "\033[40;32m\tafter-check done \033[0m"
             ;;
+        #TODO
+        t)
+            
+            ;;
+        #TODO
         E|e|Q|q|exit) echo "exit"
             exit 0
             ;;
