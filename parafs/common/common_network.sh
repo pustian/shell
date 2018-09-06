@@ -28,21 +28,35 @@ function config_hostname() {
     local command_update_hostname="echo $set_hostname |tee /etc/hostname "
     local remote_hostname="$command_condition || $command_set_hostname \
         && $command_bak_hostname && $command_update_hostname "
-    echo "do config_hostname at $authorize_ip"
+    echo -e "\t\tdo config_hostname at $authorize_ip"
     sudo su - $local_user  -c "ssh '$authorize_user@$authorize_ip' '$remote_hostname'">$temp_file 
     #ssh "$authorize_user@$authorize_ip" "$remote_hostname" > $temp_file  
     return $?
 } 
 
-###### 远程设置hosts
+###### 增加comment
 ### local_user
 ### authorize_ip
 ### authorize_user
-### ip
-### hostname
-### alias
+### comment
 ### 0 运行正常
 ### ret 0 成功配置 1 配置失败
+function config_hosts_comment() {
+    local local_user=$1
+    local authorize_ip=$2
+    local authorize_user=$3
+    local comment=$4
+
+    local temp_file="/tmp/parafs_config_hosts_comment$authorize_ip"
+    local command_condition="cat /etc/hosts |grep \"^$comment\""
+    local command_update_hosts="echo \"$comment\" |tee -a /etc/hosts"
+    local remote_hosts="$command_condition || $command_update_hosts"
+    echo -e "\t\tdo config_hosts_comment at $authorize_ip for $ip" 
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_hosts'" >$temp_file
+
+    return $?
+}
+
 function config_hosts() {
     local local_user=$1
     local authorize_ip=$2
@@ -53,10 +67,9 @@ function config_hosts() {
 
     local temp_file="/tmp/parafs_config_hosts$authorize_ip$hostname"
     local command_condition="cat /etc/hosts |grep -v '^#' |grep $ip |grep $hostname |grep $alias"
-    local command_bak_hosts="cp /etc/hosts /etc/hosts.bak_$alias"
     local command_update_hosts="echo '$ip $hostname $alias' |tee -a /etc/hosts"
-    local remote_hosts="$command_condition || $command_bak_hosts && $command_update_hosts"
-    echo "do config_hosts at $authorize_ip for $ip"
+    local remote_hosts="$command_condition || $command_update_hosts"
+    echo -e "\t\tdo config_hosts at $authorize_ip for $ip"
     sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_hosts'" >$temp_file
 #    ssh "$authorize_user@$authorize_ip" "$remote_hosts" >$temp_file 
 

@@ -13,6 +13,7 @@ function dist_usage() {
 
 ####### 分发安装文件到各机器上,llog.rpm parafs.rpm
 function cluster_dist_rpm() {
+    echo -e "cluster_dist_rpm begin"
     
     __cluster_file_dist $SOURCE_DIR $PARAFS_RPM $INSTALL_DIR
 
@@ -22,7 +23,7 @@ function cluster_dist_rpm() {
 
     __cluster_zipfile_check $LLOG_MD5_RPM $SOURCE_DIR $LLOG_RPM $INSTALL_DIR
 
-    echo -e "\t\t cluster_parafs_rpm_dist end"
+    echo -e "cluster_dist_rpm end\n"
 }
  
 #######  分发生态文件到各机器上,

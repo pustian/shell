@@ -60,7 +60,7 @@ function cluster_each_user_login() {
 
 ###### 用户免密   ssh_user_authorize==>common_user.sh
 function cluster_root_authorize() {
-    echo -e "\t\t cluster_user_authorize begin"
+    echo -e "cluster_user_authorize begin"
 
     local filename=$PASSWD_CONFIG_FILE
     local user_name='root'
@@ -90,22 +90,22 @@ function cluster_root_authorize() {
 		copy_known_hosts $master_ip $each_ip
 	done
 
-    echo -e "\t\t cluster_user_authorize end"
+    echo -e "cluster_user_authorize end\n"
 }
 
 ### 这一步要在配置好/etc/hosts和/etc/hostname之后
 function cluster_alias_authorize(){
-	echo -e "\t\t cluster_alias_authorize start"
+	echo -e "cluster_alias_authorize start"
 	
 	local master_ip=$MASTER_IP
 	# 长名、短名的免密
 	ip_longname=`cat ${NETWORK_CONFIG_FILE} |grep -v '^#' | awk -F " " '{print $2}'`
 	ip_shortname=`cat ${NETWORK_CONFIG_FILE} |grep -v '^#' | awk -F " " '{print $3}'`
 	for each_longname in $ip_longname; do
-		$SCRIPT_BASE_DIR/parafs/expect_common/ssh_alias_login.exp $each_longname
+		$SCRIPT_BASE_DIR/parafs/expect_common/ssh_alias_login.exp $each_longname >> /dev/null
 	done
 	for each_shortname in $ip_shortname; do
-		$SCRIPT_BASE_DIR/parafs/expect_common/ssh_alias_login.exp $each_shortname
+		$SCRIPT_BASE_DIR/parafs/expect_common/ssh_alias_login.exp $each_shortname >> /dev/null
 	done
 	
 	#复制authorized_keys和known_hosts 
@@ -113,12 +113,12 @@ function cluster_alias_authorize(){
 		copy_authorized_keys $master_ip $each_ip
 		copy_known_hosts $master_ip $each_ip
 	done
-	echo -e "\t\t cluster_alias_authorize end"
+	echo -e "cluster_alias_authorize end\n"
 }
 
 ### 
 function cluster_close_firewall(){
-    echo -e "\t\t cluster_close_firewall start"
+    echo -e "cluster_close_firewall start"
 
     #执行两条命令
     local cmd_disable="systemctl disable firewalld"
@@ -130,7 +130,7 @@ function cluster_close_firewall(){
     config_SELINUX
     cluster_sync_file $firewall_file 
     
-    echo -e "\t\t cluster_close_firewall end"
+    echo -e "cluster_close_firewall end\n"
 }
 
 ###### 用户hostname alias 登陆
@@ -157,33 +157,32 @@ function cluster_each_root_login() {
 
 ####### 各机器上配置文件,/etc/hosts /etc/hostname
 function cluster_config_network() {
-    echo -e "\t\t cluster_config_network begin"
+    echo -e "cluster_config_network begin"
 
     __cluster_config_hostname
     
     __cluster_config_hosts
 
-    echo -e "\t\t cluster_config_network end"
+    echo -e "cluster_config_network end\n"
 }
 
 ####### 本地压缩parafs-install/生成安装包，并生成md5 
 function local_script_zip() {
-    echo -e "\t\t local_script_zip begin"
+    echo -e "local_script_zip begin"
     zip_dir $USER_NAME $CLUSTER_LOCAL_IP $USER_NAME $SCRIPT_BASE_DIR `dirname $SCRIPT_BASE_DIR`
     zip_file=`basename $SCRIPT_BASE_DIR`.tar.gz
     file_md5sum $USER_NAME $CLUSTER_LOCAL_IP $USER_NAME `dirname $SCRIPT_BASE_DIR`/$zip_file
-    echo -e "\t\t local_script_zip end"
+    echo -e "local_script_zip end\n"
 }
 
 ####### 分发安装脚本到各机器上,方便配置文件同步
 function cluster_script_dist() {
-    echo -e "\t\t cluster_script_dist begin"
+    echo -e "cluster_script_dist begin"
 #    local script_zip_file=parafs-install.tar.gz
 #    local script_zip_md5_file=parafs-install.md5sum
     local script_basedir=`dirname $SCRIPT_BASE_DIR`
     local script_file=`basename $SCRIPT_BASE_DIR`.tar.gz
     local script_md5_file=${script_file}.md5sum
-    echo $script_file $script_basedir $script_md5_file
 
     __cluster_file_dist $script_basedir $script_file $script_basedir
 
@@ -191,7 +190,7 @@ function cluster_script_dist() {
 
     __cluster_unzipfile $script_file $script_basedir
 
-    echo -e "\t\t cluster_script_dist end"
+    echo -e "cluster_script_dist end\n"
 }
 
 ###### 修改/opt/wotung 所有者为parauser
@@ -208,6 +207,20 @@ function cluster_root_chown() {
        # dirpath_root_chown 192.168.1.99 parafs tianpusen /opt/wotung parafs parafs
     done
     echo -e "\t\t cluster_root_chown end" 
+}
+
+###安装expect
+function local_install_expect() {
+    echo -e "local_install_expect begin"
+    
+    `which expect >> /dev/null`
+    if test $? -ne 0 ; then
+        echo -e "\tno expect"
+        rpm -ivh ${SCRIPT_BASE_DIR}/download/expect/*.rpm 
+    else
+        echo -e "\talready has expect"
+    fi
+    echo -e "local_install_expect end\n"
 }
 
 

@@ -16,7 +16,7 @@ function yum_install() {
     local temp_file="/tmp/parafs_yum_install$authorize_ip"
     local remote_command="yum -y install ntp ntpdate net-tools redhat-lsb gcc libffi-devel \
         python python-devel openssl-devel numactl epel-release rsync && yum -y install python-pip "
-    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" >$temp_file
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" | tee -a $temp_file
     return $?
 }
 
@@ -35,7 +35,7 @@ function pip_install() {
         remote_command="pip install -i https://pypi.tuna.tsinghua.edu.cn/simple paramiko"
     fi
 
-    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" >$temp_file
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" | tee -a $temp_file
     return $?
 }
 

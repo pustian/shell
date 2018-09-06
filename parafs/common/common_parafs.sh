@@ -101,7 +101,7 @@ function __cluster_delete_user() {
 ###### common_parafs.sh ==>common_config.sh
 ###### 免密后修改 hostname 
 function __cluster_config_hostname() {
-    echo -e "\t\t __cluster_config_hostname begin"
+    echo -e "\t__cluster_config_hostname begin"
     local fault_ips=""
     for ip in $CLUSTER_IPS; do
         local hostname=`grep $ip $NETWORK_CONFIG_FILE | awk '{print $2}'`
@@ -118,13 +118,14 @@ function __cluster_config_hostname() {
         echo -e "\033[31m\t\tmake sure the file /etc/hostname \033[0m"
         exit 1
     fi
-    echo -e "\t\t __cluster_config_hostname end"
+    echo -e "\t__cluster_config_hostname end"
 }
 ###### 免密后修改 hosts
 function __cluster_config_hosts() {
-    echo -e "\t\t __cluster_config_hosts begin"
+    echo -e "\t__cluster_config_hosts begin"
     local fault_ips=""
     for config_ip in $CLUSTER_IPS; do
+        config_hosts_comment $USER_NAME $config_ip $USER_NAME "#####parafs_config_begin#####"
         for cluster_ip in $CLUSTER_IPS; do
             local ip_hostname_alias=`grep $cluster_ip $NETWORK_CONFIG_FILE `
             local hostname=`echo $ip_hostname_alias | awk '{print $2}'`
@@ -138,12 +139,13 @@ function __cluster_config_hosts() {
                 # break;
             fi
         done 
+        config_hosts_comment $USER_NAME $config_ip $USER_NAME "#####parafs_config_end#####"
     done
     if [ ! -z "$fault_ips" ]; then
         echo -e "\033[31m\t\tmake sure the file /etc/hosts \033[0m"
         exit 1
     fi
-    echo -e "\t\t __cluster_config_hosts end"
+    echo -e "\t__cluster_config_hosts end"
 }
 
 ###############################################################################
@@ -157,7 +159,7 @@ function __cluster_config_hosts() {
 #### dist_zip_file
 #### remote_path
 function __cluster_file_dist() {
-    echo -e "\t\t __cluster_file_dist begin"
+    echo -e "\t __cluster_file_dist begin"
     local dist_file_path=$1
     local dist_zip_file=$2
     local remote_path=$3
@@ -180,7 +182,7 @@ function __cluster_file_dist() {
         echo -e "\033[31m\t\tmake sure the file dist \033[0m"
         exit 1
     fi
-    echo -e "\t\t __cluster_file_dist end"
+    echo -e "\t __cluster_file_dist end"
 }
 
 ###### 免密后检查分发文件的md5
@@ -189,7 +191,7 @@ function __cluster_file_dist() {
 ### zip_file
 ### zip_md5_file
 function __cluster_zipfile_check() {
-    echo -e "\t\t __cluster_zipfile_check begin"
+    echo -e "\t__cluster_zipfile_check begin"
     local zip_md5_file=$1
     local zip_md5_dir=$2
     local zip_file=$3
@@ -214,7 +216,7 @@ function __cluster_zipfile_check() {
         echo -e "\033[31m\t\tmake sure the file $zip_file at $zip_file_dir \033[0m"
         exit 1
     fi
-    echo -e "\t\t __cluster_zipfile_check end"
+    echo -e "\t__cluster_zipfile_check end"
 }
 
 ###### 免密后检查分发文件解压
@@ -223,7 +225,7 @@ function __cluster_zipfile_check() {
 ### zip_file $1
 ### zip_file_dir $2
 function __cluster_unzipfile() {
-    echo -e "\t\t __cluster_unzipfile begin"
+    echo -e "\t__cluster_unzipfile begin"
     local zip_file=$1
     local zip_file_dir=$2
 
@@ -245,7 +247,7 @@ function __cluster_unzipfile() {
         echo -e "\033[31m\t\tmake sure the file $zip_file at $zip_file_dir \033[0m"
         exit 1
     fi
-    echo -e "\t\t __cluster_unzipfile end"
+    echo -e "\t__cluster_unzipfile end"
 }
 
 ###############################################################################

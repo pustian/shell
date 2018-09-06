@@ -110,7 +110,7 @@ HADOOP_MD5_FILE=`grep '^md5_parafs_hadoop_file' $MISC_CONF_FILE | grep -v '^#' |
 PIP_SOURCE=`grep '^pip_source' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
 DEFAULT_USER=`grep 'default_user=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
 DEFAULT_USER_HOME=`grep 'default_user_home=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
-MASTER_IP=`grep '^master_ip' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+MASTER_IP=`grep 'master_ip' $NETWORK_CONFIG_FILE | grep -v '^#' | awk -F " " '{print $1}'`
 test -z "$DEFAULT_USER" && DEFAULT_USER=root
 test -z "$DEFAULT_USER_HOME" && DEFAULT_USER_HOME=/root
 if [ -z $SOURCE_DIR ]|| [ -z $MASTER_IP ] \

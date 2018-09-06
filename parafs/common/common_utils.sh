@@ -10,10 +10,20 @@
 ####+++ return : 1 检查通过 0 ping不通
 function is_conn() {
     local hostname=$1
-    echo "do is_conn at $hostname"
+    echo -e "\tdo is_conn at $hostname"
     pass_pattern="4 packets transmitted, 4 received, 0% packet loss"
     ret=`ping $hostname -c 4 | grep "$pass_pattern"`
     test x = x"$ret" && return 0 || return 1
+}
+
+### 检查互联网能否连通 
+function internet_conn(){
+    local localhost=$1
+    local remotehost=$2
+    echo -e "\tdo internet_conn at $localhost"
+    local cmd_ping="ping $remotehost -c 2"
+    sudo su - 'root' -c "ssh 'root@$localhost' '$cmd_ping'" >/dev/null
+    return $?
 }
 
 ####### 检查该conf/passwd中配置的操作用户 密码正确性,
@@ -26,7 +36,7 @@ function is_passwd_ok() {
     local userhome=$4
 
     local temp_file="/tmp/parafs_${usernamer}_passwd_$ip"
-    echo "do is_passwd_ok at $ip"
+    echo -e "\tdo is_passwd_ok at $ip"
 
     $SSH_EXP_LOGIN $ip $username $userpasswd $userhome >$temp_file
     cat $temp_file| grep "login $ip successfully"  >/dev/null
@@ -61,7 +71,7 @@ function is_parafs_node_ok() {
     local node_dir="/opt/wotung/node/0"
     local format="ext4"
     local _30G=30831523
-    echo "do is_parafs_node_ok at $ip"
+    echo -e "\tdo is_parafs_node_ok at $ip"
     $SSH_REMOTE_EXEC "$ip" "$user" "$passwd" "$dfnode" >$temp_file
     
     local capcity=`cat $temp_file |grep ${node_dir} |grep ${format} |awk '{print $3}' `
@@ -97,7 +107,7 @@ function remote_excute_cmd() {
 	local remote_cmd=$4
 	
 	local log_file="/tmp/parafs_remote_excute_cmd"
-	echo excute remote command:   "$remote_cmd"  at $remote_ip
+	echo -e "\t\texcute remote command:   \"$remote_cmd\"  at $remote_ip"
 	sudo su - $local_user -c "ssh '$remote_user@$remote_ip' '$remote_cmd'" >>$log_file
 }
 
@@ -109,7 +119,7 @@ function sync_file() {
 	local file_name=$4
 
 	local log_file="/tmp/parafs_sync_file"
-	echo synchronize file: $file_name to $remote_ip
+	echo -e "\t\tsynchronize file: $file_name to $remote_ip"
 	scp $file_name $remote_user@$remote_ip:$file_name >>$log_file
 
 }
