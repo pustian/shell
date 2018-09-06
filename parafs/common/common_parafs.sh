@@ -159,7 +159,7 @@ function __cluster_config_hosts() {
 #### dist_zip_file
 #### remote_path
 function __cluster_file_dist() {
-    echo -e "\t __cluster_file_dist begin"
+    echo -e "\t__cluster_file_dist begin"
     local dist_file_path=$1
     local dist_zip_file=$2
     local remote_path=$3
@@ -182,7 +182,7 @@ function __cluster_file_dist() {
         echo -e "\033[31m\t\tmake sure the file dist \033[0m"
         exit 1
     fi
-    echo -e "\t __cluster_file_dist end"
+    echo -e "\t__cluster_file_dist end"
 }
 
 ###### 免密后检查分发文件的md5

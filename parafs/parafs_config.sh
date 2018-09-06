@@ -18,7 +18,7 @@ function install_usage() {
 
 ###### 免密，且文件script 分发后bashrc配置
 function cluster_config_bashrc() {
-    echo -e "\t\t cluster_config_bashrc begin"
+    echo -e "cluster_config_bashrc begin"
     local fault_ips=""
     for ip in $CLUSTER_IPS; do
         update_bashrc $USER_NAME $ip $USER_NAME $USER_HOME $BASHRC_CONFIG_FILE
@@ -32,12 +32,12 @@ function cluster_config_bashrc() {
         echo -e "\033[31m\t\tmake sure bashrc \033[0m"
     #    exit 1
     fi
-    echo -e "\t\t cluster_config_bashrc end"
+    echo -e "cluster_config_bashrc end\n"
 }
 
 ###### 赋予hadoop-system下的bin/和sbin/ 执行权限
 function cluster_chmod() {
-	echo -e "\t\t cluster_chmod_begin"
+	echo -e "cluster_chmod_begin"
 	bin_cmd="find /opt/wotung/hadoop-system -name bin |xargs chmod -R +x"
 	sbin_cmd="find /opt/wotung/hadoop-system -name sbin |xargs chmod -R +x"
 	local_user="root"
@@ -47,73 +47,73 @@ function cluster_chmod() {
 		remote_excute_cmd $local_user $remote_user $each_ip "$sbin_cmd"
 
 	done
-	echo -e "\t\t cluster_chmod_end"
+	echo -e "cluster_chmod_end\n"
 }
 
 function cluster_update_hadoop() {
-    echo -e "\t\t cluster_update_hadoop begin"
+    echo -e "cluster_update_hadoop begin"
 
     __cluster_hadoop_slave
     
     __cluster_hadoop_xml
 
-    echo -e "\t\t cluster_update_hadoop end"
+    echo -e "cluster_update_hadoop end\n"
 }
 
 function cluster_update_spark() {
-    echo -e "\t\t cluster_update_spark begin"
+    echo -e "cluster_update_spark begin"
     
     __cluster_spark_slave
     
     __cluster_spark_env
 
-    echo -e "\t\t cluster_update_spark end"
+    echo -e "cluster_update_spark end\n"
 }
 
 function cluster_update_zookeeper () {
-    echo -e "\t\t cluster_update_zookeeper begin"
+    echo -e "cluster_update_zookeeper begin"
 
     __cluster_zookeeper_conf
 
     __cluster_zookeeper_myid
     
-    echo -e "\t\t cluster_update_zookeeper end"
+    echo -e "cluster_update_zookeeper end\n"
 }
 
 function cluster_update_hbase() {
-    echo -e "\t\t cluster_update_hbase begin"
+    echo -e "cluster_update_hbase begin"
     
     __cluster_hbase_regeionservers
 
     __cluster_hbase_xml
 
-    echo -e "\t\t cluster_update_hbase end"
+    echo -e "cluster_update_hbase end\n"
 }
 
 function cluster_update_hive() {
-    echo -e "\t\t cluster_update_hive begin"
+    echo -e "cluster_update_hive begin"
 
     __cluster_hive_xml
     
-    echo -e "\t\t cluster_update_hive end"
+    echo -e "cluster_update_hive end\n"
 }
 
 function cluster_update_azkaban() {
-    echo -e "\t\t cluster_update_azkaban begin"
+    echo -e "cluster_update_azkaban begin"
     
     __cluster_azkaban_properties
 
-    echo -e "\t\t cluster_update_azkaban end"
+    echo -e "cluster_update_azkaban end\n"
 }
 
 function cluster_update_kafka() {
-    echo -e "\t\t cluster_update_kafka begin"
+    echo -e "cluster_update_kafka begin"
 
     __cluster_kafka_connect
 
     __cluster_kafka_broker_id
 
-    echo -e "\t\t cluster_update_kafka end"
+    echo -e "cluster_update_kafka end\n"
 }
 # ####### ParafsInstallation 
 # ####+++ 逐台安装parafs和日志

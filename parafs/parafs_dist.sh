@@ -28,7 +28,7 @@ function cluster_dist_rpm() {
  
 #######  分发生态文件到各机器上,
 function cluster_hadoop_dist() {
-    echo -e "\t\t cluster_hadoop_dist begin"
+    echo -e "cluster_hadoop_dist begin"
 
     __cluster_file_dist $SOURCE_DIR $HADOOP_FILE $INSTALL_DIR
 
@@ -36,11 +36,11 @@ function cluster_hadoop_dist() {
 
     __cluster_unzipfile $HADOOP_FILE $INSTALL_DIR
     
-    echo -e "\t\t cluster_hadoop_dist end"
+    echo -e "cluster_hadoop_dist end\n"
 }
 
 function local_dist_rpm() {
-    echo -e "\t\t local_dist_rpm begin"
+    echo -e "local_dist_rpm begin"
     file_dist $USER_NAME ${CLUSTER_LOCAL_IP} ${USER_NAME} $SOURCE_DIR $PARAFS_RPM $INSTALL_DIR
     local md5=`cat $SOURCE_DIR/$PARAFS_MD5_RPM |awk '{print $1}'`
     is_zip_file_ok $USER_NAME ${CLUSTER_LOCAL_IP} ${USER_NAME} $md5 $INSTALL_DIR $PARAFS_RPM 
@@ -48,18 +48,18 @@ function local_dist_rpm() {
     file_dist $USER_NAME ${CLUSTER_LOCAL_IP} ${USER_NAME} $SOURCE_DIR $LLOG_RPM $INSTALL_DIR
     local md5=`cat $SOURCE_DIR/$LLOG_MD5_RPM |awk '{print $1}'`
     is_zip_file_ok $USER_NAME ${CLUSTER_LOCAL_IP} ${USER_NAME} $md5 $INSTALL_DIR $LLOG_RPM 
-    echo -e "\t\t local_dist_rpm end"
+    echo -e "local_dist_rpm end\n"
 }
 
 function local_dist_hadoop() {
-    echo -e "\t\t local_dist_hadoop begin"
+    echo -e "local_dist_hadoop begin"
     file_dist $USER_NAME ${CLUSTER_LOCAL_IP} ${USER_NAME} $SOURCE_DIR $HADOOP_FILE $INSTALL_DIR
 
     local md5=`cat $SOURCE_DIR/$PARAFS_MD5_RPM |awk '{print $1}'`
     is_zip_file_ok $USER_NAME ${CLUSTER_LOCAL_IP} ${USER_NAME} $md5 $INSTALL_DIR $HADOOP_FILE 
 
     unzip_file $USER_NAME $CLUSTER_LOCAL_IP $USER_NAME $INSTALL_DIR $HADOOP_FILE 
-    echo -e "\t\t local_dist_hadoop end"
+    echo -e "local_dist_hadoop end\n"
 }
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 DIST_BASH_NAME=parafs_dist.sh

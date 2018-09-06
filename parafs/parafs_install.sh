@@ -13,7 +13,7 @@ function install_usage() {
 
 ###### 免密后yum 安装
 function cluster_yum() {
-    echo -e "\t\t cluster_yum begin"
+    echo -e "cluster_yum begin"
     local fault_ips=""
     for ip in $CLUSTER_IPS; do
         yum_install $USER_NAME $ip $USER_NAME
@@ -23,12 +23,12 @@ function cluster_yum() {
             # break;
         fi
     done
-    echo -e "\t\t cluster_yum end"
+    echo -e "cluster_yum end\n"
 }
 
 ###### 免密后pip 安装
 function cluster_pip() {
-    echo -e "\t\t cluster_pip begin"
+    echo -e "cluster_pip begin"
     local fault_ips=""
     for ip in $CLUSTER_IPS; do
         pip_install $USER_NAME $ip $USER_NAME
@@ -42,17 +42,17 @@ function cluster_pip() {
         echo -e "\033[31m\t\tmake sure pip install paramiko \033[0m"
     #    exit 1
     fi
-    echo -e "\t\t cluster_pip end"
+    echo -e "cluster_pip end\n"
 }
 
 ###### 免密后rpm 安装
 function cluster_rpm_install() {
-    echo -e "\t\t __cluster_install_rpm begin"
+    echo -e "__cluster_install_rpm begin"
     for ip in $CLUSTER_IPS; do
         rpm_install $USER_NAME $ip $USER_NAME ${INSTALL_DIR}/$PARAFS_RPM
         rpm_install $USER_NAME $ip $USER_NAME ${INSTALL_DIR}/$LLOG_RPM
     done
-    echo -e "\t\t __cluster_install_rpm end"
+    echo -e "__cluster_install_rpm end\n"
 }
 
 ###### 免密，修改解压后的hadoop-parafs 用户

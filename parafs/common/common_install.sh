@@ -12,7 +12,7 @@ function yum_install() {
     local authorize_ip=$2
     local authorize_user=$3
 
-    echo "do yum at $authorize_ip"
+    echo -e "\t\tdo yum at $authorize_ip"
     local temp_file="/tmp/parafs_yum_install$authorize_ip"
     local remote_command="yum -y install ntp ntpdate net-tools redhat-lsb gcc libffi-devel \
         python python-devel openssl-devel numactl epel-release rsync && yum -y install python-pip "
@@ -28,7 +28,7 @@ function pip_install() {
     local authorize_user=$3
     local pip_source=$4
 
-    echo "do pip at $authorize_ip"
+    echo -e "\t\tdo pip at $authorize_ip"
     local temp_file="/tmp/parafs_pip_install$authorize_ip"
     local remote_command="pip install paramiko "
     if [ -z "$pip_source" ] ; then
@@ -46,7 +46,7 @@ function rpm_install() {
     local authorize_user=$3
     local rpm_file=$4
 
-    echo "do rpm $rpm_file at $authorize_ip"
+    echo -e "\t\tdo rpm $rpm_file at $authorize_ip"
     local temp_file="/tmp/parafs_rpm_install$authorize_ip"
     local remote_command="rpm -ivh --force $rpm_file "
 

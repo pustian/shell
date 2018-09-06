@@ -14,7 +14,7 @@ function update_bashrc() {
     local authorize_home=$4
     local bashrc_file=$5
 
-    echo "do update_bashrc at $authorize_ip"
+    echo -e "\tdo update_bashrc at $authorize_ip"
     local temp_file="/tmp/parafs_update_bashrc$authorize_ip"
     ### parafs_config_path_begin 需要与 conf/bashrc 中的相同，表示配置文件中的唯一
     local check_bashrc="grep parafs_config_path_begin $authorize_home/.bashrc"

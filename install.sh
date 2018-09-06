@@ -150,6 +150,7 @@ while [ x"${input}" != x"E" ]; do
             # 集群同步kafka
             cluster_update_kafka
             echo -e "\033[40;32m\tconfig done \033[0m"
+            echo -e "\033[1;5;31m\tBash environment has been changed. Reopen a shell tty\033[0m"
             ;;
         A|a) 
             echo -e "\033[40;34m\tafter-check begin\033[0m"
