@@ -124,6 +124,40 @@ function sync_file() {
 
 }
 
+### 输出
+function print_tabs() {
+    tabsize=$1
+    test x$tabsize = x"" && tabsize=0
+    count=0
+    while (( $count < $tabsize )); do
+        echo -n "  "
+        let "count++"
+    done
+}
+function print_bgblack_fgwhite() {
+    msg=$1
+    tabsize=$2
+    print_tabs $tabsize
+    echo -e "\033[40;37m$msg \033[0m"
+}
+function print_bgblack_fgred() {
+    msg=$1
+    tabsize=$2
+    print_tabs $tabsize
+    echo -e "\033[40;31m$msg \033[0m"
+}
+function print_bgback_fggreen() {
+    msg=$1
+    tabsize=$2
+    print_tabs $tabsize
+    echo -e "\033[40;32m$msg \033[0m"
+}
+function print_bgback_fgblue() {
+    msg=$1
+    tabsize=$2
+    print_tabs $tabsize
+    echo -e "\033[40;34m$msg \033[0m"
+}
 ###===========================================================================
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 UTILS_BASH_NAME=common_utils.sh
