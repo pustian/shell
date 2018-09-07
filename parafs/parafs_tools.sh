@@ -26,7 +26,7 @@ function cluster_cmd() {
 	local local_user="root"
 	local remote_user="root"
 	for each_ip in $CLUSTER_IPS; do
-		remote_excute_cmd $local_user $remote_user $each_ip "$command"
+		remote_excute_cmd $local_user $remote_user $each_ip "$command" 
 	done
 }
 
@@ -84,6 +84,7 @@ if [ -z ${VARIABLE_BASH_NAME} ] ; then
     . ${SCRIPT_BASE_DIR}/variable.sh
 fi
 . ${SCRIPT_BASE_DIR}/parafs/common/common_utils.sh
+tools_output_tabs="2"
 ###++++++++++++++++++++++++      main end         ++++++++++++++++++++++++++###
 # ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
 #cluster_cmd "touch /tmp/hello_111"

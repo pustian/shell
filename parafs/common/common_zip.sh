@@ -21,9 +21,10 @@ function zip_dir() {
 
     if [ -z "$dirpath" ] ||  [ ! -d "$dirpath" ] ; then
         echo "make sure $1 which mast be directory"
+        print_bgblack_fgread "make sure $dirpath mast be directory" $common_zip_output_tabs
         exit 1
     fi
-    echo -e "\tzip_dir $dirpath at $authoriz_ip"
+    print_bgblack_fgwhite "function call ......zip_dir..... $dirpath at $authoriz_ip" $common_zip_output_tabs
     local dirname_dir=`dirname $dirpath`
     local basename_dir=`basename $dirpath`
     local zippedfile=${zippedfile_dir}/${basename_dir}.tar.gz 
@@ -40,7 +41,7 @@ function file_md5sum() {
     local authorize_user=$3
     local zipped_filepath=$4
 
-    echo -e "\tfile_md5sum $zipped_filepath at $authoriz_ip"
+    print_bgblack_fgwhite "function call ......file_md5sum..... $dirpath at $authoriz_ip" $common_zip_output_tabs
     local zipped_dir=`dirname $zipped_filepath`
     local zipped_file=`basename $zipped_filepath`
     local zipped_file_md5sum=${zipped_file}.md5sum
@@ -70,12 +71,10 @@ function file_dist() {
     
     local temp_file="/tmp/parafs_file_dist${local_file}$authoriz_ip"
     #if authoriz_ip is $CLUSTER_LOCAL_IP, execute 'cp'
+    print_bgblack_fgwhite "function call ......file_dist.....  at $authoriz_ip" $common_zip_output_tabs
     if [[ $authoriz_ip = $CLUSTER_LOCAL_IP ]]; then
-        echo -e "\t\tdo local file dist"
         sudo su - $local_user -c "cp '${local_file_dir}/$local_file' '$remote_path'" >$temp_file
-
     else
-        echo -e "\t\tdo dist $local_file to $authoriz_ip"
         sudo su - $local_user -c "scp '${local_file_dir}/$local_file' '$authorize_user@$authoriz_ip:$remote_path'" | tee -a $temp_file
     fi
     return $?
@@ -101,7 +100,7 @@ function is_zip_file_ok() {
     local temp_file="/tmp/parafs_zip_file_ok_$zippedfile$authoriz_ip"
     local remote_zip_md5="md5sum ${zippedfile_dir}/$zippedfile"
 
-    echo -e "\t\tdo is_zip_file_ok at $authoriz_ip"
+    print_bgblack_fgwhite "function call ......is_zip_file_ok.....  at $authoriz_ip" $common_zip_output_tabs
     sudo su - $local_user -c "ssh '$authorize_user@$authoriz_ip' '$remote_zip_md5'" >$temp_file
     grep $md5 $temp_file >/dev/null
     return $?
@@ -124,7 +123,7 @@ function unzip_file() {
     local temp_file="/tmp/parafs_${zip_file}_unzip$ip"
     # local remote_command="tar xzf $zippedfile_dir/$zip_file -C $zippedfile_dir"
     local remote_command="tar xzf $zippedfile_dir/$zip_file -C $zippedfile_dir "
-    echo -e "\t\tdo unzip_file at $authoriz_ip"
+    print_bgblack_fgwhite "function call ......unzip_file.....  at $authoriz_ip" $common_zip_output_tabs
     # echo "sudo su - $local_user -c \"ssh '$authorize_user@$authoriz_ip' '$remote_command'\" >$temp_file"
     sudo su - $local_user -c "ssh '$authorize_user@$authoriz_ip' '$remote_command'" | tee -a $temp_file
     return $?
@@ -132,6 +131,7 @@ function unzip_file() {
 ###===========================================================================
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 ZIP_BASH_NAME=common_zip.sh
+common_zip_output_tabs="3"
 ##################
 ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
 #zip_dir parauser 192.168.138.70 parauser /opt/wotung/parafs-install /opt/wotung
