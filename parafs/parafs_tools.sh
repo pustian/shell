@@ -62,7 +62,7 @@ function cluster_update_parafs(){
 }
 
 ###删除conf/passwd以及/opt/wotung下的多余文件
-function cluster_delete(){
+function cluster_install_clean(){
     local f_passwd="${SCRIPT_BASE_DIR}/conf/passwd"
     local f_hadoop_tar="${INSTALL_DIR}/hadoop-system.tar.gz"
     local f_all_tar="${INSTALL_DIR}/install_all.tar.gz"
