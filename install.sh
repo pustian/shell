@@ -66,6 +66,8 @@ while [ x"${input}" != x"E" ]; do
             echo -e "\033[40;34m\tpre-check begin\033[0m"
             #检查本地安装文件是否齐全
             check_local_install_files
+            #对本地的hadoop_system,llog,parafs进行md5sum
+            local_exec_md5
             #检查各IP是否能够ping通
             check_address
             #在root免密的情况下会直接通过
@@ -158,11 +160,6 @@ while [ x"${input}" != x"E" ]; do
             cluster_delete
             echo -e "\033[40;32m\tafter-check done \033[0m"
             ;;
-        #TODO
-        t)
-            
-            ;;
-        #TODO
         E|e|Q|q|exit) echo "exit"
             exit 0
             ;;
