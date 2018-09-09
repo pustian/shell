@@ -107,11 +107,13 @@ function update_hadoop_yarn_ip() {
         "$filename" "$sed_script_file" "$xml_key" "$xml_value"
     ### 2，同步sed_script 
     print_msg "sudo su - $local_user -c \"scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'\""
-    sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'"  >> $INSTALL_LOG #|tee -a $INSTALL_LOG
+    # sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'"  >> $INSTALL_LOG 
+    sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'"  |tee -a $INSTALL_LOG
     ### 3, 远程执行sed脚本
     local remote_exec_sed_script="sed -i -f $sed_script_file $filename"
     print_msg "sudo su - $local_user -c \"ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'\" "
-    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'"  >> $INSTALL_LOG #|tee -a $INSTALL_LOG
+    # sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'"  >> $INSTALL_LOG 
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'"  |tee -a $INSTALL_LOG
     return $?
 }
 
@@ -144,12 +146,14 @@ function update_hadoop_yarn_mem() {
 
     ### 3,同步到authorize_ip位置
     print_msg "sudo su - $local_user -c \"scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'\""
-    sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'" >> $INSTALL_LOG #|tee -a $INSTALL_LOG
+    # sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'" >> $INSTALL_LOG 
+    sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'" |tee -a $INSTALL_LOG
 
     ### 6, 远程执行sed脚本
     local remote_exec_sed_script="sed -i -f $sed_script_file $filename"
     print_msg "sudo su - $local_user -c \"ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'\" "
-    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'"  >> $INSTALL_LOG #|tee -a $INSTALL_LOG
+    # sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'"  >> $INSTALL_LOG 
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'"  |tee -a $INSTALL_LOG
     return $?
 }
 
@@ -174,12 +178,14 @@ function update_hadoop_yarn_cpu() {
 
     ### 3,同步到authorize_ip位置
     print_msg "sudo su - $local_user -c \"scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'\""
-    sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'"  >> $INSTALL_LOG #|tee -a $INSTALL_LOG
+    # sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'"  >> $INSTALL_LOG 
+    sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'" |tee -a $INSTALL_LOG
 
     ### 4, 远程执行sed脚本
     local remote_exec_sed_script="sed -i -f $sed_script_file $filename"
     print_msg "sudo su - $local_user -c \"ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'\""
-    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$INSTALL_LOG #|tee -a $INSTALL_LOG
+    # sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$INSTALL_LOG 
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" |tee -a $INSTALL_LOG
     return $?
 }
 
@@ -245,12 +251,14 @@ function update_spark_env() {
 
     ### 2,同步到authorize_ip位置
     print_msg "sudo su - $local_user -c \"scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'\""
-    sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'"  >> $INSTALL_LOG #|tee -a $INSTALL_LOG
+    # sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'"  >> $INSTALL_LOG 
+    sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'"  |tee -a $INSTALL_LOG
  
     ### 3, 远程执行sed脚本
     local remote_exec_sed_script="sed -i -f $sed_script_file $filename"
     print_msg "sudo su - $local_user -c \"scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'\""
-    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$INSTALL_LOG #|tee -a $INSTALL_LOG
+    # sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$INSTALL_LOG 
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" |tee -a $INSTALL_LOG
     return $?
 }
 
@@ -374,7 +382,8 @@ function update_zookeeper_myid() {
     print_bgblack_fgwhite "function call ...... update_zookeeper_myid ..... at $authorize_ip " $common_conf_outpus_tabs
     local remote_command="echo ${authorize_ip##*.} |tee $filename"
     print_msg "sudo su -  $local_user -c \"ssh '$authorize_user@$authorize_ip' '$remote_command'\""
-    sudo su -  $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" >>$INSTALL_LOG #|tee -a $INSTALL_LOG
+    # sudo su -  $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" >>$INSTALL_LOG 
+    sudo su -  $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" |tee -a $INSTALL_LOG
     return $?
 }
 
@@ -404,12 +413,14 @@ function update_hbase_config() {
 
     ### 2,同步到authorize_ip位置
     print_msg "sudo su - $local_user -c \"scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'\""
-    sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'"  >> $INSTALL_LOG #|tee -a $INSTALL_LOG
+    # sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'"  >> $INSTALL_LOG 
+    sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'"  |tee -a $INSTALL_LOG
  
     ### 3, 远程执行sed脚本
     local remote_exec_sed_script="sed -i -f $sed_script_file $filename"
     print_msg "sudo su - $local_user -c \"scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'\""
-    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$INSTALL_LOG #|tee -a $INSTALL_LOG
+    # sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$INSTALL_LOG 
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" |tee -a $INSTALL_LOG
     return $?
 }
 
@@ -449,12 +460,14 @@ function update_hive_config() {
 
     ### 2,同步到authorize_ip位置
     print_msg "sudo su - $local_user -c \"scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'\""
-    sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'"  >> $INSTALL_LOG #|tee -a $INSTALL_LOG
+    # sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'"  >> $INSTALL_LOG 
+    sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'"  |tee -a $INSTALL_LOG
  
     ### 3, 远程执行sed脚本
     local remote_exec_sed_script="sed -i -f $sed_script_file $filename"
     print_msg "sudo su - $local_user -c \"scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'\""
-    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$INSTALL_LOG #|tee -a $INSTALL_LOG
+    # sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$INSTALL_LOG 
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" |tee -a $INSTALL_LOG
     return $?
 }
 
@@ -511,12 +524,14 @@ function update_azkaban_config() {
 
     ### 2,同步到authorize_ip位置
     print_msg "sudo su - $local_user -c \"scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'\""
-    sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'"  >> $INSTALL_LOG #|tee -a $INSTALL_LOG
+    # sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'"  >> $INSTALL_LOG 
+    sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'"  |tee -a $INSTALL_LOG
  
     ### 3, 远程执行sed脚本
     local remote_exec_sed_script="sed -i -f $sed_script_file $filename"
     print_msg "sudo su - $local_user -c \"scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'\""
-    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$INSTALL_LOG #|tee -a $INSTALL_LOG
+    # sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$INSTALL_LOG 
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" |tee -a $INSTALL_LOG
 
     return $?
 }
@@ -544,12 +559,14 @@ function update_kafka_config() {
 
     ### 2,同步到authorize_ip位置
     print_msg "sudo su - $local_user -c \"scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'\""
-    sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'"  >> $INSTALL_LOG #|tee -a $INSTALL_LOG
+    # sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'"  >> $INSTALL_LOG 
+    sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'"  |tee -a $INSTALL_LOG
  
     ### 3, 远程执行sed脚本
     local remote_exec_sed_script="sed -i -f $sed_script_file $filename"
     print_msg "sudo su - $local_user -c \"scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'\""
-    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$INSTALL_LOG #|tee -a $INSTALL_LOG
+    # sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$INSTALL_LOG 
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" |tee -a $INSTALL_LOG
 
     return $?
 }
@@ -571,12 +588,14 @@ function update_kafka_broker_id() {
 
     ### 2,同步到authorize_ip位置
     print_msg "sudo su - $local_user -c \"scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'\""
-    sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'"  >> $INSTALL_LOG #|tee -a $INSTALL_LOG
+    # sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'"  >> $INSTALL_LOG 
+    sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'"  |tee -a $INSTALL_LOG
  
     ### 3, 远程执行sed脚本
     local remote_exec_sed_script="sed -i -f $sed_script_file $filename"
     print_msg "sudo su - $local_user -c \"scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'\""
-    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$INSTALL_LOG #|tee -a $INSTALL_LOG
+    # sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$INSTALL_LOG 
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" |tee -a $INSTALL_LOG
 
     return $?
 }

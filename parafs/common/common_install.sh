@@ -16,7 +16,8 @@ function yum_install() {
     local remote_command="yum -y install ntp ntpdate net-tools redhat-lsb gcc libffi-devel \
         python python-devel openssl-devel numactl epel-release rsync && yum -y install python-pip "
     print_bgblack_fgwhite "It will take a few minutes to some dependences by yum" $common_inst_outpus_tabs
-    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'"  >> $INSTALL_LOG #|tee -a $INSTALL_LOG
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'"  |tee -a $INSTALL_LOG
+    # sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'"  >> $INSTALL_LOG 
     return $?
 }
 
@@ -35,7 +36,8 @@ function pip_install() {
     fi
 
     print_msg "sudo su - $local_user -c \"ssh '$authorize_user@$authorize_ip' '$remote_command'\""
-    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" >> $INSTALL_LOG #|tee -a $INSTALL_LOG
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" |tee -a $INSTALL_LOG
+    # sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" >> $INSTALL_LOG 
     return $?
 }
 
@@ -49,7 +51,8 @@ function rpm_install() {
     print_bgblack_fgwhite "function call ......rpm_install..... at $authorize_ip for `basename $rpm_file`" $common_inst_outpus_tabs
     local remote_command="rpm -ivh --force $rpm_file "
     print_msg "sudo su - $local_user -c \"ssh '$authorize_user@$authorize_ip' '$remote_command'\""
-    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" >> $INSTALL_LOG #|tee -a $INSTALL_LOG
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" |tee -a $INSTALL_LOG
+    # sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" >> $INSTALL_LOG 
     return $?
 }
 
