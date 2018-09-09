@@ -140,7 +140,8 @@ function unzip_file() {
         print_msg "sudo su - $local_user -c \"ssh '$authorize_user@$authorize_ip' '$remote_command'\""
         # ret=`sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" `
         # print_result "$ret"
-        sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'"  >> $INSTALL_LOG #|tee -a $INSTALL_LOG
+        # sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'"  >> $INSTALL_LOG 
+        sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'"  |tee -a $INSTALL_LOG
     fi
     return $?
 }
