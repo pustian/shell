@@ -100,16 +100,21 @@ function cluster_alias_authorize(){
 	ip_shortname=`cat ${NETWORK_CONFIG_FILE} |grep -v '^#' | awk -F " " '{print $3}'`
 
 	for each_longname in $ip_longname; do
-        print_bgblack_fgwhite "login from $each_longname to $master_ip" "(($prepare_output_tabs+1))"
-		$SCRIPT_BASE_DIR/parafs/expect_common/ssh_alias_login.exp $each_longname >> /dev/null
+        print_bgblack_fgwhite "login from $each_longname to $master_ip by expect" "(($prepare_output_tabs+1))"
+        print_msg "$SCRIPT_BASE_DIR/parafs/expect_common/ssh_alias_login.exp $each_longname " 
+		ret=`$SCRIPT_BASE_DIR/parafs/expect_common/ssh_alias_login.exp $each_longname`
+        print_result "$ret"
 	done
 	for each_shortname in $ip_shortname; do
-        print_bgblack_fgwhite "login from $each_shortname to $master_ip" "(($prepare_output_tabs+1))"
-		$SCRIPT_BASE_DIR/parafs/expect_common/ssh_alias_login.exp $each_shortname >> /dev/null
+        print_bgblack_fgwhite "login from $each_shortname to $master_ip by expect" "(($prepare_output_tabs+1))"
+        print_msg "$SCRIPT_BASE_DIR/parafs/expect_common/ssh_alias_login.exp $each_shortname "
+		ret=`$SCRIPT_BASE_DIR/parafs/expect_common/ssh_alias_login.exp $each_shortname` 
+        print_result "$ret"
 	done
 	
 	#复制authorized_keys和known_hosts 
 	for each_ip in $CLUSTER_IPS; do
+        print_bgblack_fgwhite "copy authorized_keys known_hosts to $each_ip" "(($prepare_output_tabs+1))"
 		copy_authorized_keys $master_ip $each_ip
 		copy_known_hosts $master_ip $each_ip
 	done
@@ -220,6 +225,9 @@ if [ -z ${ZIP_BASH_NAME} ] ; then
 fi
 if [ -z ${COMMON_BASH_NAME} ] ; then
     . ${SCRIPT_BASE_DIR}/parafs/common/common_parafs.sh
+fi
+if [ -z ${LOG_BASH_NAME} ] ; then 
+    . $SCRIPT_BASE_DIR/parafs/common/common_log.sh
 fi
 prepare_output_tabs="2"
 # use the parafs_tools.sh

@@ -94,11 +94,13 @@ function ssh_user_authorize() {
     local remote_passwd=$7
     local remote_userhome=$8
 
-    local temp_file="/tmp/parafs_ssh_user_authorize$ip"
     output_msg="function call ......ssh_user_authorize..... at $current_user@$current_ip to $remote_user@$remote_ip"
     print_bgblack_fgwhite "$output_msg" $common_utils_output_tabs
-    $SSH_EXP_AUTHORIZE ${current_ip} ${current_user} ${current_passwd} ${current_userhome} \
-        ${remote_ip} ${remote_user} ${remote_passwd} ${remote_userhome} >$temp_file
+    ret=`$SSH_EXP_AUTHORIZE ${current_ip} ${current_user} ${current_passwd} ${current_userhome} \
+        ${remote_ip} ${remote_user} ${remote_passwd} ${remote_userhome} `
+    print_msg "$SSH_EXP_AUTHORIZE ${current_ip} ${current_user} \$current_passwd $current_userhome \
+        ${remote_ip} ${remote_user} \${remote_passwd} ${remote_userhome}"
+    print_result "$ret"
 }
 
 #####复制master机器上的authorized_keys到远程的机器
@@ -107,8 +109,9 @@ function copy_authorized_keys(){
 	local each_ip=$2
 
     print_bgblack_fgwhite "function call ......copy_authorize_keys..... to $each_ip" $common_utils_output_tabs
-	local temp_file="/tmp/parafs_copy_authorized_keys$each_ip"
-	scp ~/.ssh/authorized_keys root@$each_ip:~/.ssh/authorized_keys >$temp_file
+    print_msg "scp ~/.ssh/authorized_keys root@$each_ip:~/.ssh/authorized_keys "
+	scp ~/.ssh/authorized_keys root@$each_ip:~/.ssh/authorized_keys >/dev/null
+    return $?
 }
 
 #####复制master机器上的known_hosts到远程的机器
@@ -117,8 +120,9 @@ function copy_known_hosts(){
 	local each_ip=$2
 
     print_bgblack_fgwhite "function call ......copy_known_hosts..... to $each_ip" $common_utils_output_tabs
-	local temp_file="/tmp/parafs_copy_known_hosts$each_ip"
-	scp /root/.ssh/known_hosts root@$each_ip:/root/.ssh/known_hosts >$temp_file
+    print_msg "scp /root/.ssh/known_hosts root@$each_ip:/root/.ssh/known_hosts"
+	scp /root/.ssh/known_hosts root@$each_ip:/root/.ssh/known_hosts  >/dev/null
+    return $?
 }
 
 function ssh_user_login() {
@@ -185,6 +189,9 @@ function dirpath_root_chown() {
 USER_BASH_NAME=common_user.sh
 if [ -z "$VARIABLE_BASH_NAME" ] ; then 
     . ../../variable.sh
+fi
+if [ -z ${LOG_BASH_NAME} ] ; then 
+    . $SCRIPT_BASE_DIR/parafs/common/common_log.sh
 fi
 common_user_output_tabs="3"
 ###++++++++++++++++++++++++      main  end        ++++++++++++++++++++++++++###

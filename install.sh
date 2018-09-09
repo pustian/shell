@@ -30,8 +30,6 @@ function usage() {
     echo -e "\033[40;37mExit ----------------------------------------------------------------------[E]\033[0m" ;
 }
 
-
-
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 if [ -z $VARIABLE_BASH_NAME ] ; then
     . ./variable.sh
@@ -55,6 +53,12 @@ fi
 #    . $SCRIPT_BASE_DIR/parafs/parafs_check.sh
 #fi
 installsh_output_tabs="1"
+if [ -f $INSTALL_LOG ] ; then
+    mv $INSTALL_LOG $INSTALL_LOG`date  +%y%m%d%H%M%S`.bak 
+    truncate -s 0 $INSTALL_LOG
+else
+    touch $INSTALL_LOG
+fi
 
 input="?"
 while [ x"${input}" != x"E" ]; do 
@@ -126,6 +130,7 @@ while [ x"${input}" != x"E" ]; do
             ;;
         D|d)
             print_bgblack_fgblue "distribute begin" $installsh_output_tabs
+            print_bgblack_fgwhite "It will take a few minutes at each machine for $HADOOP_FILE operation" $installsh_output_tabs
             local_dist_hadoop
             cluster_hadoop_dist
             print_bgblack_fgblue "distribute end" $installsh_output_tabs
@@ -136,12 +141,14 @@ while [ x"${input}" != x"E" ]; do
             cluster_config_bashrc
             # 集群操作，给hadoop-system的bin/和sbin/ +x
             cluster_chmod
+            # 
+            check_local_config_file
             # 集群同步hadoop，注意MASTER_IP在conf/MISC_config中配置
             cluster_update_hadoop
             # 集群同步spark
             cluster_update_spark
             # 集群同步zookeeper
-            cluster_update_zookeeper
+             cluster_update_zookeeper
             # 集群同步hbase
             cluster_update_hbase
             # 集群同步hive
@@ -151,7 +158,7 @@ while [ x"${input}" != x"E" ]; do
             # 集群同步kafka
             cluster_update_kafka
             print_bgblack_fgblue "config parafs-system end" $installsh_output_tabs
-            print_bgblack_fgred "Bash environment has been changed. Pls reopen a new console"
+            print_bgblack_fgred "Bash environment has been changed. Pls reopen a new console, or run source ~/.bashrc"
             ;;
         A|a) 
             print_bgblack_fgblue "after-check begin" $installsh_output_tabs

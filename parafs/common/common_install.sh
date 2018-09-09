@@ -12,11 +12,11 @@ function yum_install() {
     local authorize_ip=$2
     local authorize_user=$3
 
-    echo -e "\t\tdo yum at $authorize_ip"
-    local temp_file="/tmp/parafs_yum_install$authorize_ip"
+    print_bgblack_fgwhite "function call ......yum_install.....  at $authorize_ip" $common_inst_outpus_tabs
     local remote_command="yum -y install ntp ntpdate net-tools redhat-lsb gcc libffi-devel \
         python python-devel openssl-devel numactl epel-release rsync && yum -y install python-pip "
-    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" | tee -a $temp_file
+    print_bgblack_fgwhite "It will take a few minutes to some dependences by yum" $common_inst_outpus_tabs
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'"  >> $INSTALL_LOG #|tee -a $INSTALL_LOG
     return $?
 }
 
@@ -28,14 +28,14 @@ function pip_install() {
     local authorize_user=$3
     local pip_source=$4
 
-    echo -e "\t\tdo pip at $authorize_ip"
-    local temp_file="/tmp/parafs_pip_install$authorize_ip"
+    print_bgblack_fgwhite "function call ......pip_install.....  at $authorize_ip" $common_inst_outpus_tabs
     local remote_command="pip install paramiko "
     if [ -z "$pip_source" ] ; then
         remote_command="pip install -i https://pypi.tuna.tsinghua.edu.cn/simple paramiko"
     fi
 
-    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" | tee -a $temp_file
+    print_msg "sudo su - $local_user -c \"ssh '$authorize_user@$authorize_ip' '$remote_command'\""
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" >> $INSTALL_LOG #|tee -a $INSTALL_LOG
     return $?
 }
 
@@ -46,17 +46,20 @@ function rpm_install() {
     local authorize_user=$3
     local rpm_file=$4
 
-    echo -e "\t\tdo rpm $rpm_file at $authorize_ip"
-    local temp_file="/tmp/parafs_rpm_install$authorize_ip"
+    print_bgblack_fgwhite "function call ......rpm_install..... at $authorize_ip for `basename $rpm_file`" $common_inst_outpus_tabs
     local remote_command="rpm -ivh --force $rpm_file "
-
-    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" >>$temp_file
+    print_msg "sudo su - $local_user -c \"ssh '$authorize_user@$authorize_ip' '$remote_command'\""
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" >> $INSTALL_LOG #|tee -a $INSTALL_LOG
     return $?
 }
 
 ###===========================================================================
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 COMMON_INSTALL_BASH_NAME=common_install.sh
+if [ -z ${LOG_BASH_NAME} ] ; then 
+    . $SCRIPT_BASE_DIR/parafs/common/common_log.sh
+fi
+common_inst_outpus_tabs="2"
 ###++++++++++++++++++++++++      main end         ++++++++++++++++++++++++++###
 ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
 # yum_install parauser 192.168.138.71 parauser

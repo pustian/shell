@@ -14,12 +14,13 @@ function env_usage() {
 ####### 配置文件相关检查已经在 需要安装文件在此处作检查
 function check_local_install_files() {
     print_bgblack_fggreen "check_local_install_files begin" $check_env_output_tabs
-    if [ ! -d $SOURCE_DIR ] || [ ! -f $SOURCE_DIR/$PARAFS_RPM ] || [ ! -f $SOURCE_DIR/$PARAFS_MD5_RPM ] \
-        || [ ! -f $SOURCE_DIR/$LLOG_RPM ] || [ ! -f $SOURCE_DIR/$LLOG_MD5_RPM ] \
-        || [ ! -f $SOURCE_DIR/$HADOOP_FILE ] || [ ! -f $SOURCE_DIR/$HADOOP_MD5_FILE ] ; then 
-        print_bgblack_fgred "check local install file at $SOURCE_DIR and config at $MISC_CONF_FILE" $check_env_output_tabs
-        exit 1
-    fi
+    test ! -d $SOURCE_DIR && print_bgblack_fgred "$SOURCE_DIR is not exist"
+    test ! -f $SOURCE_DIR/$PARAFS_RPM  && print_bgblack_fgred "$SOURCE_DIR/$PARAFS_RPM is not exist" && exit 1
+    test ! -f $SOURCE_DIR/$PARAFS_MD5_RPM && print_bgblack_fgred "$SOURCE_DIR/$PARAFS_MD5_RPM is not exist" && exit 1
+    test ! -f $SOURCE_DIR/$LLOG_RPM && print_bgblack_fgred "$SOURCE_DIR/$LLOG_RPM is not exist" && exit 1
+    test ! -f $SOURCE_DIR/$LLOG_MD5_RPM && print_bgblack_fgred "$SOURCE_DIR/$LLOG_MD5_RPM is not exist" && exit 1
+    test ! -f $SOURCE_DIR/$HADOOP_FILE && print_bgblack_fgred "$SOURCE_DIR/$HADOOP_FILE is not exist" && exit 1
+    test ! -f $SOURCE_DIR/$HADOOP_MD5_FILE && print_bgblack_fgred "$SOURCE_DIR/$HADOOP_MD5_FILE is not exist" && exit 1
     print_bgblack_fggreen "check_local_install_files end" $check_env_output_tabs
 }
 
@@ -68,9 +69,13 @@ function cluster_check_internet(){
 function local_install_expect() {
     print_bgblack_fggreen "local_install_expect begin" $check_env_output_tabs
     
-    which expect >/dev/null 2>&1
+    print_msg "which expect"
+    ret=`which expect`
+    print_result "$ret"
     if test $? -ne 0 ; then
-        rpm -ivh ${SCRIPT_BASE_DIR}/download/expect/*.rpm  >/dev/null
+        print_msg "rpm -ivh ${SCRIPT_BASE_DIR}/download/expect/*.rpm"
+        ret=`rpm -ivh ${SCRIPT_BASE_DIR}/download/expect/*.rpm`
+        print_result "$ret"
     fi
     print_bgblack_fggreen "local_install_expect end" $check_env_output_tabs
 }
@@ -138,6 +143,9 @@ if [ -z ${VARIABLE_BASH_NAME} ] ; then
 fi
 if [ -z ${UTILS_BASH_NAME} ] ; then 
     . $SCRIPT_BASE_DIR/parafs/common/common_utils.sh
+fi
+if [ -z ${LOG_BASH_NAME} ] ; then 
+    . $SCRIPT_BASE_DIR/parafs/common/common_log.sh
 fi
 check_env_output_tabs="2"
 ###++++++++++++++++++++++++      main end         ++++++++++++++++++++++++++###

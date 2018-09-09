@@ -18,6 +18,9 @@ fi
 if [ -z ${UTILS_BASH_NAME} ] ; then 
     . $SCRIPT_BASE_DIR/parafs/common/common_utils.sh
 fi
+if [ -z ${LOG_BASH_NAME} ] ; then 
+    . $SCRIPT_BASE_DIR/parafs/common/common_log.sh
+fi
 
 ###++++++++++++++++++++++++      main end         ++++++++++++++++++++++++++###
 # ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###

@@ -12,7 +12,9 @@ function is_conn() {
     local hostname=$1
     print_bgblack_fgwhite "function call ......is_conn..... at $hostname" $common_utils_output_tabs
     pass_pattern="4 packets transmitted, 4 received, 0% packet loss"
+    print_msg "ping $hostname -c 4 | grep '$pass_pattern' "
     ret=`ping $hostname -c 4 | grep "$pass_pattern"`
+    print_result "$ret"
     test x = x"$ret" && return 0 || return 1
 }
 
@@ -21,8 +23,11 @@ function internet_conn(){
     local hostname=$1
     local remotehost=$2
     print_bgblack_fgwhite "function call ......internet_conn..... at $hostname" $common_utils_output_tabs
-    local cmd_ping="ping $remotehost -c 2"
-    sudo su - 'root' -c "ssh 'root@$hostname' '$cmd_ping'" >/dev/null
+    pass_pattern="2 packets transmitted, 2 received, 0% packet loss"
+    remote_command="ping $remotehost -c 2 | grep \"$pass_pattern\""
+    print_msg "sudo su - 'root' -c \"ssh 'root@$hostname' '$remote_command'\" " 
+    ret=`sudo su - 'root' -c "ssh 'root@$hostname' '$remote_command'" `
+    print_result "$ret"
     return $?
 }
 
@@ -35,11 +40,12 @@ function is_passwd_ok() {
     local userpasswd=$3
     local userhome=$4
 
-    local temp_file="/tmp/parafs_${usernamer}_passwd_$hostname"
     print_bgblack_fgwhite "function call ......is_passwd_ok..... at $hostname" $common_utils_output_tabs
 
-    $SSH_EXP_LOGIN $hostname $username $userpasswd $userhome >$temp_file
-    cat $temp_file| grep "login $hostname successfully"  >/dev/null
+    print_msg "$SSH_EXP_LOGIN $hostname $username userpasswd $userhome"
+    ret=`$SSH_EXP_LOGIN $hostname $username $userpasswd $userhome`
+    print_result "$ret"
+    echo $ret| grep "login $hostname successfully" >/dev/null
     return $?
 }
 
@@ -67,15 +73,16 @@ function is_parafs_node_ok() {
     local passwd=$3
     local dfnode="df -T"
 
-    local temp_file="/tmp/parafs_node_check$hostname"
+    local temp_file="/tmp/parafs_is_parafs_node_ok$hostname"
     local node_dir="/opt/wotung/node/0"
     local format="ext4"
     local _30G=30831523
     print_bgblack_fgwhite "function call ......is_parafs_node_ok..... at $hostname" $common_utils_output_tabs
     $SSH_REMOTE_EXEC "$hostname" "$user" "$passwd" "$dfnode" >$temp_file
-    
+    print_msg "$SSH_REMOTE_EXEC '$hostname' '$user' 'passwd' '$dfnode' >$temp_file"
+    print_msg "cat $temp_file |grep ${node_dir} |grep ${format} |awk '{print \$3}' "
     local capcity=`cat $temp_file |grep ${node_dir} |grep ${format} |awk '{print $3}' `
-    # echo "[ ! -z ${capcity} ] && [ $((capcity)) -gt  $((_30G)) ] "
+    print_result "$capcity"
     if [ ! -z ${capcity} ] && [ $((capcity)) -gt  $((_30G)) ] ; then
         return 1
     else
@@ -106,9 +113,11 @@ function remote_excute_cmd() {
 	local remote_ip=$3
 	local remote_cmd=$4
 	
-	local log_file="/tmp/parafs_remote_execute_cmd"
     print_bgblack_fgwhite "function call ......remote_excute_cmd.....  \"$remote_cmd\"  at $remote_ip" $common_utils_output_tabs
-	sudo su - $local_user -c "ssh '$remote_user@$remote_ip' '$remote_cmd'" >>$log_file 2>&1
+    print_msg "sudo su - $local_user -c \"ssh '$remote_user@$remote_ip' '$remote_cmd'\""
+	# ret=`sudo su - $local_user -c "ssh '$remote_user@$remote_ip' '$remote_cmd'"`
+    # print_result "$ret"
+	sudo su - $local_user -c "ssh '$remote_user@$remote_ip' '$remote_cmd'"
     return $?
 }
 
@@ -119,51 +128,21 @@ function sync_file() {
 	local remote_ip=$3
 	local file_name=$4
 
-	local log_file="/tmp/parafs_sync_file"
     print_bgblack_fgwhite "function call ......sync_file..... $file_name to $remote_ip" $common_utils_output_tabs
-	scp $file_name $remote_user@$remote_ip:$file_name >>$log_file 2>&1
+    print_msg "scp $file_name $remote_user@$remote_ip:$file_name "
+    # ret=`scp $file_name $remote_user@$remote_ip:$file_name`
+    # print_result "$ret"
+    scp $file_name $remote_user@$remote_ip:$file_name >/dev/null
     return $?
-}
-
-### 输出
-function print_tabs() {
-    tabsize=$1
-    test x$tabsize = x"" && tabsize=0
-    count=0
-    while (( $count < $tabsize )); do
-        echo -n "  "
-        let "count++"
-    done
-}
-function print_bgblack_fgwhite() {
-    msg=$1
-    tabsize=$2
-    print_tabs $tabsize
-    echo -e "\033[40;37m$msg \033[0m"
-}
-function print_bgblack_fgred() {
-    msg=$1
-    tabsize=$2
-    print_tabs $tabsize
-    echo -e "\033[40;31m$msg \033[0m"
-}
-function print_bgblack_fggreen() {
-    msg=$1
-    tabsize=$2
-    print_tabs $tabsize
-    echo -e "\033[40;32m$msg \033[0m"
-}
-function print_bgblack_fgblue() {
-    msg=$1
-    tabsize=$2
-    print_tabs $tabsize
-    echo -e "\033[40;34m$msg \033[0m"
 }
 ###===========================================================================
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 UTILS_BASH_NAME=common_utils.sh
 if [ -z "$VARIABLE_BASH_NAME" ] ; then 
-    . ../..//variable.sh
+    . ../../variable.sh
+fi
+if [ -z ${LOG_BASH_NAME} ] ; then 
+    . $SCRIPT_BASE_DIR/parafs/common/common_log.sh
 fi
 common_utils_output_tabs="3"
 #  # ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
