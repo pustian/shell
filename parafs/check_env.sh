@@ -70,8 +70,7 @@ function local_install_expect() {
     print_bgblack_fggreen "local_install_expect begin" $check_env_output_tabs
     
     print_msg "which expect"
-    ret=`which expect`
-    print_result "$ret"
+    which expect
     if test $? -ne 0 ; then
         print_msg "rpm -ivh ${SCRIPT_BASE_DIR}/download/expect/*.rpm"
         ret=`rpm -ivh ${SCRIPT_BASE_DIR}/download/expect/*.rpm`

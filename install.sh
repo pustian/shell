@@ -111,7 +111,7 @@ while [ x"${input}" != x"E" ]; do
             cluster_yum
             cluster_pip
             cluster_rpm_install
-	        ## hadoop-system
+	    ## hadoop-system
             cluster_hadoop_dist
             local_dist_hadoop
             ## cluster_sudoer_chown
