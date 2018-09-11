@@ -67,6 +67,8 @@ function cluster_update_spark() {
     
     __cluster_spark_env
 
+    __cluster_spark_hive_xml
+
     print_bgblack_fggreen "cluster_update_spark end" $config_output_tabs
 }
 

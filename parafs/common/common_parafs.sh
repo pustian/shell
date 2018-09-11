@@ -336,12 +336,39 @@ function __cluster_spark_env() {
     print_bgblack_fgwhite "function call ...... __cluster_spark_env end" $common_parafs_output_tabs
 }
 
+
 function __cluster_spark_sql() {
     echo -e "\t\t __cluster_spark_sql begin"
     echo "+++++++++ do nothing +++++++"
 #    update_spark_sql_config
     echo -e "\t\t __cluster_spark_sql end"
 }
+
+function __cluster_spark_hive_xml() {
+    print_bgblack_fgwhite "function call ...... __cluster_spark_hive_xml begin" $common_parafs_output_tabs
+    print_bgblack_fgwhite "    config $SPARK_HIVE_CONF" $common_parafs_output_tabs
+    local fault_ips=""
+    for ip in $CLUSTER_IPS; do
+        # update_hive_config parauser 192.168.138.71 parauser \
+        #     /opt/wotung/hadoop-parafs/hive-2.1.1/conf/hive-site.xml \
+        #     /opt/wotung/parafs-install/conf/sed_script/hive/hive_conf \
+        #     192..168.1213.abx 
+        update_hive_config $USER_NAME $ip $USER_NAME ${SPARK_HIVE_CONF} ${SED_SCRIPT_HIVE_CONF} ${MASTER_IP}
+        if [ $? -ne 0 ] ; then
+            print_bgblack_fgred "Failed to config ${SPARK_HIVE_CONF} at $ip" $common_parafs_output_tabs
+            fault_ips="$ip $fault_ips"
+            # break;
+        fi
+    done
+    if [ ! -z "$fault_ips" ]; then
+        print_bgblack_fgred "Make sure the file ${SPARK_HIVE_CONF} at $fault_ips" $common_parafs_output_tabs
+        exit 1
+    fi
+    
+    print_bgblack_fgwhite "function call ...... __cluster_hive_xml end" $common_parafs_output_tabs
+    
+}
+
 ###### 
 function __cluster_zookeeper_conf() {
     print_bgblack_fgwhite "function call ...... __cluster_zookeeper_conf begin" $common_parafs_output_tabs
@@ -416,9 +443,9 @@ function __cluster_hbase_backup(){
     print_bgblack_fgwhite "function call ...... __cluster_hbase_backup begin" $common_parafs_output_tabs
     print_bgblack_fgwhite "    config $HBASE_HOME/conf/backup-masters" $common_parafs_output_tabs
 
-    local_hbase_backup
+    local_hbase_backup "${CLUSTER_IPS[*]}" $MASTER_IP $HBASE_BACKUP_MASTERS
     for ip in $CLUSTER_IPS; do
-#TODO
+        scp $HBASE_BACKUP_MASTERS $ip:/$HBASE_BACKUP_MASTERS
     done
     print_bgblack_fgwhite "function call ...... __cluster_hbase_backup end"
 

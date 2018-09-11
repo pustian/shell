@@ -426,24 +426,33 @@ function update_hbase_config() {
 
 ### 本地进行hbase的backup-masters
 function local_hbase_backup(){
-    print_bgblack_fgwhite "function call ...... local_hbase_backup ..... at $MASTER_IP" $common_conf_outpus_tabs
-    if [ -f $HBASE_HOME/conf/backup-masters ]; then
-        #do nothing
-    else
-        touch $HBASE_HOME/conf/backup-masters
-        local num_backup=2
-        local i=0
-        while (( $i < $num_backup ))
-        do
-            if (( $CLUSTER_IPS[$i] -ne $MASTER_IP )); then
-                echo $CLUSTER_IPS[$i] >> $HBASE_HOME/conf/backup-masters
-                i++
-            else
-                #do nothing when it's $MASTER_IP
-            fi
+    local cluster_ips=$1
+    local master_ip=$2
+    local file=$3
 
-        done
-    fi
+    if [ -f $file ];then
+        rm $file
+        touch $file
+    else
+        touch $file
+    fi  
+
+    local backup_num=0
+    # backup_limit cat't be more than 9
+    local backup_limit=2
+    for ip in $cluster_ips
+    do  
+        if [[ $ip = $master_ip ]];then
+            echo "master_ip can't be chosen" >> /dev/null
+        elif (( $backup_num >= $backup_limit ));then
+            echo "beyond the limit" >> /dev/null
+            break
+        else
+            echo "write ip" $ip >> /dev/null
+            echo $ip >> $file
+            let backup_num++
+        fi  
+    done
 }
 
 ###### 远程 更改hive配置
