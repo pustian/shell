@@ -26,7 +26,7 @@ function cluster_cmd() {
 	local local_user="root"
 	local remote_user="root"
 	for each_ip in $CLUSTER_IPS; do
-		remote_excute_cmd $local_user $remote_user $each_ip "$command"
+		remote_excute_cmd $local_user $remote_user $each_ip "$command" 
 	done
 }
 
@@ -62,7 +62,7 @@ function cluster_update_parafs(){
 }
 
 ###删除conf/passwd以及/opt/wotung下的多余文件
-function cluster_delete(){
+function cluster_install_clean(){
     local f_passwd="${SCRIPT_BASE_DIR}/conf/passwd"
     local f_hadoop_tar="${INSTALL_DIR}/hadoop-system.tar.gz"
     local f_all_tar="${INSTALL_DIR}/install_all.tar.gz"
@@ -76,6 +76,8 @@ function cluster_delete(){
 
     local rm_cmd="rm -f $f_passwd $f_hadoop_tar $f_all_tar $f_script_tar $f_script_md5 $f_parafs_rpm $f_llog_rpm"
     cluster_cmd "$rm_cmd"
+    
+    rm $INSTALL_LOG*bak
 }
 
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
@@ -84,6 +86,7 @@ if [ -z ${VARIABLE_BASH_NAME} ] ; then
     . ${SCRIPT_BASE_DIR}/variable.sh
 fi
 . ${SCRIPT_BASE_DIR}/parafs/common/common_utils.sh
+tools_output_tabs="2"
 ###++++++++++++++++++++++++      main end         ++++++++++++++++++++++++++###
 # ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
 #cluster_cmd "touch /tmp/hello_111"

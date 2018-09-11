@@ -13,46 +13,46 @@ function install_usage() {
 
 ###### 免密后yum 安装
 function cluster_yum() {
-    echo -e "cluster_yum begin"
+    print_bgblack_fggreen "cluster_yum begin" $inst_output_tabs
     local fault_ips=""
     for ip in $CLUSTER_IPS; do
         yum_install $USER_NAME $ip $USER_NAME
         if [ $? -ne 0 ] ; then
-            echo -e "\033[31m\t\tfailed to yum file at $ip \033[0m"
+            print_bgblack_fgred "Failed to yum depdences at $ip "
             fault_ips="$config_ip $fault_ips"
             # break;
         fi
     done
-    echo -e "cluster_yum end\n"
+    print_bgblack_fggreen "cluster_yum end" $inst_output_tabs
 }
 
 ###### 免密后pip 安装
 function cluster_pip() {
-    echo -e "cluster_pip begin"
+    print_bgblack_fggreen "cluster_pip begin" $inst_output_tabs
     local fault_ips=""
     for ip in $CLUSTER_IPS; do
         pip_install $USER_NAME $ip $USER_NAME
         if [ $? -ne 0 ] ; then
-            echo -e "\033[31m\t\tfailed to pip install paramiko at $ip \033[0m"
+            print_bgblack_fgred "Failed to pip install paramiko at $ip "
             fault_ips="$config_ip $fault_ips"
             # break;
         fi
     done
     if [ ! -z "$fault_ips" ]; then
-        echo -e "\033[31m\t\tmake sure pip install paramiko \033[0m"
+        print_bgblack_fgred "make sure pip install paramiko at $fault_ips"
     #    exit 1
     fi
-    echo -e "cluster_pip end\n"
+    print_bgblack_fggreen "cluster_pip end" $inst_output_tabs
 }
 
 ###### 免密后rpm 安装
 function cluster_rpm_install() {
-    echo -e "__cluster_install_rpm begin"
+    print_bgblack_fggreen "cluster_rpm_install begin" $inst_output_tabs
     for ip in $CLUSTER_IPS; do
         rpm_install $USER_NAME $ip $USER_NAME ${INSTALL_DIR}/$PARAFS_RPM
         rpm_install $USER_NAME $ip $USER_NAME ${INSTALL_DIR}/$LLOG_RPM
     done
-    echo -e "__cluster_install_rpm end\n"
+    print_bgblack_fggreen "cluster_rpm_install end" $inst_output_tabs
 }
 
 ###### 免密，修改解压后的hadoop-parafs 用户
@@ -83,7 +83,11 @@ fi
 if [ -z ${COMMON_BASH_NAME} ] ; then
     . ${SCRIPT_BASE_DIR}/parafs/common/common_parafs.sh
 fi
+if [ -z ${LOG_BASH_NAME} ] ; then 
+    . $SCRIPT_BASE_DIR/parafs/common/common_log.sh
+fi
 
+inst_output_tabs="2"
 ###++++++++++++++++++++++++      main end         ++++++++++++++++++++++++++###
 ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
 # install_usage

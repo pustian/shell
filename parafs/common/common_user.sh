@@ -20,7 +20,7 @@ function is_no_parauser() {
 
     local temp_file="/tmp/parafs_parauser_check$ip"
     remote_passwd_command="cat /etc/passwd"
-    echo "do is_no_parauser at $ip"
+    print_bgblack_fgwhite "function call ......is_no_parauser..... at $ip" $common_utils_output_tabs
     $SSH_REMOTE_EXEC "$ip" "$user" "$passwd" "$remote_passwd_command" >$temp_file
     
     cat $temp_file | grep $username  >/dev/null
@@ -47,7 +47,7 @@ function create_user() {
 
     local temp_file="/tmp/parafs_create_user$ip"
     local remote_create_user="sudo useradd -d $userhome -m -U -p $userpasswd_ssl -s $usershell $username"
-    echo "do create_user at $ip"
+    print_bgblack_fgwhite "function call ......create_user..... at $ip" $common_utils_output_tabs
     $SSH_REMOTE_EXEC "$ip" "$user" "$passwd" "$remote_create_user" >$temp_file
 }
 
@@ -68,7 +68,7 @@ function sudoer_nopasswd() {
     nopasswd_sentence="$username ALL=(ALL) NOPASSWD: ALL"
     local parauser_condition="grep $username /etc/sudoers |grep NOPASSWD"
     local remote_user_sudoer=" $parauser_condition || sudo sed -i '\$a $nopasswd_sentence' /etc/sudoers"
-    echo "do sudoer_nopasswd at $ip"
+    print_bgblack_fgwhite "function call ......sudoer_nopasswd..... at $ip" $common_utils_output_tabs
     sudo $SSH_REMOTE_EXEC "$ip" "$user" "$passwd" "$remote_user_sudoer"  >$temp_file
 }
 
@@ -94,10 +94,13 @@ function ssh_user_authorize() {
     local remote_passwd=$7
     local remote_userhome=$8
 
-    local temp_file="/tmp/parafs_ssh_user_authorize$ip"
-    echo -e "\tdo ssh_user_authorize at $current_user@$current_ip to $remote_user@$remote_ip"
-    $SSH_EXP_AUTHORIZE ${current_ip} ${current_user} ${current_passwd} ${current_userhome} \
-        ${remote_ip} ${remote_user} ${remote_passwd} ${remote_userhome} >$temp_file
+    output_msg="function call ......ssh_user_authorize..... at $current_user@$current_ip to $remote_user@$remote_ip"
+    print_bgblack_fgwhite "$output_msg" $common_utils_output_tabs
+    ret=`$SSH_EXP_AUTHORIZE ${current_ip} ${current_user} ${current_passwd} ${current_userhome} \
+        ${remote_ip} ${remote_user} ${remote_passwd} ${remote_userhome} `
+    print_msg "$SSH_EXP_AUTHORIZE ${current_ip} ${current_user} \$current_passwd $current_userhome \
+        ${remote_ip} ${remote_user} \${remote_passwd} ${remote_userhome}"
+    print_result "$ret"
 }
 
 #####复制master机器上的authorized_keys到远程的机器
@@ -105,9 +108,10 @@ function copy_authorized_keys(){
 	local master_ip=$1
 	local each_ip=$2
 
-	echo -e "\tdo copy_authorized_keys to $each_ip"
-	local temp_file="/tmp/parafs_copy_authorized_keys$each_ip"
-	scp ~/.ssh/authorized_keys root@$each_ip:~/.ssh/authorized_keys >$temp_file
+    print_bgblack_fgwhite "function call ......copy_authorize_keys..... to $each_ip" $common_utils_output_tabs
+    print_msg "scp ~/.ssh/authorized_keys root@$each_ip:~/.ssh/authorized_keys "
+	scp ~/.ssh/authorized_keys root@$each_ip:~/.ssh/authorized_keys >/dev/null
+    return $?
 }
 
 #####复制master机器上的known_hosts到远程的机器
@@ -115,9 +119,10 @@ function copy_known_hosts(){
 	local master_ip=$1
 	local each_ip=$2
 
-	echo -e "\tdo copy_known_hosts to $each_ip"
-	local temp_file="/tmp/parafs_copy_known_hosts$each_ip"
-	scp ~/.ssh/known_hosts root@$each_ip:~/.ssh/known_hosts >$temp_file
+    print_bgblack_fgwhite "function call ......copy_known_hosts..... to $each_ip" $common_utils_output_tabs
+    print_msg "scp /root/.ssh/known_hosts root@$each_ip:/root/.ssh/known_hosts"
+	scp /root/.ssh/known_hosts root@$each_ip:/root/.ssh/known_hosts  >/dev/null
+    return $?
 }
 
 function ssh_user_login() {
@@ -129,7 +134,8 @@ function ssh_user_login() {
     local remote_passwd=$6
 
     local temp_file="/tmp/parafs_ssh_user_login$ip"
-    echo "do ssh_user_login at $current_user@$current_ip to $remote_user@$remote_ip"
+    output_msg="function call ......ssh_user_login..... at $current_user@$current_ip to $remote_user@$remote_ip"
+    print_bgblack_fgwhite "$output_msg" $common_utils_output_tabs
     $SSH_EXP_SECOND_LOGIN ${current_ip} ${current_user} ${current_passwd} \
         ${remote_ip} ${remote_user} ${remote_passwd} >$temp_file
 }
@@ -151,7 +157,7 @@ function delete_user() {
     local temp_file="/tmp/parafs_delete_user$ip"
     delete_user="sudo userdel -r $username"
     config_sudoer="sudo sed -i '/$username/'d /etc/sudoers "
-    echo "do delete_user at $ip"
+    print_bgblack_fgwhite "function call ......delete_user...... at $ip" $common_utils_output_tabs
     $SSH_REMOTE_EXEC "$ip" "$user" "$passwd" "$delete_user" >$temp_file
     $SSH_REMOTE_EXEC "$ip" "$user" "$passwd" "$config_sudoer" >>$temp_file
 }
@@ -175,7 +181,7 @@ function dirpath_root_chown() {
     # sudo chown -R parauser:parauser /opt/wotung
     local temp_file="/tmp/parafs_create_user$remote_ip"
     local remote_chown="sudo chown -R $username:$groupname $dirpath"
-    echo "do dirpath_root_chown $dirpath at $remote_ip"
+    print_bgblack_fgwhite "function call ......dirpath_root_chown...... $dirpath at $remote_ip" $common_utils_output_tabs
     $SSH_REMOTE_EXEC "$remote_ip" "$remote_user" "$remote_passwd" "$remote_chown" >$temp_file
 }
 ###===========================================================================
@@ -184,6 +190,10 @@ USER_BASH_NAME=common_user.sh
 if [ -z "$VARIABLE_BASH_NAME" ] ; then 
     . ../../variable.sh
 fi
+if [ -z ${LOG_BASH_NAME} ] ; then 
+    . $SCRIPT_BASE_DIR/parafs/common/common_log.sh
+fi
+common_user_output_tabs="3"
 ###++++++++++++++++++++++++      main  end        ++++++++++++++++++++++++++###
 ###++++++++++++++++++++++++      test begin       ++++++++++++++++++++++++++###
 ###########

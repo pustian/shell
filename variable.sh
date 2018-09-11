@@ -6,6 +6,7 @@ VARIABLE_BASH_NAME=variable.sh
 INSTALL_DIR=/opt/wotung
 ###### 脚本根目录支持parafs-install 不在/opt/wotung目录下
 SCRIPT_BASE_DIR=/opt/wotung/parafs-install
+INSTALL_LOG=$SCRIPT_BASE_DIR/parafs-install.log
 SCRIPT_FILE=`basename $SCRIPT_BASE_DIR`.tar.gz
 SCRIPT_MD5_FILE=${SCRIPT_MD5_FILE}.md5sum
 if test ! -d $SCRIPT_BASE_DIR ; then
@@ -157,14 +158,4 @@ AZKABAN_EXEC_CONF=${HADOOP_PARAFS_HOME}/azkaban/azkaban-exec-server-3.41.0/conf/
 AZKABAN_WEB_CONF=${HADOOP_PARAFS_HOME}/azkaban/azkaban-web-server-3.41.0/conf/azkaban.properties
 KAFKA_CONF=${HADOOP_PARAFS_HOME}/kafka_2.11-1.0.1/config/server.properties
 
-#if test ! -f $HADOOP_SLAVES || test ! -f $HADOOP_YARN_XML \
-#    || test ! -f $SPARK_SLAVES || test ! -f $SPARK_ENV || test ! -f $SPARK_CONF \
-#    || test ! -f $ZOOKEEPER_CONF || test ! -f $ZOOKEEPER_MY_ID \
-#    || test ! -d $ZOOKEEPER_DATA || test ! -d $ZOOKEEPER_DATA_LOG \
-#    || test ! -f $HBASE_REGEION_SERVERS || test ! -f $HBASE_CONF \
-#    || test ! -f $HIVE_CONF || test ! -f $KAFKA_CONF \
-#    || test ! -f $AZKABAN_EXEC_CONF || test ! -f $AZKABAN_WEB_CONF ; then
-#    echo -e "\033[31m$HADOOP_PARAFS_HOME need update config file\033[0m"
-#    exit 1
-#fi
 # echo "====================variable loaded==========="
