@@ -412,6 +412,18 @@ function __cluster_hbase_xml() {
     print_bgblack_fgwhite "function call ...... __cluster_hbase_xml end" $common_parafs_output_tabs
 }
 
+function __cluster_hbase_backup(){
+    print_bgblack_fgwhite "function call ...... __cluster_hbase_backup begin" $common_parafs_output_tabs
+    print_bgblack_fgwhite "    config $HBASE_HOME/conf/backup-masters" $common_parafs_output_tabs
+
+    local_hbase_backup
+    for ip in $CLUSTER_IPS; do
+#TODO
+    done
+    print_bgblack_fgwhite "function call ...... __cluster_hbase_backup end"
+
+}
+
 function __cluster_hive_xml() {
     print_bgblack_fgwhite "function call ...... __cluster_hive_xml begin" $common_parafs_output_tabs
     print_bgblack_fgwhite "    config $HIVE_CONF" $common_parafs_output_tabs

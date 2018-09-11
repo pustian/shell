@@ -424,6 +424,28 @@ function update_hbase_config() {
     return $?
 }
 
+### 本地进行hbase的backup-masters
+function local_hbase_backup(){
+    print_bgblack_fgwhite "function call ...... local_hbase_backup ..... at $MASTER_IP" $common_conf_outpus_tabs
+    if [ -f $HBASE_HOME/conf/backup-masters ]; then
+        #do nothing
+    else
+        touch $HBASE_HOME/conf/backup-masters
+        local num_backup=2
+        local i=0
+        while (( $i < $num_backup ))
+        do
+            if (( $CLUSTER_IPS[$i] -ne $MASTER_IP )); then
+                echo $CLUSTER_IPS[$i] >> $HBASE_HOME/conf/backup-masters
+                i++
+            else
+                #do nothing when it's $MASTER_IP
+            fi
+
+        done
+    fi
+}
+
 ###### 远程 更改hive配置
 function update_hive_config() {
     local local_user=$1
@@ -499,7 +521,7 @@ function sed_property_script() {
     if [ x${is_append} = 'xtrue' ] ; then
         echo $sed_script >>$sed_script_file
     else
-        echo $sed_script >>$sed_script_file
+        echo $sed_script >$sed_script_file
     fi
     #echo "sed_script_file=$sed_script_file" && cat $sed_script_file
     ### 修改sed文件 

@@ -87,6 +87,8 @@ function cluster_update_hbase() {
 
     __cluster_hbase_xml
 
+    __cluster_hbase_backup
+
     print_bgblack_fggreen "cluster_update_hbase end" $config_output_tabs
 }
 
