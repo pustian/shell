@@ -212,33 +212,6 @@ function cluster_root_chown() {
     done
     print_bgblack_fggreen "cluster_root_chown end" $prepare_output_tabs
 }
-
-###安装expect
-function local_install_expect() {
-    echo -e "local_install_expect begin"
-    
-    `which expect >> /dev/null`
-    if test $? -ne 0 ; then
-        echo -e "\tno expect"
-        rpm -ivh ${SCRIPT_BASE_DIR}/download/expect/*.rpm 
-    else
-        echo -e "\talready has expect"
-    fi
-    echo -e "local_install_expect end\n"
-}
-
-function local_exec_md5(){
-    local name_hadoop=`grep ^parafs_hadoop_file ${SCRIPT_BASE_DIR}/conf/misc_config | awk -F '=' '{print $2}'`
-    local name_parafs=`grep ^parafs_rpm ${SCRIPT_BASE_DIR}/conf/misc_config | awk -F '=' '{print $2}'`
-    local name_llog=`grep ^llog_rpm ${SCRIPT_BASE_DIR}/conf/misc_config | awk -F '=' '{print $2}'`
-
-    local package_path="${INSTALL_DIR}/package"
-    
-    md5sum ${package_path}/${name_hadoop} >> ${package_path}/${name_hadoop}.md5sum
-    md5sum ${package_path}/${name_parafs} >> ${package_path}/${name_parafs}.md5sum
-    md5sum ${package_path}/${name_llog} >> ${package_path}/${name_llog}.md5sum
-}    
-
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 PREPARE_BASH_NAME=parafs_prepare.sh
 if [ -z ${VARIABLE_BASH_NAME} ] ; then 

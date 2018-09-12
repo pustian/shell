@@ -14,15 +14,60 @@ function env_usage() {
 ####### 配置文件相关检查已经在 需要安装文件在此处作检查
 function check_local_install_files() {
     print_bgblack_fggreen "check_local_install_files begin" $check_env_output_tabs
-    test ! -d $SOURCE_DIR && print_bgblack_fgred "$SOURCE_DIR is not exist"
+    test ! -d $SOURCE_DIR && print_bgblack_fgred "$SOURCE_DIR is not exist" && exit 1
     test ! -f $SOURCE_DIR/$PARAFS_RPM  && print_bgblack_fgred "$SOURCE_DIR/$PARAFS_RPM is not exist" && exit 1
     test ! -f $SOURCE_DIR/$PARAFS_MD5_RPM && print_bgblack_fgred "$SOURCE_DIR/$PARAFS_MD5_RPM is not exist" && exit 1
     test ! -f $SOURCE_DIR/$LLOG_RPM && print_bgblack_fgred "$SOURCE_DIR/$LLOG_RPM is not exist" && exit 1
     test ! -f $SOURCE_DIR/$LLOG_MD5_RPM && print_bgblack_fgred "$SOURCE_DIR/$LLOG_MD5_RPM is not exist" && exit 1
     test ! -f $SOURCE_DIR/$HADOOP_FILE && print_bgblack_fgred "$SOURCE_DIR/$HADOOP_FILE is not exist" && exit 1
     test ! -f $SOURCE_DIR/$HADOOP_MD5_FILE && print_bgblack_fgred "$SOURCE_DIR/$HADOOP_MD5_FILE is not exist" && exit 1
+
+
+    test ! -d $SCRIPT_BASE_DIR  && print_bgblack_fgred "$SCRIPT_BASE_DIR is not exist" && exit 1
+    test ! -d $SCRIPT_BASE_DIR/parafs/expect_common  && print_bgblack_fgred "$SCRIPT_BASE_DIR/parafs/expect_common is not exist" && exit 1
+    test ! -f $SSH_EXP_LOGIN  && print_bgblack_fgred "$SSH_EXP_LOGIN is not exist" && exit 1
+    test ! -f $SSH_EXP_COPY  && print_bgblack_fgred "$SSH_EXP_COPY is not exist" && exit 1
+    test ! -f $SSH_REMOTE_EXEC && print_bgblack_fgred "$SSH_REMOTE_EXEC is not exist" && exit 1
+    test ! -f $SSH_EXP_AUTHORIZE  && print_bgblack_fgred "$SSH_EXP_AUTHORIZE is not exist" && exit 1
+
+    test ! -d $SCRIPT_BASE_DIR/conf && print_bgblack_fgred "$SCRIPT_BASE_DIR/conf is not exist" && exit 1
+    test ! -f $NETWORK_CONFIG_FILE && print_bgblack_fgred "$NETWORK_CONFIG_FILE is not exist" && exit 1
+    # test ! -f $USER_PASSWD_FILE  && print_bgblack_fgred "$USER_PASSWD_FILE is not exist" && exit 1
+    test ! -f $MISC_CONF_FILE && print_bgblack_fgred "$MISC_CONF_FILE is not exist" && exit 1
+    test ! -f $PASSWD_CONFIG_FILE && print_bgblack_fgred "$PASSWD_CONFIG_FILE is not exist" && exit 1
+    test ! -f $BASHRC_CONFIG_FILE  && print_bgblack_fgred "$BASHRC_CONFIG_FILE is not exist" && exit 1
+
+    test ! -d $SCRIPT_BASE_DIR/conf/sed_script && print_bgblack_fgred "$SCRIPT_BASE_DIR/conf/sed_script is not exist" && exit 1
+    test ! -f $SED_SCRIPT_HADOOP_YARN_IP && print_bgblack_fgred "$SED_SCRIPT_HADOOP_YARN_IP is not exist" && exit 1
+    test ! -f $SED_SCRIPT_HADOOP_YARN_MEM && print_bgblack_fgred "$SED_SCRIPT_HADOOP_YARN_MEM is not exist" && exit 1
+    test ! -f $SED_SCRIPT_HADOOP_YARN_CPUS && print_bgblack_fgred "$SED_SCRIPT_HADOOP_YARN_CPUS is not exist" && exit 1
+    test ! -f $SED_SCRIPT_SPARK_ENV && print_bgblack_fgred "$SED_SCRIPT_SPARK_ENV is not exist" && exit 1 
+    test ! -f $SED_SCRIPT_SPARK_CONF && print_bgblack_fgred "$SED_SCRIPT_SPARK_CONF is not exist" && exit 1 
+    test ! -f $SED_SCRIPT_HBASE_CONF && print_bgblack_fgred "$SED_SCRIPT_HBASE_CONF is not exist" && exit 1 
+    test ! -f $SED_SCRIPT_HIVE_CONF && print_bgblack_fgred "$SED_SCRIPT_HIVE_CONF is not exist" && exit 1
+    test ! -f $SED_SCRIPT_AZKABAN_CONF && print_bgblack_fgred "$SED_SCRIPT_AZKABAN_CONF is not exist" && exit 1 
+    test ! -f $SED_SCRIPT_KAFKA_CONF && print_bgblack_fgred "$SED_SCRIPT_KAFKA_CONF is not exist" && exit 1 
+    test ! -f $SED_SCRIPT_KAFKA_BROKER_ID && print_bgblack_fgred "$SED_SCRIPT_KAFKA_BROKER_ID is not exist" && exit 1
+    test ! -f $SED_SCRIPT_SPARK_BENCH_LEGACY_ENV && print_bgblack_fgred "$SED_SCRIPT_SPARK_BENCH_LEGACY_ENV is not exist" && exit 1
+
+    test -z $MASTER_IP && print_bgblack_fgred "\$MASTER_IP is null" && exit 1
+    test -z ${HADOOP_PARAFS_HOME} &&  print_bgblack_fgred "\$HADOOP_PARAFS_HOME is null" && exit 1
     print_bgblack_fggreen "check_local_install_files end" $check_env_output_tabs
 }
+
+function local_exec_md5(){
+    print_bgblack_fggreen "local_exec_md5 begin" $check_env_output_tabs
+    local name_hadoop=`grep ^parafs_hadoop_file ${SCRIPT_BASE_DIR}/conf/misc_config | awk -F '=' '{print $2}'`
+    local name_parafs=`grep ^parafs_rpm ${SCRIPT_BASE_DIR}/conf/misc_config | awk -F '=' '{print $2}'`
+    local name_llog=`grep ^llog_rpm ${SCRIPT_BASE_DIR}/conf/misc_config | awk -F '=' '{print $2}'`
+
+    local package_path="${INSTALL_DIR}/package"
+    print_msg "if md5sum file exists, the origin will be used "
+    test ! -f ${package_path}/${name_hadoop}.md5sum && md5sum ${package_path}/${name_hadoop} > ${package_path}/${name_hadoop}.md5sum
+    test ! -f ${package_path}/${name_parafs}.md5sum &&  md5sum ${package_path}/${name_parafs} > ${package_path}/${name_parafs}.md5sum
+    test ! -f ${package_path}/${name_llog}.md5sum && md5sum ${package_path}/${name_llog} > ${package_path}/${name_llog}.md5sum
+    print_bgblack_fggreen "local_exec_md5 end" $check_env_output_tabs
+}    
 
 ####### 根据配置文件network检查ip连通状况
 ####+++ return : 检查失败输出到屏幕，并且停止进行

@@ -77,7 +77,7 @@ function cluster_install_clean(){
     local rm_cmd="rm -f $f_passwd $f_hadoop_tar $f_all_tar $f_script_tar $f_script_md5 $f_parafs_rpm $f_llog_rpm"
     cluster_cmd "$rm_cmd"
     
-    # rm $INSTALL_LOG*bak
+    rm $INSTALL_LOG*bak
 }
 
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###

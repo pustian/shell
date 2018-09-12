@@ -67,12 +67,12 @@ while [ x"${input}" != x"E" ]; do
     case ${input} in
         P|p) 
             print_bgblack_fgblue "pre-chenk begin" $installsh_output_tabs
-            #检查本地安装文件是否齐全
-            check_local_install_files
             #对本地的hadoop_system,llog,parafs进行md5sum
             local_exec_md5
             #本地安装expect，免密需要用到。
             local_install_expect
+            #检查本地安装文件是否齐全
+            check_local_install_files
             #检查各IP是否能够ping通
             check_address
             #在root免密的情况下会直接通过
