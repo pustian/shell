@@ -52,6 +52,7 @@ SED_SCRIPT_HIVE_CONF=${SCRIPT_BASE_DIR}/conf/sed_script/hive/hive_conf
 SED_SCRIPT_AZKABAN_CONF=${SCRIPT_BASE_DIR}/conf/sed_script/azkaban/azkaban_conf 
 SED_SCRIPT_KAFKA_CONF=${SCRIPT_BASE_DIR}/conf/sed_script/kafka/kafka_conf
 SED_SCRIPT_KAFKA_BROKER_ID=${SCRIPT_BASE_DIR}/conf/sed_script/kafka/kafka_broker_id
+SED_SCRIPT_SPARK_BENCH_LEGACY_ENV=${SCRIPT_BASE_DIR}/conf/sed_script/spark_bench_legacy/spark_bench_legacy_env
 
 if test ! -d $SCRIPT_BASE_DIR/conf/sed_script || test ! -f $SED_SCRIPT_HADOOP_YARN_IP \
     || test ! -f $SED_SCRIPT_HADOOP_YARN_MEM || test ! -f $SED_SCRIPT_HADOOP_YARN_CPUS \
@@ -157,5 +158,6 @@ HIVE_CONF=${HADOOP_PARAFS_HOME}/hive-2.1.1/conf/hive-site.xml
 AZKABAN_EXEC_CONF=${HADOOP_PARAFS_HOME}/azkaban/azkaban-exec-server-3.41.0/conf/azkaban.properties
 AZKABAN_WEB_CONF=${HADOOP_PARAFS_HOME}/azkaban/azkaban-web-server-3.41.0/conf/azkaban.properties
 KAFKA_CONF=${HADOOP_PARAFS_HOME}/kafka_2.11-1.0.1/config/server.properties
-
+SPARK_BENCH_LEGACY_ENV=${HADOOP_PARAFS_HOME}/spark-bench-legacy/conf/env.sh
+YCSB_HBASE12_CONF=ycsb-hbase12/conf/hbase-size.xml
 # echo "====================variable loaded==========="

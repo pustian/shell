@@ -610,6 +610,33 @@ function config_SELINUX(){
 # function update_ycsb_config() {
 #     echo $?
 # }
+
+function update_bench_legacy_env() {
+    local local_user=$1
+    local authorize_ip=$2
+    local authorize_user=$3
+    local filename=$4
+    local sed_script_file=$5
+    local master_ip=$6
+    print_bgblack_fgwhite "function call ...... update_bench_legacy_env ..... at $authorize_ip " $common_conf_outpus_tabs
+    ### master
+    local shell_key="master"
+    local shell_value=$master_ip
+    sed_shell_script "$local_user" "$authorize_ip" "$authorize_user" \
+        "$filename" "$sed_script_file" "$shell_key" "$shell_value"
+    
+    ### 2,同步到authorize_ip位置
+    print_msg "sudo su - $local_user -c \"scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'\""
+    # sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'"  >> $INSTALL_LOG 
+    sudo su - $local_user -c "scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'"  |tee -a $INSTALL_LOG
+ 
+    ### 3, 远程执行sed脚本
+    local remote_exec_sed_script="sed -i -f $sed_script_file $filename"
+    print_msg "sudo su - $local_user -c \"scp '$sed_script_file' '$authorize_user@$authorize_ip:$sed_script_file'\""
+    # sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" >>$INSTALL_LOG 
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_exec_sed_script'" |tee -a $INSTALL_LOG
+    return $?
+}
 ###===========================================================================
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 COMMON_CONFIG_BASH_NAME=common_config.sh

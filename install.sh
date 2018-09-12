@@ -78,7 +78,7 @@ while [ x"${input}" != x"E" ]; do
             #在root免密的情况下会直接通过
             cluster_check_passwd 
             #检查/opt/wotung/node/0 目录 
-            cluster_check_nodes
+            cluster_check_filesystem
             print_bgblack_fgblue "pre-chenk end" $installsh_output_tabs
             ;;
         R|r) 
@@ -159,6 +159,10 @@ while [ x"${input}" != x"E" ]; do
             cluster_update_azkaban
             # 集群同步kafka
             cluster_update_kafka
+            #
+            cluster_update_ycsb_hbase
+            # 
+            cluster_update_spark_bench_legacy
             print_bgblack_fgblue "config parafs-system end" $installsh_output_tabs
             print_bgblack_fgred "Bash environment has been changed. Pls reopen a new console, or run source ~/.bashrc"
             ;;

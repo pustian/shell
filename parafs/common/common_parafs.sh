@@ -506,6 +506,46 @@ function __cluster_kafka_broker_id() {
 
     print_bgblack_fgwhite "function call ...... __cluster_kafka_broker_id end" $common_parafs_output_tabs
 }
+
+function __cluster_ycsb_hbase_xml() {
+    print_bgblack_fgwhite "function call ...... __cluster_ycsb_hbase_xml begin" $common_parafs_output_tabs
+    print_bgblack_fgwhite "    config $YCSB_HBASE12_CONF" $common_parafs_output_tabs
+    local fault_ips=""
+    for ip in $CLUSTER_IPS; do
+        update_hbase_config $USER_NAME $ip $USER_NAME $YCSB_HBASE12_CONF $SED_SCRIPT_HBASE_CONF $MASTER_IP "${CLUSTER_IPS[*]}"
+        if [ $? -ne 0 ] ; then
+            print_bgblack_fgred "Failed to config ${YCSB_HBASE12_CONF} at $ip" $common_parafs_output_tabs
+            fault_ips="$ip $fault_ips"
+            # break;
+        fi
+    done
+    if [ ! -z "$fault_ips" ]; then
+        print_bgblack_fgred "Make sure the file ${YCSB_HBASE12_CONF} at $fault_ips" $common_parafs_output_tabs
+        exit 1
+    fi
+    
+    print_bgblack_fgwhite "function call ...... __cluster_ycsb_hbase_xml end" $common_parafs_output_tabs
+}
+function __cluster_spark_bench_legacy_env() {
+    print_bgblack_fgwhite "function call ...... __cluster_spark_bench_legacy_env begin" $common_parafs_output_tabs
+    print_bgblack_fgwhite "    config $SPARK_BENCH_LEGACY_ENV" $common_parafs_output_tabs
+    local fault_ips=""
+    for ip in $CLUSTER_IPS; do
+        update_bench_legacy_env $USER_NAME $ip $USER_NAME $SPARK_BENCH_LEGACY_ENV $SED_SCRIPT_SPARK_BENCH_LEGACY_ENV $MASTER_IP 
+        if [ $? -ne 0 ] ; then
+            print_bgblack_fgred "Failed to config ${SPARK_BENCH_LEGACY_ENV} at $ip" $common_parafs_output_tabs
+            fault_ips="$ip $fault_ips"
+            # break;
+        fi
+    done
+    if [ ! -z "$fault_ips" ]; then
+        print_bgblack_fgred "Make sure the file ${SPARK_BENCH_LEGACY_ENV} at $fault_ips" $common_parafs_output_tabs
+        exit 1
+    fi
+    
+    print_bgblack_fgwhite "function call ...... __cluster_spark_bench_legacy_env end" $common_parafs_output_tabs
+
+}
 ###===========================================================================
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 COMMON_BASH_NAME=common_parafs.h
