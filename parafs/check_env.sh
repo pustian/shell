@@ -50,8 +50,8 @@ function check_local_install_files() {
     test ! -f $SED_SCRIPT_KAFKA_BROKER_ID && print_bgblack_fgred "$SED_SCRIPT_KAFKA_BROKER_ID is not exist" && exit 1
     test ! -f $SED_SCRIPT_SPARK_BENCH_LEGACY_ENV && print_bgblack_fgred "$SED_SCRIPT_SPARK_BENCH_LEGACY_ENV is not exist" && exit 1
 
-    test -z $MASTER_IP && print_bgblack_fgred "\$MASTER_IP is null" && exit 1
-    test -z ${HADOOP_PARAFS_HOME} &&  print_bgblack_fgred "\$HADOOP_PARAFS_HOME is null" && exit 1
+    test -z $MASTER_IP && print_bgblack_fgred "\$MASTER_IP is null. Pls confirm the $NETWORK_CONFIG_FILE" && exit 1
+    test -z ${HADOOP_PARAFS_HOME} &&  print_bgblack_fgred "\$HADOOP_PARAFS_HOME is null. Pls confirm $BASHRC_CONFIG_FILE" && exit 1
     print_bgblack_fggreen "check_local_install_files end" $check_env_output_tabs
 }
 
