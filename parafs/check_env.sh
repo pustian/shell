@@ -73,7 +73,7 @@ function local_install_expect() {
     which expect
     if test $? -ne 0 ; then
         print_msg "rpm -ivh ${SCRIPT_BASE_DIR}/download/expect/*.rpm"
-        ret=`rpm -ivh ${SCRIPT_BASE_DIR}/download/expect/*.rpm`
+        ret=`rpm -ivh ${SCRIPT_BASE_DIR}/download/expect/*.rpm --force`
         print_result "$ret"
     fi
     print_bgblack_fggreen "local_install_expect end" $check_env_output_tabs
@@ -109,8 +109,8 @@ function cluster_check_passwd() {
 ######
 ####### 检查/opt/wotung/node/0 目录，需要root免密登陆
 ####+++ return : 检查失败输出到屏幕，并且停止进行
-function cluster_check_nodes() {
-    print_bgblack_fggreen "cluster_check_nodes begin" $check_env_output_tabs
+function cluster_check_filesystem() {
+    print_bgblack_fggreen "cluster_check_filesystem begin" $check_env_output_tabs
     local filename=$PASSWD_CONFIG_FILE
 
     fault_ips=""
@@ -120,19 +120,25 @@ function cluster_check_nodes() {
         fi
         passwd=`grep ${ip} $filename |awk '{print $2 }'`
 
-        is_parafs_node_ok $ip $DEFAULT_USER $passwd
+        is_ext4_format $ip $DEFAULT_USER $passwd
         if [ $? -eq 0 ]; then
             fault_ips="$ip $fault_ips"
-            print_bgblack_fgred "ERROR: $ip /opt/wotung/node/0 error" $check_env_output_tabs
+            print_bgblack_fgred "WARN: The file system isnot ext4 filesystem at $ip" $check_env_output_tabs
+            # break;
+        fi 
+        node_capcity $ip $DEFAULT_USER $passwd
+        if [ $? -eq 0 ]; then
+            fault_ips="$ip $fault_ips"
+            print_bgblack_fgred "WARN: The capcity of /opt/wotung/node/0 need more space at $ip" $check_env_output_tabs
             # break;
         fi 
     done
 
     if [ ! -z "$fault_ips" ] ; then
         print_bgblack_fgred "make sure /opt/wotung/node/0 at $fault_ips" $check_env_output_tabs
-        exit 1;
+        # exit 1;
     fi
-    print_bgblack_fggreen "cluster_check_nodes end" $check_env_output_tabs
+    print_bgblack_fggreen "cluster_check_filesystem end" $check_env_output_tabs
 }
 
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
