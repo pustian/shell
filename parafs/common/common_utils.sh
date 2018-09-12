@@ -89,6 +89,43 @@ function is_parafs_node_ok() {
         return 0
     fi
 }
+
+function is_ext4_format() {
+    local hostname=$1
+    local user=$2
+    local passwd=$3
+    print_bgblack_fgwhite "function call ......is_ext4_format..... at $hostname" $common_utils_output_tabs
+    
+    local remote_command="grep defaults /etc/fstab | grep -v ext4  |grep -v ^# |grep -v swap "
+    print_msg "$SSH_REMOTE_EXEC '$hostname' '$user' 'passwd' '$remote_command'  "
+    local result=`$SSH_REMOTE_EXEC "$hostname" "$user" "$passwd" "$remote_command" ` 
+    print_msg "grep default '$result'"
+    result=`grep 'defaults' "$result"`
+    test ! -z $result && return 1 || return 0
+}
+
+function node_capcity() {
+    local hostname=$1
+    local user=$2
+    local passwd=$3
+    print_bgblack_fgwhite "function call ......node_capcity..... at $hostname" $common_utils_output_tabs
+
+    local df_result="/tmp/parafs_node_capcity$hostname"
+    local _30G=30831523
+    local node_dir="/opt/wotung/node/0"
+    local remote_command="df -T"
+    print_msg "$SSH_REMOTE_EXEC '$hostname' '$user' 'passwd' '$remote_command' >$temp_file"
+    $SSH_REMOTE_EXEC "$hostname" "$user" "$passwd" "$remote_command" >$temp_file
+    print_msg "cat $temp_file |grep ${node_dir} |awk '{print \$3}'"
+    local capcity=`cat $temp_file |grep ${node_dir} |awk '{print $3}' `
+    print_result "$capcity should greate than $_30G"
+    if [ ! -z ${capcity} ] && [ $((capcity)) -gt  $((_30G)) ] ; then
+        return 1
+    else
+        return 0
+    fi
+}
+
 #####################################################################
 ###### 免密升级sudoer用户不需要密码 修改文件所有用户
 function dirpath_sudoer_chown() {
