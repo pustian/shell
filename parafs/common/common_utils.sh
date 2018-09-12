@@ -96,12 +96,13 @@ function is_ext4_format() {
     local passwd=$3
     print_bgblack_fgwhite "function call ......is_ext4_format..... at $hostname" $common_utils_output_tabs
     
+    local ext4_result="/tmp/parafs_ext4format$hostname"
     local remote_command="grep defaults /etc/fstab | grep -v ext4  |grep -v ^# |grep -v swap "
-    print_msg "$SSH_REMOTE_EXEC '$hostname' '$user' 'passwd' '$remote_command'  "
-    local result=`$SSH_REMOTE_EXEC "$hostname" "$user" "$passwd" "$remote_command" ` 
-    print_msg "grep default '$result'"
-    result=`grep 'defaults' "$result"`
-    test ! -z $result && return 1 || return 0
+    print_msg "$SSH_REMOTE_EXEC '$hostname' '$user' 'passwd' '$remote_command' >$ext4_result "
+    $SSH_REMOTE_EXEC "$hostname" "$user" "$passwd" "$remote_command" >$ext4_result 
+    print_msg "grep -v 'grep' $ext4_result |grep 'defaults' "
+    grep -v 'grep' $ext4_result |grep 'defaults' 
+    return $?
 }
 
 function node_capcity() {
@@ -114,10 +115,10 @@ function node_capcity() {
     local _30G=30831523
     local node_dir="/opt/wotung/node/0"
     local remote_command="df -T"
-    print_msg "$SSH_REMOTE_EXEC '$hostname' '$user' 'passwd' '$remote_command' >$temp_file"
-    $SSH_REMOTE_EXEC "$hostname" "$user" "$passwd" "$remote_command" >$temp_file
-    print_msg "cat $temp_file |grep ${node_dir} |awk '{print \$3}'"
-    local capcity=`cat $temp_file |grep ${node_dir} |awk '{print $3}' `
+    print_msg "$SSH_REMOTE_EXEC '$hostname' '$user' 'passwd' '$remote_command' >$df_result"
+    $SSH_REMOTE_EXEC "$hostname" "$user" "$passwd" "$remote_command" >$df_result
+    print_msg "cat $df_result|grep ${node_dir} |awk '{print \$3}'"
+    local capcity=`cat $df_result |grep ${node_dir} |awk '{print $3}' `
     print_result "$capcity should greate than $_30G"
     if [ ! -z ${capcity} ] && [ $((capcity)) -gt  $((_30G)) ] ; then
         return 1
@@ -190,6 +191,7 @@ common_utils_output_tabs="3"
   # is_parafs_node_ok 192.168.138.71 "root" "Tianpusen@1" 
   # echo $?
   # is_parafs_node_ok 192.168.138.70 "parafs" "tianpusen" 
+  # is_ext4_format 192.168.1.21 "root" "888888"
   # dirpath_sudoer_chown parauser 192.168.138.71 parauser /opt/wotung/hadoop-parafs parauser parauser
   # echo $?
 #  # ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

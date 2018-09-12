@@ -161,5 +161,5 @@ AZKABAN_EXEC_CONF=${HADOOP_PARAFS_HOME}/azkaban/azkaban-exec-server-3.41.0/conf/
 AZKABAN_WEB_CONF=${HADOOP_PARAFS_HOME}/azkaban/azkaban-web-server-3.41.0/conf/azkaban.properties
 KAFKA_CONF=${HADOOP_PARAFS_HOME}/kafka_2.11-1.0.1/config/server.properties
 SPARK_BENCH_LEGACY_ENV=${HADOOP_PARAFS_HOME}/spark-bench-legacy/conf/env.sh
-YCSB_HBASE12_CONF=ycsb-hbase12/conf/hbase-size.xml
+YCSB_HBASE12_CONF=${HADOOP_PARAFS_HOME}/ycsb-hbase12/conf/hbase-site.xml
 # echo "====================variable loaded==========="
