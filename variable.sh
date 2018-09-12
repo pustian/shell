@@ -115,10 +115,14 @@ DEFAULT_USER_HOME=`grep 'default_user_home=' $MISC_CONF_FILE | grep -v '^#' | aw
 MASTER_IP=`grep 'master_ip' $NETWORK_CONFIG_FILE | grep -v '^#' | awk -F " " '{print $1}'`
 test -z "$DEFAULT_USER" && DEFAULT_USER=root
 test -z "$DEFAULT_USER_HOME" && DEFAULT_USER_HOME=/root
-if [ -z $SOURCE_DIR ]|| [ -z $MASTER_IP ] \
-    || [ -z $PARAFS_RPM ] || [ -z $LLOG_RPM ] || [ -z $HADOOP_FILE ] ; then
+if [ -z $SOURCE_DIR ] || [ -z $PARAFS_RPM ] || [ -z $LLOG_RPM ] || [ -z $HADOOP_FILE ] ; then
     echo -e "\033[31mplease confirm the file $MISC_CONF_FILE ,\033[0m"
-    echo -e "\033[31m    the source_dir, maser_ip, llog_rpm, parafs_rpm, and parafs_hadoop_file are must\033[0m"
+    echo -e "\033[31m    the source_dir, llog_rpm, parafs_rpm, and parafs_hadoop_file are must\033[0m"
+    exit 1
+fi
+if [ -z $MASTER_IP ] ; then
+    echo -e "\033[31mplease confirm the file $NETWORK_CONFIG_FILE,\033[0m"
+    echo -e "\033[31m    the maser_ip should be marked\033[0m"
     exit 1
 fi
 
