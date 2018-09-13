@@ -6,7 +6,7 @@ VARIABLE_BASH_NAME=variable.sh
 INSTALL_DIR=/opt/wotung
 ###### 脚本根目录支持parafs-install 不在/opt/wotung目录下
 SCRIPT_BASE_DIR=/opt/wotung/parafs-install
-INSTALL_LOG=$SCRIPT_BASE_DIR/parafs-install.log
+INSTALL_LOG=$SCRIPT_BASE_DIR/log/parafs-install.log
 SCRIPT_FILE=`basename $SCRIPT_BASE_DIR`.tar.gz
 SCRIPT_MD5_FILE=${SCRIPT_MD5_FILE}.md5sum
 if test ! -d $SCRIPT_BASE_DIR ; then
