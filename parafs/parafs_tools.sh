@@ -22,7 +22,6 @@ function tools_usage() {
 ### 注意：调用时,command要用双引号括起来,否则$1传输会出错
 function cluster_cmd() {
 	local command=$1
-
 	local local_user="root"
 	local remote_user="root"
 	for each_ip in $CLUSTER_IPS; do
@@ -61,23 +60,69 @@ function cluster_update_parafs(){
     cluster_cmd "$cmd_update_llog"
 }
 
-###删除conf/passwd以及/opt/wotung下的多余文件
+###集群删除conf/passwd以及/opt/wotung下的多余文件
 function cluster_install_clean(){
-    local f_passwd="${SCRIPT_BASE_DIR}/conf/passwd"
-    local f_hadoop_tar="${INSTALL_DIR}/hadoop-system.tar.gz"
-    local f_all_tar="${INSTALL_DIR}/install_all.tar.gz"
-    local f_script_tar="${INSTALL_DIR}/parafs-install.tar.gz"
-    local f_script_md5="${INSTALL_DIR}/parafs-install.tar.gz.md5sum"
-    
+    # passwd
+    local file_passwd="${SCRIPT_BASE_DIR}/conf/passwd"
+
+    # redundant files
     local name_parafs_rpm=`grep '^parafs_rpm' $SCRIPT_BASE_DIR/conf/misc_config | awk -F '=' '{print $2}'`
     local name_llog_rpm=`grep '^llog_rpm' $SCRIPT_BASE_DIR/conf/misc_config | awk -F '=' '{print $2}'`
     local f_parafs_rpm="${INSTALL_DIR}/${name_parafs_rpm}"
     local f_llog_rpm="${INSTALL_DIR}/${name_llog_rpm}"
+    local f_hadoop_tar="${INSTALL_DIR}/hadoop-system.tar.gz"
+    local f_all_tar="${INSTALL_DIR}/install_all.tar.gz"
+    local f_script_tar="${INSTALL_DIR}/parafs-install.tar.gz"
+    local f_script_md5="${INSTALL_DIR}/parafs-install.tar.gz.md5sum"
 
-    local rm_cmd="rm -f $f_passwd $f_hadoop_tar $f_all_tar $f_script_tar $f_script_md5 $f_parafs_rpm $f_llog_rpm"
-    cluster_cmd "$rm_cmd"
-    
-    rm $INSTALL_LOG*bak
+    local file_array=("$f_parafs_rpm" "$f_llog_rpm" "$f_hadoop_tar" "$f_all_tar" "$f_script_tar" "$f_script_md5")
+
+    # logs
+    local file_logs_old="/tmp/parafs_*"
+    local file_logs_new="$INSTALL_LOG*bak"
+    local file_logs=("$file_logs_old" "$file_logs_new")
+
+    # 循环交互，y or n
+    ask_for_deletion "passwd in conf/" "$file_passwd" "remote"
+    ask_for_deletion "redundant files in /opt/wotung" "${file_array[*]}" "remote"
+    ask_for_deletion "logs" "${file_logs[*]}" "local"
+}
+
+function ask_for_deletion(){
+    local rubbish=$1
+    local rubbish_array=$2
+    local remote_or_local=$3
+    read -p "Do you want to delete [ $rubbish ]  ?(y/n)" input
+    case ${input} in
+        y|Y)  
+            echo "Deleting the $rubbish ..."
+            delete_file "${rubbish_array[*]}" "$remote_or_local"
+            ;;  
+        n|N)  
+            echo "The [ $rubbish ] will be preserved."
+            ;;  
+        *)  
+            ask_for_deletion "$rubbish" $rubbish_array $remote_or_local
+            ;;  
+    esac
+}
+
+function delete_file(){
+    local rubbish_array=$1 
+    local remote_or_local=$2
+    if [[ $remote_or_local = "local" ]];then
+        for i in $rubbish_array
+        do
+            echo "local delete" $i
+            rm -f $i
+        done
+    elif [[ $remote_or_local = "remote" ]];then
+        for i in $rubbish_array
+        do
+            echo "remote delete $i" 
+            cluster_cmd "rm -f $i"
+        done
+    fi
 }
 
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###

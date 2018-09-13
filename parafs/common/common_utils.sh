@@ -150,7 +150,6 @@ function remote_excute_cmd() {
 	local remote_user=$2
 	local remote_ip=$3
 	local remote_cmd=$4
-	
     print_bgblack_fgwhite "function call ......remote_excute_cmd.....  \"$remote_cmd\"  at $remote_ip" $common_utils_output_tabs
     print_msg "sudo su - $local_user -c \"ssh '$remote_user@$remote_ip' '$remote_cmd'\""
 	# ret=`sudo su - $local_user -c "ssh '$remote_user@$remote_ip' '$remote_cmd'"`
