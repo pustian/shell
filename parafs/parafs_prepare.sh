@@ -64,8 +64,8 @@ function cluster_root_authorize() {
     local user_name='root'
     local user_home='/root'
 
-    master_ip=$MASTER_IP
-    user_passwd=`grep ${master_ip} $filename |awk '{print $2 }'`
+    local master_ip=$MASTER_IP
+    local user_passwd=`grep ${master_ip} $filename |awk '{print $2 }'`
 	# 从master到各机器，再从各机器到master免密
     for each_ip in $CLUSTER_IPS; do
 		#master to each
@@ -96,8 +96,8 @@ function cluster_alias_authorize(){
 	
 	local master_ip=$MASTER_IP
 	# 长名、短名的免密
-	ip_longname=`cat ${NETWORK_CONFIG_FILE} |grep -v '^#' | awk -F " " '{print $2}'`
-	ip_shortname=`cat ${NETWORK_CONFIG_FILE} |grep -v '^#' | awk -F " " '{print $3}'`
+	local ip_longname=`cat ${NETWORK_CONFIG_FILE} |grep -v '^#' | awk -F " " '{print $2}'`
+	local ip_shortname=`cat ${NETWORK_CONFIG_FILE} |grep -v '^#' | awk -F " " '{print $3}'`
 
 	for each_longname in $ip_longname; do
         print_bgblack_fgwhite "login from $each_longname to $master_ip by expect" "(($prepare_output_tabs+1))"

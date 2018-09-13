@@ -2,27 +2,27 @@
 
 function help_info(){
     echo The tools are as following:
-    echo -e "\033[40;37m Update parafs-----------------------------------------------------------------[u]\033[0m"
-    echo -e "\033[40;37m Add node----------------------------------------------------------------------[a]\033[0m"
-    echo -e "\033[40;37m Rebuild parafs----------------------------------------------------------------[r]\033[0m"
-
-    echo "what do you want to do:"
+    echo -e "update parafs:\t\t tool_update_parafs"
+    echo -e "add node:\t\t tool_add_node \"node_ip\""
+    echo -e "synchronize file:\t tool_sync_file \"full_filepath\""
 }   
 
-function switch_case(){
-    read input
-    case $input in
-        u)
-            ;;
-        a)
-            ;;
-        r)
-            ;;
-    esac
+function tool_update_parafs(){
+    cluster_update_parafs
 }
 
+function tool_add_node(){
+    local node=$1
+    # before executing, configure the conf/network & conf/passwd
+    cluster_add_node $node
+    echo
+}
+
+function tool_sync_file(){
+    local full_filepath=$1
+    cluster_sync_file "$full_filepath"
+}
 ### main ###
 . /opt/wotung/parafs-install/parafs/parafs_tools.sh
 
 help_info
-switch_case

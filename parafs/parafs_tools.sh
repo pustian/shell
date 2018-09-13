@@ -36,6 +36,7 @@ function cluster_sync_file() {
 
 	local local_user="root"
 	local remote_user="root"
+    echo $1
 	for each_ip in $CLUSTER_IPS; do
 		sync_file $local_user $remote_user $each_ip $filename
 	done
@@ -60,7 +61,20 @@ function cluster_update_parafs(){
     cluster_cmd "$cmd_update_llog"
 }
 
-###集群删除conf/passwd以及/opt/wotung下的多余文件
+#function cluster_add_node(){
+#    local node=$1
+#    cluster_root_authorize
+#    cluster_config_network
+#
+#    single_parafs
+#    single_yum
+#    single_pip 
+#
+#    cluster_close_firewall
+#    cluster_
+#}
+
+###集群删除conf/passwd,/opt/wotung下的多余文件,以及log文件
 function cluster_install_clean(){
     # passwd
     local file_passwd="${SCRIPT_BASE_DIR}/conf/passwd"

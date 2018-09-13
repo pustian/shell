@@ -134,7 +134,7 @@ function cluster_check_passwd() {
     
     fault_ips=""
     for ip in $CLUSTER_IPS; do
-        passwd=`grep ${ip} $filename |awk '{print $2 }'`
+        local passwd=`grep ${ip} $filename |awk '{print $2 }'`
         #echo "ip=$ip DEFAULT_USER=$DEFAULT_USER passwd=******  DEFAULT_USER_HOME=$DEFAULT_USER_HOME"
         is_passwd_ok "$ip" "$DEFAULT_USER" "$passwd" "$DEFAULT_USER_HOME"
         if [ $? -ne 0 ]; then
@@ -163,7 +163,7 @@ function cluster_check_filesystem() {
         if [ "x${ip}" = "x" ] ; then 
             break;
         fi
-        passwd=`grep ${ip} $filename |awk '{print $2 }'`
+        local passwd=`grep ${ip} $filename |awk '{print $2 }'`
 
         is_ext4_format $ip $DEFAULT_USER $passwd
         if [ $? -eq 0 ]; then
