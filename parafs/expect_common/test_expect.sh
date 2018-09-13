@@ -9,7 +9,10 @@
 # ### ssh_remote_exec.exp
 #  ./ssh_remote_exec.exp "192.168.138.71" "root" "Tianpusen@1" "ls -la /root" 
 #  ./ssh_remote_exec.exp "192.168.138.72" "root" "Tianpusen@1" "ls -la /aaa"
-# ./ssh_remote_exec.exp "192.168.138.72" "root" "Tianpusen@1" "cat /etc/passwd"  >aa
+# ./ssh_remote_exec.exp "192.168.1.99" "root" "Tianpusen@1" "grep defaults /root/fstab | grep -v ext4  |grep -v ^# |grep -v swap" 
+# result=`./ssh_remote_exec.exp "192.168.1.99" "root" "Tianpusen@1" "df -T >/tmp/res " `
+# echo $result
+# ./ssh_remote_exec.exp "192.168.1.99" "root" "Tianpusen@1" "df -T  " >/tmp/res2
 
 # ### current_authorize.exp
 # ./current_authorize.exp "192.168.138.71" 'parauser' "hetong@2015" "/home/parauser"  \

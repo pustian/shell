@@ -89,6 +89,44 @@ function is_parafs_node_ok() {
         return 0
     fi
 }
+
+function is_ext4_format() {
+    local hostname=$1
+    local user=$2
+    local passwd=$3
+    print_bgblack_fgwhite "function call ......is_ext4_format..... at $hostname" $common_utils_output_tabs
+    
+    local ext4_result="/tmp/parafs_ext4format$hostname"
+    local remote_command="grep defaults /etc/fstab | grep -v ext4  |grep -v ^# |grep -v swap "
+    print_msg "$SSH_REMOTE_EXEC '$hostname' '$user' 'passwd' '$remote_command' >$ext4_result "
+    $SSH_REMOTE_EXEC "$hostname" "$user" "$passwd" "$remote_command" >$ext4_result 
+    print_msg "grep -v 'grep' $ext4_result |grep 'defaults' "
+    grep -v 'grep' $ext4_result |grep 'defaults' 
+    return $?
+}
+
+function node_capcity() {
+    local hostname=$1
+    local user=$2
+    local passwd=$3
+    print_bgblack_fgwhite "function call ......node_capcity..... at $hostname" $common_utils_output_tabs
+
+    local df_result="/tmp/parafs_node_capcity$hostname"
+    local _30G=30831523
+    local node_dir="/opt/wotung/node/0"
+    local remote_command="df -T"
+    print_msg "$SSH_REMOTE_EXEC '$hostname' '$user' 'passwd' '$remote_command' >$df_result"
+    $SSH_REMOTE_EXEC "$hostname" "$user" "$passwd" "$remote_command" >$df_result
+    print_msg "cat $df_result|grep ${node_dir} |awk '{print \$3}'"
+    local capcity=`cat $df_result |grep ${node_dir} |awk '{print $3}' `
+    print_result "$capcity should greate than $_30G"
+    if [ ! -z ${capcity} ] && [ $((capcity)) -gt  $((_30G)) ] ; then
+        return 1
+    else
+        return 0
+    fi
+}
+
 #####################################################################
 ###### 免密升级sudoer用户不需要密码 修改文件所有用户
 function dirpath_sudoer_chown() {
@@ -112,7 +150,6 @@ function remote_excute_cmd() {
 	local remote_user=$2
 	local remote_ip=$3
 	local remote_cmd=$4
-	
     print_bgblack_fgwhite "function call ......remote_excute_cmd.....  \"$remote_cmd\"  at $remote_ip" $common_utils_output_tabs
     print_msg "sudo su - $local_user -c \"ssh '$remote_user@$remote_ip' '$remote_cmd'\""
 	# ret=`sudo su - $local_user -c "ssh '$remote_user@$remote_ip' '$remote_cmd'"`
@@ -153,6 +190,7 @@ common_utils_output_tabs="3"
   # is_parafs_node_ok 192.168.138.71 "root" "Tianpusen@1" 
   # echo $?
   # is_parafs_node_ok 192.168.138.70 "parafs" "tianpusen" 
+  # is_ext4_format 192.168.1.21 "root" "888888"
   # dirpath_sudoer_chown parauser 192.168.138.71 parauser /opt/wotung/hadoop-parafs parauser parauser
   # echo $?
 #  # ###++++++++++++++++++++++++      test end         ++++++++++++++++++++++++++###

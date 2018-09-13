@@ -23,9 +23,9 @@ function usage() {
     echo ""
     echo -e "\033[40;37mpre-check -----------------------------------------------------------------[P]\033[0m" ;
     echo -e "\033[40;37mpre-installation-----------------------------------------------------------[R]\033[0m" ;
-    echo -e "\033[40;37minstallation-------------------------------------------------------------- [I]\033[0m" ;
-    echo -e "\033[40;37mpackage-dist ------------------------------------------------------------- [D]\033[0m" ;
-    echo -e "\033[40;37mconfig-------------------------------------------------------------------- [C]\033[0m" ;
+    echo -e "\033[40;37mparafs-installation------------------------------------------------------- [I]\033[0m" ;
+    echo -e "\033[40;37mhadoop-system-dist-------------------------------------------------------- [D]\033[0m" ;
+    echo -e "\033[40;37mhadoop-system-config------------------------------------------------------ [C]\033[0m" ;
     echo -e "\033[40;37mafter-check----------------------------------------------------------------[A]\033[0m" ;
     echo -e "\033[40;37mExit ----------------------------------------------------------------------[E]\033[0m" ;
 }
@@ -67,18 +67,18 @@ while [ x"${input}" != x"E" ]; do
     case ${input} in
         P|p) 
             print_bgblack_fgblue "pre-chenk begin" $installsh_output_tabs
-            #检查本地安装文件是否齐全
-            check_local_install_files
             #对本地的hadoop_system,llog,parafs进行md5sum
             local_exec_md5
             #本地安装expect，免密需要用到。
             local_install_expect
+            #检查本地安装文件是否齐全
+            check_local_install_files
             #检查各IP是否能够ping通
             check_address
             #在root免密的情况下会直接通过
             cluster_check_passwd 
             #检查/opt/wotung/node/0 目录 
-            cluster_check_nodes
+            cluster_check_filesystem
             print_bgblack_fgblue "pre-chenk end" $installsh_output_tabs
             ;;
         R|r) 
@@ -159,6 +159,10 @@ while [ x"${input}" != x"E" ]; do
             cluster_update_azkaban
             # 集群同步kafka
             cluster_update_kafka
+            #
+            cluster_update_ycsb_hbase
+            # 
+            cluster_update_spark_bench_legacy
             print_bgblack_fgblue "config parafs-system end" $installsh_output_tabs
             print_bgblack_fgred "Bash environment has been changed. Pls reopen a new console, or run source ~/.bashrc"
             ;;
@@ -168,6 +172,11 @@ while [ x"${input}" != x"E" ]; do
             cluster_install_clean
             print_bgblack_fgblue "after-check end" $installsh_output_tabs
             ;;
+        #TODO
+        t)
+            
+            ;;
+        #TODO
         E|e|Q|q|exit) 
             exit 0
             ;;

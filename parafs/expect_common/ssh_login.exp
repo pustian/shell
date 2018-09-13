@@ -59,4 +59,4 @@ expect {
 exp_send "exit\r"
 # exp_send "exit\r"
 # expect eof
-puts "\n----------+----------  end  ----------+----------"
+puts "----------+----------  end  ----------+----------\n"

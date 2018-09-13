@@ -113,37 +113,27 @@ function cluster_update_azkaban() {
 function cluster_update_kafka() {
     print_bgblack_fggreen "cluster_update_kafka begin" $config_output_tabs
 
-    __cluster_kafka_connect
-
     __cluster_kafka_broker_id
+
+    __cluster_kafka_connect
 
     print_bgblack_fggreen "cluster_update_kafka end" $config_output_tabs
 }
-# ####### ParafsInstallation 
-# ####+++ 逐台安装parafs和日志
-# function cluster_ParafsInstallation() {
-#    	echo -e "\t\t cluster_ParafsInstallation start"
-# 		 source $SCRIPT_BASE_DIR/parafs/InstallALLParafs.sh
-#     echo -e "\t\t cluster_parafs done"
-# }
-# 
-# ####### cluster_SourceBashrc
-# ####+++  设置环境变量
-# function cluster_SourceBashrc() {
-# 	  echo -e "\t\t cluster_SourceBashrc start"
-# 	  	source $SCRIPT_BASE_DIR/parafs/InstallAllSourceBashrc.sh 
-#     echo -e "\t\t cluster_SourceBashrc done"
-# }
-# 
-# ####### cluster_ChangeConfigurationFile
-# ####+++ 修改xml文件
-# function cluster_ChangeConfigurationFile() {
-#     echo -e "\t\t cluster_ChangeConfigurationFile start"
-# 	  	source $SCRIPT_BASE_DIR/parafs/InstallAllChangeParaCfg.sh  
-#     echo -e "\t\t cluster_ChangeConfigurationFile done"
-# }
-# 
 
+function cluster_update_spark_bench_legacy() {
+    print_bgblack_fggreen "cluster_update_spark_bench_legacy begin" $config_output_tabs
+    
+    __cluster_spark_bench_legacy_env
+    
+    print_bgblack_fggreen "cluster_update_spark_bench_legacy end" $config_output_tabs
+}
+function cluster_update_ycsb_hbase() {
+    print_bgblack_fggreen "cluster_update_ycsb_hbase begin" $config_output_tabs
+    
+    __cluster_ycsb_hbase_xml
+
+    print_bgblack_fggreen "cluster_update_ycsb_hbase end" $config_output_tabs
+}
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 CONFIG_BASH_NAME=parafs_config.sh
 if [ -z ${VARIABLE_BASH_NAME} ] ; then 

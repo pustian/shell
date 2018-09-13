@@ -73,15 +73,17 @@ function file_dist() {
     
     #if authorize_ip is $CLUSTER_LOCAL_IP, execute 'cp'
     print_bgblack_fgwhite "function call ......file_dist.....  at $authorize_ip for $local_file" $common_zip_output_tabs
-    if [[ $authorize_ip = $CLUSTER_LOCAL_IP ]]; then
-        print_msg "sudo su - $local_user -c \"cp '${local_file_dir}/$local_file' '$remote_path'\" "
-        sudo su - $local_user -c "cp '${local_file_dir}/$local_file' '$remote_path'" 
-        # print_result $ret
-    else
-        print_msg "sudo su - $local_user -c \"scp '${local_file_dir}/$local_file' '$authorize_user@$authorize_ip:$remote_path'\" >/dev/null"
-        sudo su - $local_user -c "scp '${local_file_dir}/$local_file' '$authorize_user@$authorize_ip:$remote_path'" # >/dev/null
-        # print_result $ret
-    fi
+    #if [[ $authorize_ip = $CLUSTER_LOCAL_IP ]]; then
+    #    print_msg "sudo su - $local_user -c \"cp '${local_file_dir}/$local_file' '$remote_path'\" "
+    #    sudo su - $local_user -c "cp '${local_file_dir}/$local_file' '$remote_path'" 
+    #    # print_result $ret
+    #else
+    #    print_msg "sudo su - $local_user -c \"rsync -rv '${local_file_dir}/$local_file' '$authorize_user@$authorize_ip:$remote_path'\" >/dev/null"
+    #    sudo su - $local_user -c "rsync -rv '${local_file_dir}/$local_file' '$authorize_user@$authorize_ip:$remote_path'" # >/dev/null
+    #    # print_result $ret
+    #fi
+    print_msg "sudo su - $local_user -c \"rsync -rv '${local_file_dir}/$local_file' '$authorize_user@$authorize_ip:$remote_path'\" >/dev/null"
+    sudo su - $local_user -c "rsync -rv '${local_file_dir}/$local_file' '$authorize_user@$authorize_ip:$remote_path'" # >/dev/null
     return $?
 }
 
