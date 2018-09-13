@@ -127,9 +127,7 @@ function delete_file(){
 
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 TOOLS_BASH_NAME=parafs_tools.sh
-if [ -z ${VARIABLE_BASH_NAME} ] ; then 
-    . ${SCRIPT_BASE_DIR}/variable.sh
-fi
+. /opt/wotung/parafs-install/variable.sh
 . ${SCRIPT_BASE_DIR}/parafs/common/common_utils.sh
 tools_output_tabs="2"
 ###++++++++++++++++++++++++      main end         ++++++++++++++++++++++++++###
