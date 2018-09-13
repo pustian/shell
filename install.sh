@@ -124,6 +124,7 @@ while [ x"${input}" != x"E" ]; do
             echo -e "\033[40;34m\t\033[0m"
             local_dist_rpm
             cluster_dist_rpm
+            cluster_config_yum_source
             cluster_yum
             cluster_pip
             cluster_rpm_install

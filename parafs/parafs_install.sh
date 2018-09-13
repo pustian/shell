@@ -11,6 +11,21 @@ function install_usage() {
     echo "cluster-sudoer-chown"
 }
 
+###### 免密后yum 安装源切换
+function cluster_config_yum_source() {
+    print_bgblack_fggreen " cluster_config_yum_source begin" $inst_output_tabs
+    local fault_ips=""
+    for ip in $CLUSTER_IPS; do
+        config_yum_source $USER_NAME $ip $USER_NAME
+        if [ $? -ne 0 ] ; then
+            print_bgblack_fgred "Info Failed to config yum source at $ip "
+            fault_ips="$config_ip $fault_ips"
+            # break;
+        fi
+    done
+    print_bgblack_fggreen "cluster_config_yum_source end" $inst_output_tabs
+
+}
 ###### 免密后yum 安装
 function cluster_yum() {
     print_bgblack_fggreen "cluster_yum begin" $inst_output_tabs
