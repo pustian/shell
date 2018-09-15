@@ -18,6 +18,10 @@ function tool_add_node(){
     cluster_config_network
     cluster_close_firewalld
 
+    # dist the parafs-install
+    local_script_zip
+    cluster_script_dist
+
     # parafs rpm install
     local_dist_rpm
     single_dist_rpm $node
@@ -53,25 +57,6 @@ function tool_sync_file(){
     cluster_sync_file "$full_filepath"
 }
 
-function test_f(){
-    # single dist hadoop-system
-    single_hadoop_dist "192.168.1.204"
-
-    # config
-    cluster_config_bashrc
-    cluster_chmod
-    check_local_config_file
-    cluster_update_hadoop
-    cluster_update_spark
-    cluster_update_zookeeper
-    cluster_update_hbase
-    cluster_update_hive
-    cluster_update_azkaban
-    cluster_update_kafka
-    cluster_update_ycsb_hbase
-    cluster_update_spark_bench_legacy     
-
-}
 ### main ###
 . /opt/wotung/parafs-install/variable.sh
 . ${SCRIPT_BASE_DIR}/parafs/parafs_tools.sh
