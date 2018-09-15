@@ -43,6 +43,9 @@ function tool_add_node(){
     cluster_update_kafka
     cluster_update_ycsb_hbase
     cluster_update_spark_bench_legacy     
+
+    # after check
+    cluster_install_clean
 }
 
 function tool_sync_file(){
