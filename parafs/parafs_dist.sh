@@ -25,7 +25,23 @@ function cluster_dist_rpm() {
 
     print_bgblack_fggreen "cluster_dist_rpm end" $dist_output_tabs
 }
- 
+
+####### 分发安装文件到单台机器上,llog.rpm parafs.rpm
+function single_dist_rpm() {
+    print_bgblack_fggreen "single_dist_rpm begin" $dist_output_tabs
+    local ip=$1
+    
+    __single_file_dist $SOURCE_DIR $PARAFS_RPM $INSTALL_DIR $ip
+
+    __single_zipfile_check $PARAFS_MD5_RPM $SOURCE_DIR $PARAFS_RPM $INSTALL_DIR $ip
+
+    __single_file_dist $SOURCE_DIR $LLOG_RPM $INSTALL_DIR $ip
+
+    __single_zipfile_check $LLOG_MD5_RPM $SOURCE_DIR $LLOG_RPM $INSTALL_DIR $ip
+
+    print_bgblack_fggreen "single_dist_rpm end" $dist_output_tabs
+}
+
 #######  分发生态文件到各机器上,
 function cluster_hadoop_dist() {
     print_bgblack_fggreen "cluster_hadoop_dist begin" $dist_output_tabs
@@ -37,6 +53,20 @@ function cluster_hadoop_dist() {
     __cluster_unzipfile $HADOOP_FILE $INSTALL_DIR
     
     print_bgblack_fggreen "cluster_hadoop_dist end" $dist_output_tabs
+}
+
+function single_hadoop_dist(){
+    print_bgblack_fggreen "single_hadoop_dist begin" $dist_output_tabs
+    local ip=$1
+
+    __single_file_dist $SOURCE_DIR $HADOOP_FILE $INSTALL_DIR $ip
+
+    __single_zipfile_check $HADOOP_MD5_FILE $SOURCE_DIR $HADOOP_FILE $INSTALL_DIR $ip
+
+    __single_unzipfile $HADOOP_FILE $INSTALL_DIR $ip
+    
+    print_bgblack_fggreen "single_hadoop_dist end" $dist_output_tabs
+
 }
 
 function local_dist_rpm() {

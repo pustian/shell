@@ -7,14 +7,11 @@
 function tools_usage() {
 	echo "在集群上执行指定命令"  
 	echo "在集群上同步指定文件" 
-    echo "在集群上更新parafs" #TODO
+    echo "在集群上更新parafs"
     echo "检查指定ip的node"
     echo "新建一个parauser";
     echo "同一用户免密"
     echo "dist file to some computer";
-    echo "删除用户";
-    echo "集群新增一台机器"
-    echo "集群删除一台机器"
 }
 
 ### 在集群上执行某个命令
@@ -60,19 +57,6 @@ function cluster_update_parafs(){
     cluster_cmd "$cmd_update_para"
     cluster_cmd "$cmd_update_llog"
 }
-
-#function cluster_add_node(){
-#    local node=$1
-#    cluster_root_authorize
-#    cluster_config_network
-#
-#    single_parafs
-#    single_yum
-#    single_pip 
-#
-#    cluster_close_firewall
-#    cluster_
-#}
 
 ###集群删除conf/passwd,/opt/wotung下的多余文件,以及log文件
 function cluster_install_clean(){

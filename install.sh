@@ -105,6 +105,7 @@ while [ x"${input}" != x"E" ]; do
             # 删除 passwd user_passwd 文件 
             print_bgblack_fgblue "pre-installation end" $installsh_output_tabs
             ;;
+
         #此选项没有在提示中显示，执行U选项相当于执行D和I
         U|u) 
             print_bgblack_fgblue "dist and install begin " $installsh_output_tabs
@@ -122,10 +123,15 @@ while [ x"${input}" != x"E" ]; do
         I|i)
             print_bgblack_fgblue "installation begin" $installsh_output_tabs
             echo -e "\033[40;34m\t\033[0m"
+            # 本地移动rpm包到指定位置
             local_dist_rpm
+            # 集群分发rpm包
             cluster_dist_rpm
+            # 集群安装依赖的yum下载相关软件
             cluster_yum
+            # 集群安装依赖的pip下载相关软件
             cluster_pip
+            # 集群安装rpm包
             cluster_rpm_install
             ##cluster_sudoer_chown
             print_bgblack_fgblue "installation end" $installsh_output_tabs
@@ -133,7 +139,9 @@ while [ x"${input}" != x"E" ]; do
         D|d)
             print_bgblack_fgblue "distribute begin" $installsh_output_tabs
             print_bgblack_fgwhite "It will take a few minutes at each machine for $HADOOP_FILE operation" $installsh_output_tabs
+            # 本地移动hadoop-system文件到指定位置
             local_dist_hadoop
+            # 集群分发hadoop-system
             cluster_hadoop_dist
             print_bgblack_fgblue "distribute end" $installsh_output_tabs
             ;;
@@ -143,7 +151,7 @@ while [ x"${input}" != x"E" ]; do
             cluster_config_bashrc
             # 集群操作，给hadoop-system的bin/和sbin/ +x
             cluster_chmod
-            # 
+            # 检查要config的文件是否存在
             check_local_config_file
             # 集群同步hadoop，注意MASTER_IP在conf/MISC_config中配置
             cluster_update_hadoop
@@ -174,7 +182,6 @@ while [ x"${input}" != x"E" ]; do
             ;;
         #TODO
         t)
-            
             ;;
         #TODO
         E|e|Q|q|exit) 

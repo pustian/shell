@@ -170,6 +170,26 @@ function cluster_config_network() {
     print_bgblack_fggreen "cluster_config_network end" $prepare_output_tabs
 }
 
+###集群检查internet连接
+function cluster_check_internet(){
+    print_bgblack_fggreen "cluster_check_internet begin" $check_env_output_tabs
+    local fail_node=""
+    
+    for ip in $CLUSTER_IPS; do
+        internet_conn $ip "www.baidu.com"
+        if [ $? -ne 0 ] ; then
+            print_bgblack_fgred "ERROR: $ip to internet connection error" $check_env_output_tabs
+            fail_node="$ip $fail_node"
+        fi  
+    done
+
+    if [ ! -z "$fail_node" ]; then
+        print_bgblack_fgred "check the internet connection of $fail_node" $check_env_output_tabs
+        exit 1
+    fi  
+    print_bgblack_fggreen "cluster_check_internet end" $check_env_output_tabs
+}
+
 ####### 本地压缩parafs-install/生成安装包，并生成md5 
 function local_script_zip() {
     print_bgblack_fggreen "local_script_zip begin" $prepare_output_tabs

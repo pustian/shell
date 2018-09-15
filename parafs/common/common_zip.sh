@@ -82,8 +82,8 @@ function file_dist() {
     #    sudo su - $local_user -c "rsync -rv '${local_file_dir}/$local_file' '$authorize_user@$authorize_ip:$remote_path'" # >/dev/null
     #    # print_result $ret
     #fi
-    print_msg "sudo su - $local_user -c \"rsync -rv '${local_file_dir}/$local_file' '$authorize_user@$authorize_ip:$remote_path'\" >/dev/null"
-    sudo su - $local_user -c "rsync -rv '${local_file_dir}/$local_file' '$authorize_user@$authorize_ip:$remote_path'" # >/dev/null
+    print_msg "sudo su - $local_user -c \"scp '${local_file_dir}/$local_file' '$authorize_user@$authorize_ip:$remote_path'\" >/dev/null"
+    sudo su - $local_user -c "scp '${local_file_dir}/$local_file' '$authorize_user@$authorize_ip:$remote_path'" # >/dev/null
     return $?
 }
 

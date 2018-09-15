@@ -27,21 +27,21 @@ function update_bashrc() {
 }
 
 function check_local_config_file() {
-    test ! -f $HADOOP_SLAVES         && print_msg "$HADOOP_SLAVES         is not exist" && exit 1
-    test ! -f $HADOOP_YARN_XML       && print_msg "$HADOOP_YARN_XML       is not exist" && exit 1
-    test ! -f $SPARK_SLAVES          && print_msg "$SPARK_SLAVES          is not exist" && exit 1
-    test ! -f $SPARK_ENV             && print_msg "$SPARK_ENV             is not exist" && exit 1
-    test ! -f $SPARK_CONF            && print_msg "$SPARK_CONF            is not exist" && exit 1
-    test ! -f $ZOOKEEPER_CONF        && print_msg "$ZOOKEEPER_CONF        is not exist" && exit 1
-    test ! -f $ZOOKEEPER_MY_ID       && print_msg "$ZOOKEEPER_MY_ID       is not exist" && exit 1
-#    test ! -f $ZOOKEEPER_DATA        && print_msg "$ZOOKEEPER_DATA        is not exist" && exit 1
-#    test ! -f $ZOOKEEPER_DATA_LOG    && print_msg "$ZOOKEEPER_DATA_LOG    is not exist" && exit 1
-    test ! -f $HBASE_REGEION_SERVERS && print_msg "$HBASE_REGEION_SERVERS is not exist" && exit 1
-    test ! -f $HBASE_CONF            && print_msg "$HBASE_CONF            is not exist" && exit 1
-    test ! -f $HIVE_CONF             && print_msg "$HIVE_CONF             is not exist" && exit 1
-    test ! -f $KAFKA_CONF            && print_msg "$KAFKA_CONF            is not exist" && exit 1
-    test ! -f $AZKABAN_EXEC_CONF     && print_msg "$AZKABAN_EXEC_CONF     is not exist" && exit 1
-    test ! -f $AZKABAN_WEB_CONF      && print_msg "$AZKABAN_WEB_CONF      is not exist" && exit 1
+    test ! -f $HADOOP_SLAVES         && print_msg "$HADOOP_SLAVES         is not exist" 
+    test ! -f $HADOOP_YARN_XML       && print_msg "$HADOOP_YARN_XML       is not exist" 
+    test ! -f $SPARK_SLAVES          && print_msg "$SPARK_SLAVES          is not exist" 
+    test ! -f $SPARK_ENV             && print_msg "$SPARK_ENV             is not exist" 
+    test ! -f $SPARK_CONF            && print_msg "$SPARK_CONF            is not exist" 
+    test ! -f $ZOOKEEPER_CONF        && print_msg "$ZOOKEEPER_CONF        is not exist" 
+    test ! -f $ZOOKEEPER_MY_ID       && print_msg "$ZOOKEEPER_MY_ID       is not exist" 
+#    test ! -f $ZOOKEEPER_DATA        && print_msg "$ZOOKEEPER_DATA        is not exist"
+#    test ! -f $ZOOKEEPER_DATA_LOG    && print_msg "$ZOOKEEPER_DATA_LOG    is not exist"
+    test ! -f $HBASE_REGEION_SERVERS && print_msg "$HBASE_REGEION_SERVERS is not exist" 
+    test ! -f $HBASE_CONF            && print_msg "$HBASE_CONF            is not exist" 
+    test ! -f $HIVE_CONF             && print_msg "$HIVE_CONF             is not exist" 
+    test ! -f $KAFKA_CONF            && print_msg "$KAFKA_CONF            is not exist" 
+    test ! -f $AZKABAN_EXEC_CONF     && print_msg "$AZKABAN_EXEC_CONF     is not exist" 
+    test ! -f $AZKABAN_WEB_CONF      && print_msg "$AZKABAN_WEB_CONF      is not exist" 
     return 0
 }
 ###### slave 应该为空文件

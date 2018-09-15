@@ -26,6 +26,21 @@ function cluster_yum() {
     print_bgblack_fggreen "cluster_yum end" $inst_output_tabs
 }
 
+###### 免密后yum 单结点安装
+function single_yum() {
+    print_bgblack_fggreen "single_yum begin" $inst_output_tabs
+
+    local ip=$1
+    local fault_ips=""
+    yum_install $USER_NAME $ip $USER_NAME
+    if [ $? -ne 0 ] ; then
+        print_bgblack_fgred "Failed to yum depdences at $ip "
+        fault_ips="$config_ip $fault_ips"
+        # break;
+    fi
+    print_bgblack_fggreen "single_yum end" $inst_output_tabs
+}
+
 ###### 免密后pip 安装
 function cluster_pip() {
     print_bgblack_fggreen "cluster_pip begin" $inst_output_tabs
@@ -45,6 +60,24 @@ function cluster_pip() {
     print_bgblack_fggreen "cluster_pip end" $inst_output_tabs
 }
 
+###### 免密后pip 单结点安装
+function single_pip() {
+    print_bgblack_fggreen "single_pip begin" $inst_output_tabs
+    local ip=$1
+    local fault_ips=""
+    pip_install $USER_NAME $ip $USER_NAME
+    if [ $? -ne 0 ] ; then
+        print_bgblack_fgred "Failed to pip install paramiko at $ip "
+        fault_ips="$config_ip $fault_ips"
+        # break;
+    fi
+    if [ ! -z "$fault_ips" ]; then
+        print_bgblack_fgred "make sure pip install paramiko at $fault_ips"
+    #    exit 1
+    fi
+    print_bgblack_fggreen "single_pip end" $inst_output_tabs
+}
+
 ###### 免密后rpm 安装
 function cluster_rpm_install() {
     print_bgblack_fggreen "cluster_rpm_install begin" $inst_output_tabs
@@ -52,6 +85,17 @@ function cluster_rpm_install() {
         rpm_install $USER_NAME $ip $USER_NAME ${INSTALL_DIR}/$PARAFS_RPM
         rpm_install $USER_NAME $ip $USER_NAME ${INSTALL_DIR}/$LLOG_RPM
     done
+    print_bgblack_fggreen "cluster_rpm_install end" $inst_output_tabs
+}
+
+###### 免密后rpm 单结点远程安装
+function single_rpm_install() {
+    print_bgblack_fggreen "single_rpm_install begin" $inst_output_tabs
+    
+    local ip=$1
+    rpm_install $USER_NAME $ip $USER_NAME ${INSTALL_DIR}/$PARAFS_RPM
+    rpm_install $USER_NAME $ip $USER_NAME ${INSTALL_DIR}/$LLOG_RPM
+
     print_bgblack_fggreen "cluster_rpm_install end" $inst_output_tabs
 }
 

@@ -90,26 +90,6 @@ function check_address() {
     print_bgblack_fggreen "check_address end" $check_env_output_tabs
 }
 
-###集群检查internet连接
-function cluster_check_internet(){
-    print_bgblack_fggreen "cluster_check_internet begin" $check_env_output_tabs
-    local fail_node=""
-    
-    for ip in $CLUSTER_IPS; do
-        internet_conn $ip "www.baidu.com"
-        if [ $? -ne 0 ] ; then
-            print_bgblack_fgred "ERROR: $ip to internet connection error" $check_env_output_tabs
-            fail_node="$ip $fail_node"
-        fi
-    done
-
-    if [ ! -z "$fail_node" ]; then
-        print_bgblack_fgred "check the internet connection of $fail_node" $check_env_output_tabs
-        exit 1
-    fi
-    print_bgblack_fggreen "cluster_check_internet end" $check_env_output_tabs
-}
-
 ###安装expect
 function local_install_expect() {
     print_bgblack_fggreen "local_install_expect begin" $check_env_output_tabs

@@ -186,6 +186,29 @@ function __cluster_file_dist() {
     print_bgblack_fgwhite "function call ...... __cluster_file_dist end ......" $common_parafs_output_tabs
 }
 
+### 单IP传文件
+function __single_file_dist() {
+    print_bgblack_fgwhite "function call ...... __single_file_dist begin ......" $common_parafs_output_tabs
+    local dist_file_path=$1
+    local dist_zip_file=$2
+    local remote_path=$3
+    local ip=$4
+
+    local fault_ips=""
+    print_msg "file_dist $dist_file_path $dist_zip_file $USER_NAME ${ip} ${USER_NAME}  $remote_path"
+    file_dist $USER_NAME ${ip} ${USER_NAME} $dist_file_path $dist_zip_file $remote_path
+    if [ $? -ne 0 ] ; then 
+        print_bgblack_fgred "file dist error to $ip " $common_parafs_output_tabs
+        fault_ips="$ip $fault_ips"
+    fi
+   
+    if [ ! -z "$fault_ips" ]; then
+        print_bgblack_fgred "make sure the file dist $dist_zip_file at $fault_ips" $common_parafs_output_tabs
+        exit 1
+    fi
+    print_bgblack_fgwhite "function call ...... __cluster_file_dist end ......" $common_parafs_output_tabs
+}
+
 ###### 免密后检查分发文件的md5
 ### 此处 dist_user用户下可以免密登陆 authorize_user@authorize_ip 
 ###      authorize_user 在remote_path 用户可执行文件权限
@@ -220,6 +243,32 @@ function __cluster_zipfile_check() {
     print_bgblack_fgwhite "function call ...... __cluster_zipfile_check end ......" $common_parafs_output_tabs
 }
 
+### 单点IP压缩文件检查
+function __single_zipfile_check() {
+    print_bgblack_fgwhite "function call ...... __single_zipfile_check begin ......" $common_parafs_output_tabs
+    local zip_md5_file=$1
+    local zip_md5_dir=$2
+    local zip_file=$3
+    local zip_file_dir=$4
+    local ip=$5
+    
+    local md5=`cat ${zip_md5_dir}/$zip_md5_file |awk '{print $1}'`
+    local fault_ips=""
+    print_msg "check_zip_file $md5 $zip_file_dir $zip_file ${USER_NAME} $ip ${USER_NAME}"
+    check_zip_file ${USER_NAME} $ip ${USER_NAME} $md5 $zip_file_dir $zip_file 
+    if [ $? -ne 0 ] ; then
+        print_bgblack_fgred "zip_file=$zip_file is damage at $ip " $common_parafs_output_tabs
+        fault_ips="$ip $fault_ips"
+        # break;
+    fi
+ 
+    if [ ! -z "$fault_ips" ]; then
+        print_bgblack_fgred "make sure the file dist $zip_file_dir at $fault_ips" $common_parafs_output_tabs
+        exit 1
+    fi
+    print_bgblack_fgwhite "function call ...... __single_zipfile_check end ......" $common_parafs_output_tabs
+}
+
 ###### 免密后检查分发文件解压
 ### 此处 dist_user用户下可以免密登陆 authorize_user@authorize_ip 
 ###      authorize_user 在remote_path 用户写权限
@@ -248,6 +297,27 @@ function __cluster_unzipfile() {
         exit 1
     fi
     print_bgblack_fgwhite "function call ...... __cluster_unzipfile end ......" $common_parafs_output_tabs
+}
+
+function __single_unzipfile() {
+    print_bgblack_fgwhite "function call ...... __single_unzipfile begin ......" $common_parafs_output_tabs
+    local zip_file=$1
+    local zip_file_dir=$2
+    local ip=$3
+
+    local fault_ips=""
+    print_msg "unzip_file $zip_file_dir $zip_file $USER_NAME $ip $USER_NAME"
+    unzip_file $USER_NAME $ip $USER_NAME $zip_file_dir $zip_file
+    if [ $? -ne 0 ] ; then
+        print_bgblack_fgred "failed to unzip $zip_file at $ip" $common_parafs_output_tabs
+        fault_ips="$ip $fault_ips"
+        # break;
+    fi
+    if [ ! -z "$fault_ips" ]; then
+        print_bgblack_fgred "make sure the file $zip_file_dir at $fault_ips" $common_parafs_output_tabs
+        exit 1
+    fi
+    print_bgblack_fgwhite "function call ...... __single_unzipfile end ......" $common_parafs_output_tabs
 }
 
 ###############################################################################
