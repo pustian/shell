@@ -436,7 +436,7 @@ function local_hbase_backup(){
     local file=$3
 
     if [ -f $file ];then
-        rm $file
+        rm -f $file
         touch $file
     else
         touch $file
