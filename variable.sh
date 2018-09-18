@@ -82,11 +82,11 @@ USER_HOME='/root'
 ###### 安装文件,不包含目录 misc_config
 SOURCE_DIR=`grep '^source_dir' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
 PARAFS_RPM=`grep '^parafs_rpm' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
-PARAFS_MD5_RPM=`grep '^md5_parafs_rpm' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+PARAFS_MD5_RPM=`grep '^parafs_rpm' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`".md5sum"
 LLOG_RPM=`grep '^llog_rpm' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
-LLOG_MD5_RPM=`grep '^md5_llog_rpm' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+LLOG_MD5_RPM=`grep '^llog_rpm' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`".md5sum"
 HADOOP_FILE=`grep '^parafs_hadoop_file' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
-HADOOP_MD5_FILE=`grep '^md5_parafs_hadoop_file' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
+HADOOP_MD5_FILE=`grep '^parafs_hadoop_file' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`".md5sum"
 PIP_SOURCE=`grep '^pip_source' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
 DEFAULT_USER=`grep 'default_user=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`
 DEFAULT_USER_HOME=`grep 'default_user_home=' $MISC_CONF_FILE | grep -v '^#' | awk -F "=" '{print $2}'`

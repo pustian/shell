@@ -38,13 +38,12 @@ function cluster_config_bashrc() {
 ###### 赋予hadoop-system下的bin/和sbin/ 执行权限
 function cluster_chmod() {
     print_bgblack_fggreen "cluster_chmod hadoop-system begin" $config_output_tabs
-	bin_cmd="find /opt/wotung/hadoop-system -name bin |xargs chmod -R +x"
-	sbin_cmd="find /opt/wotung/hadoop-system -name sbin |xargs chmod -R +x"
+
+	chmod_cmd="chmod -R u+x /opt/wotung/hadoop-system/"
 	local_user="root"
 	remote_user="root"
 	for each_ip in $CLUSTER_IPS; do
-		remote_excute_cmd $local_user $remote_user $each_ip "$bin_cmd"
-		remote_excute_cmd $local_user $remote_user $each_ip "$sbin_cmd"
+		remote_excute_cmd $local_user $remote_user $each_ip "$chmod_cmd"
 	done
     print_bgblack_fggreen "cluster_chmod hadoop-system end" $config_output_tabs
 }

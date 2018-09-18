@@ -149,7 +149,7 @@ while [ x"${input}" != x"E" ]; do
             print_bgblack_fgblue "config parafs-system begin" $installsh_output_tabs
             # 集群同步.bashrc，需要确保/root/.bashrc存在
             cluster_config_bashrc
-            # 集群操作，给hadoop-system的bin/和sbin/ +x
+            # 集群操作，给hadoop-system对root用户 +x
             cluster_chmod
             # 检查要config的文件是否存在
             check_local_config_file

@@ -15,10 +15,6 @@ function env_usage() {
 function check_local_install_files() {
     print_bgblack_fggreen "check_local_install_files begin" $check_env_output_tabs
     test ! -d $SOURCE_DIR && print_bgblack_fgred "$SOURCE_DIR is not exist" && exit 1
-    test ! -f $SOURCE_DIR/$PARAFS_RPM  && print_bgblack_fgred "$SOURCE_DIR/$PARAFS_RPM is not exist" && exit 1
-    test ! -f $SOURCE_DIR/$PARAFS_MD5_RPM && print_bgblack_fgred "$SOURCE_DIR/$PARAFS_MD5_RPM is not exist" && exit 1
-    test ! -f $SOURCE_DIR/$LLOG_RPM && print_bgblack_fgred "$SOURCE_DIR/$LLOG_RPM is not exist" && exit 1
-    test ! -f $SOURCE_DIR/$LLOG_MD5_RPM && print_bgblack_fgred "$SOURCE_DIR/$LLOG_MD5_RPM is not exist" && exit 1
     test ! -f $SOURCE_DIR/$HADOOP_FILE && print_bgblack_fgred "$SOURCE_DIR/$HADOOP_FILE is not exist" && exit 1
     test ! -f $SOURCE_DIR/$HADOOP_MD5_FILE && print_bgblack_fgred "$SOURCE_DIR/$HADOOP_MD5_FILE is not exist" && exit 1
 
