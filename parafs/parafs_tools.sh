@@ -39,23 +39,19 @@ function cluster_sync_file() {
 	done
 }
 
-### 集群上更新parafs,
-### 需要在/opt/wotung/package/update中放好parafs和llog的安装包
-function cluster_update_parafs(){
+### 根据传入的参数（parafs llog）进行升级
+function cluster_update(){
+    local rpm_name=$1
+
     local update_dir=$INSTALL_DIR/package/update
-    local parafs_rpm=`ls $update_dir | grep parafs`
-    local llog_rpm=`ls $update_dir | grep llog`
     cluster_cmd "mkdir -p $update_dir"
 
-    local para_fullpath=$update_dir/$parafs_rpm
-    local llog_fullpath=$update_dir/$llog_rpm
-    cluster_sync_file "$para_fullpath"
-    cluster_sync_file "$llog_fullpath"
+    local rpm_name=`ls $update_dir | grep $rpm_name`
+    local rpm_fullpath=$update_dir/$rpm_name
+    cluster_sync_file "$rpm_fullpath"
 
-    local cmd_update_para="rpm -ivh $para_fullpath --force"
-    local cmd_update_llog="rpm -ivh $llog_fullpath --force"
-    cluster_cmd "$cmd_update_para"
-    cluster_cmd "$cmd_update_llog"
+    local cmd_update_rpm="rpm -ivh $rpm_fullpath --force"
+    cluster_cmd "$cmd_update_rpm"
 }
 
 ###集群删除conf/passwd,/opt/wotung下的多余文件,以及log文件

@@ -217,6 +217,23 @@ function cluster_script_dist() {
     print_bgblack_fggreen "cluster_script_dist end" $prepare_output_tabs
 }
 
+####### 对单个节点远程分发安装脚本,parameter 1: ip
+function single_script_dist(){
+    print_bgblack_fggreen "single_script_dist begin" $prepare_output_tabs
+    local ip=$1
+    local script_basedir=`dirname $SCRIPT_BASE_DIR`
+    local script_file=`basename $SCRIPT_BASE_DIR`.tar.gz
+    local script_md5_file=${script_file}.md5sum
+
+    __single_file_dist $script_basedir $script_file $script_basedir $ip
+
+    __single_zipfile_check $script_md5_file $script_basedir $script_file $script_basedir $ip
+
+    __single_unzipfile $script_file $script_basedir $ip
+
+    print_bgblack_fggreen "single_script_dist end" $prepare_output_tabs   
+}
+
 ###### 修改/opt/wotung 所有者为parauser
 function cluster_root_chown() {
     print_bgblack_fggreen "cluster_root_chown begin" $prepare_output_tabs
