@@ -84,6 +84,7 @@ function cluster_rpm_install() {
     for ip in $CLUSTER_IPS; do
         rpm_install $USER_NAME $ip $USER_NAME ${INSTALL_DIR}/$PARAFS_RPM
         rpm_install $USER_NAME $ip $USER_NAME ${INSTALL_DIR}/$LLOG_RPM
+        cluster_cmd "cp /opt/wotung/etc/para.cfg.sample /opt/wotung/etc/para.cfg"
     done
     print_bgblack_fggreen "cluster_rpm_install end" $inst_output_tabs
 }
@@ -130,6 +131,8 @@ fi
 if [ -z ${LOG_BASH_NAME} ] ; then 
     . $SCRIPT_BASE_DIR/parafs/common/common_log.sh
 fi
+
+. $SCRIPT_BASE_DIR/parafs/parafs_tools.sh
 
 inst_output_tabs="2"
 ###++++++++++++++++++++++++      main end         ++++++++++++++++++++++++++###

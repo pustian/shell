@@ -367,6 +367,27 @@ function __cluster_hadoop_xml() {
     print_bgblack_fgwhite "function call ...... __cluster_hadoop_xml end" $common_parafs_output_tabs
 }
 
+###### yarn配置文件,远程单节点
+function __single_hadoop_xml(){
+    local ip=$1
+    print_bgblack_fgwhite "function call ...... __single_hadoop_xml begin......" $common_parafs_output_tabs
+    print_bgblack_fgwhite "    config $HADOOP_YARN_XML" $common_parafs_output_tabs
+    local fault_ips=""
+    update_hadoop_yarn_ip $USER_NAME ${ip} $USER_NAME ${HADOOP_YARN_XML} ${SED_SCRIPT_HADOOP_YARN_IP} ${MASTER_IP} \
+    && update_hadoop_yarn_mem $USER_NAME ${ip} $USER_NAME ${HADOOP_YARN_XML} ${SED_SCRIPT_HADOOP_YARN_MEM}         \
+    && update_hadoop_yarn_cpu $USER_NAME ${ip} $USER_NAME ${HADOOP_YARN_XML} ${SED_SCRIPT_HADOOP_YARN_CPUS}
+    if [ $? -ne 0 ] ; then
+        print_bgblack_fgred "Failed to config ${HADOOP_YARN_XML} at $ip" $common_parafs_output_tabs
+        fault_ips="$ip $fault_ips"
+        # break;
+    fi
+    if [ ! -z "$fault_ips" ]; then
+        print_bgblack_fgred "Make sure the file ${HADOOP_YARN_XML} at $fault_ips" $common_parafs_output_tabs
+        exit 1
+    fi
+    print_bgblack_fgwhite "function call ...... __single_hadoop_xml end" $common_parafs_output_tabs
+}
+
 ###### spark slave配置 可以考虑软连接hadoop
 function __cluster_spark_slave() {
     print_bgblack_fgwhite "function call ...... __cluster_spark_slave begin" $common_parafs_output_tabs
@@ -406,6 +427,25 @@ function __cluster_spark_env() {
     print_bgblack_fgwhite "function call ...... __cluster_spark_env end" $common_parafs_output_tabs
 }
 
+function __single_spark_env(){
+    local ip=$1
+    print_bgblack_fgwhite "function call ...... __single_spark_env begin" $common_parafs_output_tabs
+    print_bgblack_fgwhite "    config $SPARK_ENV" $common_parafs_output_tabs
+    local fault_ips=""
+    update_spark_env $USER_NAME $ip $USER_NAME $SPARK_ENV $SED_SCRIPT_SPARK_ENV $MASTER_IP\
+    && update_spark_conf $USER_NAME $ip $USER_NAME $SPARK_CONF $SED_SCRIPT_SPARK_CONF 
+    if [ $? -ne 0 ] ; then
+        print_bgblack_fgred "Failed to config ${SPARK_ENV} at $ip" $common_parafs_output_tabs
+        fault_ips="$ip $fault_ips"
+        # break;
+    fi
+    if [ ! -z "$fault_ips" ]; then
+        print_bgblack_fgred "Make sure the file ${SPARK_ENV} at $fault_ips" $common_parafs_output_tabs
+        exit 1
+    fi
+    print_bgblack_fgwhite "function call ...... __single_spark_env end" $common_parafs_output_tabs
+}
+
 
 function __cluster_spark_sql() {
     echo -e "\t\t __cluster_spark_sql begin"
@@ -435,8 +475,27 @@ function __cluster_spark_hive_xml() {
         exit 1
     fi
     
-    print_bgblack_fgwhite "function call ...... __cluster_hive_xml end" $common_parafs_output_tabs
+    print_bgblack_fgwhite "function call ...... __cluster_spark_hive_xml end" $common_parafs_output_tabs
     
+}
+
+function __single_spark_hive_xml(){
+    local ip=$1
+    print_bgblack_fgwhite "function call ...... __single_spark_hive_xml begin" $common_parafs_output_tabs
+    print_bgblack_fgwhite "    config $SPARK_HIVE_CONF" $common_parafs_output_tabs
+    local fault_ips=""
+    update_hive_config $USER_NAME $ip $USER_NAME ${SPARK_HIVE_CONF} ${SED_SCRIPT_HIVE_CONF} ${MASTER_IP}
+    if [ $? -ne 0 ] ; then
+        print_bgblack_fgred "Failed to config ${SPARK_HIVE_CONF} at $ip" $common_parafs_output_tabs
+        fault_ips="$ip $fault_ips"
+        # break;
+    fi
+    if [ ! -z "$fault_ips" ]; then
+        print_bgblack_fgred "Make sure the file ${SPARK_HIVE_CONF} at $fault_ips" $common_parafs_output_tabs
+        exit 1
+    fi
+    
+    print_bgblack_fgwhite "function call ...... __single_spark_hive_xml end" $common_parafs_output_tabs
 }
 
 ###### 
@@ -545,6 +604,26 @@ function __cluster_hive_xml() {
     print_bgblack_fgwhite "function call ...... __cluster_hive_xml end" $common_parafs_output_tabs
 }
 
+function __single_hive_xml(){
+    local ip=$1
+    print_bgblack_fgwhite "function call ...... __single_hive_xml begin" $common_parafs_output_tabs
+    print_bgblack_fgwhite "    config $HIVE_CONF" $common_parafs_output_tabs
+    local fault_ips=""
+    update_hive_config $USER_NAME $ip $USER_NAME ${HIVE_CONF} ${SED_SCRIPT_HIVE_CONF} ${MASTER_IP}
+    if [ $? -ne 0 ] ; then
+        print_bgblack_fgred "Failed to config ${HIVE_CONF} at $ip" $common_parafs_output_tabs
+        fault_ips="$ip $fault_ips"
+        # break;
+    fi
+    if [ ! -z "$fault_ips" ]; then
+        print_bgblack_fgred "Make sure the file ${HIVE_CONF} at $fault_ips" $common_parafs_output_tabs
+        exit 1
+    fi
+    
+    print_bgblack_fgwhite "function call ...... __single_hive_xml end" $common_parafs_output_tabs
+   
+}
+
 function __cluster_azkaban_properties() {
     print_bgblack_fgwhite "function call ...... __cluster_azkaban_properties begin" $common_parafs_output_tabs
     print_bgblack_fgwhite "    config $AZKABAN_WEB_CONF " $common_parafs_output_tabs
@@ -575,6 +654,32 @@ function __cluster_azkaban_properties() {
     fi
     
     print_bgblack_fgwhite "function call ...... __cluster_azkaban_properties end" $common_parafs_output_tabs
+}
+
+function __single_azkaban_properties(){
+    local ip=$1
+    print_bgblack_fgwhite "function call ...... __single_azkaban_properties begin" $common_parafs_output_tabs
+    print_bgblack_fgwhite "    config $AZKABAN_WEB_CONF " $common_parafs_output_tabs
+    print_bgblack_fgwhite "    config $AZKABAN_EXEC_CONF" $common_parafs_output_tabs
+    local fault_ips=""
+    update_azkaban_config $USER_NAME $ip $USER_NAME $AZKABAN_EXEC_CONF $SED_SCRIPT_AZKABAN_CONF ${MASTER_IP}
+    if [ $? -ne 0 ] ; then
+        print_bgblack_fgred "Failed to config ${AZKABAN_EXEC_CONF} at $ip" $common_parafs_output_tabs
+        fault_ips="$ip $fault_ips"
+        # break;
+    fi
+    update_azkaban_config $USER_NAME $ip $USER_NAME $AZKABAN_WEB_CONF $SED_SCRIPT_AZKABAN_CONF ${MASTER_IP} 
+    if [ $? -ne 0 ] ; then
+        print_bgblack_fgred "Failed to config ${AZKABAN_WEB_CONF} at $ip" $common_parafs_output_tabs
+        fault_ips="$ip $fault_ips"
+        # break;
+    fi
+    if [ ! -z "$fault_ips" ]; then
+        print_bgblack_fgred "Make sure the file ${AZKABAN_EXEC_CONF}|${AZKABAN_WEB_CONF} at $fault_ips" $common_parafs_output_tabs
+        exit 1
+    fi
+    
+    print_bgblack_fgwhite "function call ...... __single_azkaban_properties end" $common_parafs_output_tabs
 }
 
 function __cluster_kafka_connect() { 
@@ -635,6 +740,26 @@ function __cluster_ycsb_hbase_xml() {
     
     print_bgblack_fgwhite "function call ...... __cluster_ycsb_hbase_xml end" $common_parafs_output_tabs
 }
+
+function __single_ycsb_hbase_xml(){
+    local ip=$1
+    print_bgblack_fgwhite "function call ...... __single_ycsb_hbase_xml begin" $common_parafs_output_tabs
+    print_bgblack_fgwhite "    config $YCSB_HBASE12_CONF" $common_parafs_output_tabs
+    local fault_ips=""
+    update_hbase_config $USER_NAME $ip $USER_NAME $YCSB_HBASE12_CONF $SED_SCRIPT_HBASE_CONF $MASTER_IP "${CLUSTER_IPS[*]}"
+    if [ $? -ne 0 ] ; then
+        print_bgblack_fgred "Failed to config ${YCSB_HBASE12_CONF} at $ip" $common_parafs_output_tabs
+        fault_ips="$ip $fault_ips"
+        # break;
+    fi
+    if [ ! -z "$fault_ips" ]; then
+        print_bgblack_fgred "Make sure the file ${YCSB_HBASE12_CONF} at $fault_ips" $common_parafs_output_tabs
+        exit 1
+    fi
+    
+    print_bgblack_fgwhite "function call ...... __single_ycsb_hbase_xml end" $common_parafs_output_tabs
+}
+
 function __cluster_spark_bench_legacy_env() {
     print_bgblack_fgwhite "function call ...... __cluster_spark_bench_legacy_env begin" $common_parafs_output_tabs
     print_bgblack_fgwhite "    config $SPARK_BENCH_LEGACY_ENV" $common_parafs_output_tabs
@@ -655,6 +780,27 @@ function __cluster_spark_bench_legacy_env() {
     print_bgblack_fgwhite "function call ...... __cluster_spark_bench_legacy_env end" $common_parafs_output_tabs
 
 }
+
+function __single_spark_bench_legacy_env() {
+    local ip=$1
+    print_bgblack_fgwhite "function call ...... __single_spark_bench_legacy_env begin" $common_parafs_output_tabs
+    print_bgblack_fgwhite "    config $SPARK_BENCH_LEGACY_ENV" $common_parafs_output_tabs
+    local fault_ips=""
+    update_bench_legacy_env $USER_NAME $ip $USER_NAME $SPARK_BENCH_LEGACY_ENV $SED_SCRIPT_SPARK_BENCH_LEGACY_ENV $MASTER_IP 
+    if [ $? -ne 0 ] ; then
+        print_bgblack_fgred "Failed to config ${SPARK_BENCH_LEGACY_ENV} at $ip" $common_parafs_output_tabs
+        fault_ips="$ip $fault_ips"
+        # break;
+    fi
+    if [ ! -z "$fault_ips" ]; then
+        print_bgblack_fgred "Make sure the file ${SPARK_BENCH_LEGACY_ENV} at $fault_ips" $common_parafs_output_tabs
+        exit 1
+    fi
+    
+    print_bgblack_fgwhite "function call ...... __single_spark_bench_legacy_env end" $common_parafs_output_tabs
+
+}
+
 ###===========================================================================
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 COMMON_BASH_NAME=common_parafs.h

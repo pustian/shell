@@ -26,6 +26,17 @@ function cluster_cmd() {
 	done
 }
 
+### 在单结点上执行某个命令
+### $1: command
+### $2: ip
+function single_cmd(){
+   	local command=$1
+    local each_ip=$2
+	local local_user="root"
+	local remote_user="root"
+	remote_excute_cmd $local_user $remote_user $each_ip "$command" 
+}
+
 ### 在集群上同步指定文件
 ### $1: 要同步文件的完整路径
 function cluster_sync_file() {
@@ -33,10 +44,21 @@ function cluster_sync_file() {
 
 	local local_user="root"
 	local remote_user="root"
-    echo $1
 	for each_ip in $CLUSTER_IPS; do
 		sync_file $local_user $remote_user $each_ip $filename
 	done
+}
+
+### 在集群上同步指定文件
+### $1: 要同步文件的完整路径
+### $2: ip
+function single_sync_file(){
+	local filename=$1
+    local each_ip=$2
+
+	local local_user="root"
+	local remote_user="root"
+    sync_file $local_user $remote_user $each_ip $filename
 }
 
 ### 根据传入的参数（parafs llog）进行升级

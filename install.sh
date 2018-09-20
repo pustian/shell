@@ -182,6 +182,7 @@ while [ x"${input}" != x"E" ]; do
             ;;
         #TODO
         t)
+            cluster_rpm_install
             ;;
         #TODO
         E|e|Q|q|exit) 

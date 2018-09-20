@@ -60,13 +60,22 @@ function alert_msg(){
 function tool_update_parafs(){
     local update_path="/opt/wotung/package/update"
     if [ -f $update_path/parafs*.rpm ]; then 
+        echo "update parafs......"
         cluster_update "parafs"
-    elif [ -f $update_path/llog*.rpm ]; then
+    fi
+
+    if [ -f $update_path/llog*.rpm ]; then
+        echo "update llog......"
         cluster_update "llog"
-    else
+    fi
+
+    if [ ! -f $update_path/parafs*.rpm ] && [ ! -f $update_path/llog*.rpm ]; then
         alert_msg "No rpms of parafs or llog in ${update_path}"
         exit 1
     fi
+
+    # empty update/ directory
+    rm -f $update_path/*
 }
 
 function tool_add_node(){
@@ -89,12 +98,12 @@ function tool_add_node(){
 function add_node_execute(){
     local node=$1
 
-    cluster_check_filesystem
+    single_check_filesystem $node
     cluster_root_authorize
     cluster_config_network
     cluster_alias_authorize
-    cluster_check_internet
-    cluster_close_firewalld
+    single_check_internet $node
+    single_close_firewalld $node
 
     # dist the parafs-install
     local_script_zip
@@ -112,22 +121,21 @@ function add_node_execute(){
     single_hadoop_dist $node
 
     # config
-    cluster_config_bashrc
-    cluster_chmod
-    check_local_config_file
-    cluster_update_hadoop
-    cluster_update_spark
-    cluster_update_zookeeper
-    cluster_update_hbase
-    cluster_update_hive
-    cluster_update_azkaban
-    cluster_update_kafka
-    cluster_update_ycsb_hbase
-    cluster_update_spark_bench_legacy     
+    single_config_bashrc $node
+    single_chmod $node
+    check_local_config_file #local
+    single_update_hadoop $node
+    single_update_spark $node
+    cluster_update_zookeeper # cluster
+    cluster_update_hbase # cluster
+    single_update_hive $node
+    single_update_azkaban $node
+    cluster_update_kafka # cluster
+    single_update_ycsb_hbase $node
+    single_update_spark_bench_legacy $node
 
     # after check
     cluster_install_clean
-
 }
 
 function tool_sync_file(){

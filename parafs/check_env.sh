@@ -162,6 +162,38 @@ function cluster_check_filesystem() {
     print_bgblack_fggreen "cluster_check_filesystem end" $check_env_output_tabs
 }
 
+### 单节点远程检查文件系统
+function single_check_filesystem(){
+    local ip=$1
+    print_bgblack_fggreen "single_check_filesystem begin" $check_env_output_tabs
+    local filename=$PASSWD_CONFIG_FILE
+
+    fault_ips=""
+    if [ "x${ip}" = "x" ] ; then 
+        break;
+    fi
+    local passwd=`grep ${ip} $filename |awk '{print $2}'`
+
+    is_ext4_format $ip $DEFAULT_USER $passwd
+    if [ $? -eq 0 ]; then
+        fault_ips="$ip $fault_ips"
+        print_bgblack_fgred "WARN: The file system isnot ext4 filesystem at $ip" $check_env_output_tabs
+        # break;
+    fi 
+    node_capcity $ip $DEFAULT_USER $passwd
+    if [ $? -eq 0 ]; then
+        fault_ips="$ip $fault_ips"
+        print_bgblack_fgred "WARN: The capcity of /opt/wotung/node/0 need more space at $ip" $check_env_output_tabs
+        # break;
+    fi 
+
+    if [ ! -z "$fault_ips" ] ; then
+        print_bgblack_fgred "make sure /opt/wotung/node/0 at $fault_ips" $check_env_output_tabs
+        # exit 1;
+    fi
+    print_bgblack_fggreen "single_check_filesystem end" $check_env_output_tabs
+}
+
 ###++++++++++++++++++++++++      main begin       ++++++++++++++++++++++++++###
 CHECK_ENV_BASH_NAME=check_env.sh
 if [ -z ${VARIABLE_BASH_NAME} ] ; then 

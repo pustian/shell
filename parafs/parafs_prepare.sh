@@ -121,18 +121,45 @@ function cluster_alias_authorize(){
     print_bgblack_fggreen "cluster_alias_authorize end" $prepare_output_tabs
 }
 
-### 
+### 集群关闭防火墙
 function cluster_close_firewalld(){
     print_bgblack_fggreen "cluster_close_firewalld begin" $prepare_output_tabs
 
     #执行两条命令
     local cmd_disable="systemctl disable firewalld"
     local cmd_stop="systemctl stop firewalld"
-    cluster_cmd "$cmd_disable && $cmd_stop" 
+    cluster_cmd "$cmd_disable && $cmd_stop"
     #本地执行sed，复制到远程
     local firewall_file="/etc/selinux/config"
     config_SELINUX
-    cluster_sync_file $firewall_file 
+    cluster_sync_file $firewall_file
+    # 禁用、关闭NetworkManager
+    local cmd_dis_manager="systemctl disable NetworkManager"
+    local cmd_stop_manager="systemctl stop NetworkManager"
+    cluster_cmd "$cmd_dis_manager && $cmd_stop_manager"
+    
+    print_bgblack_fggreen "cluster_close_firewalld end" $prepare_output_tabs
+
+}
+
+### 单节点关闭防火墙
+function single_close_firewalld(){
+    local ip=$1
+    print_bgblack_fggreen "cluster_close_firewalld begin" $prepare_output_tabs
+
+    #执行两条命令
+    local cmd_disable="systemctl disable firewalld"
+    local cmd_stop="systemctl stop firewalld"
+    single_cmd "$cmd_disable && $cmd_stop" $ip
+    #本地执行sed，复制到远程
+    local firewall_file="/etc/selinux/config"
+    config_SELINUX
+    single_sync_file $firewall_file $ip
+
+    # 禁用、关闭NetworkManager
+    local cmd_dis_manager="systemctl disable NetworkManager"
+    local cmd_stop_manager="systemctl stop NetworkManager"
+    single_cmd "$cmd_dis_manager && $cmd_stop_manager"
     
     print_bgblack_fggreen "cluster_close_firewalld end" $prepare_output_tabs
 }
@@ -188,6 +215,26 @@ function cluster_check_internet(){
         exit 1
     fi  
     print_bgblack_fggreen "cluster_check_internet end" $check_env_output_tabs
+}
+
+### 单结点远程检查internet连接
+function single_check_internet(){
+    local ip=$1
+    print_bgblack_fggreen "single_check_internet begin" $check_env_output_tabs
+    local fail_node=""
+    
+    internet_conn $ip "www.baidu.com"
+    if [ $? -ne 0 ] ; then
+        print_bgblack_fgred "ERROR: $ip to internet connection error" $check_env_output_tabs
+        fail_node="$ip $fail_node"
+    fi  
+
+    if [ ! -z "$fail_node" ]; then
+        print_bgblack_fgred "check the internet connection of $fail_node" $check_env_output_tabs
+        exit 1
+    fi  
+    print_bgblack_fggreen "single_check_internet end" $check_env_output_tabs
+
 }
 
 ####### 本地压缩parafs-install/生成安装包，并生成md5 
