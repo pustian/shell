@@ -128,6 +128,7 @@ while [ x"${input}" != x"E" ]; do
             # 集群分发rpm包
             cluster_dist_rpm
             # 集群安装依赖的yum下载相关软件
+            cluster_config_yum_source
             cluster_yum
             # 集群安装依赖的pip下载相关软件
             cluster_pip

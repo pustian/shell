@@ -83,18 +83,22 @@ function config_hosts() {
 #    test $((ip_counts)) -ne 1 && return 1 || return 0
 }
 
-# ###### 远程配置yum安装源
-# function config_yum_source() {
-#     local local_user=$1
-#     local authorize_ip=$2
-#     local authorize_user=$3
-# 
-#     local temp_file="/tmp/parafs_config_yum_source$authorize_ip"
-#     local remote_command="ls -l"
-#     sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" >$temp_file
-#     return $?
-# }
-# 
+###### 远程配置yum安装源
+function config_yum_source() {
+    local local_user=$1
+    local authorize_ip=$2
+    local authorize_user=$3
+    print_bgblack_fgwhite "function call ..... config_yum_source at $authorize_ip" $common_network_output_tabs
+
+    local cp_command="cp /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo`date +%y%m%d%H%M%S`"
+    local curl_command="curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo"
+    local yum_cache="yum makecache"
+    local remote_command="$cp_command && $curl_command && $yum_cache"
+    print_msg "sudo su - $local_user -c \"ssh '$authorize_user@$authorize_ip' '$remote_command'\" "
+    sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" 
+    return $?
+}
+
 # ###### 远程配置yum安装源
 # function config_pip_source() {
 #     local local_user=$1
