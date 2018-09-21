@@ -58,6 +58,39 @@ function config_hosts_comment() {
     # return $?
 }
 
+# 单机配置/etc/hosts
+function local_config_hosts(){
+    # get array of whole_ip_long_short 
+    local array_ip=(`cat ${NETWORK_CONFIG_FILE} | grep -v '^#' | awk -F " " '{print $1}'`)
+    local array_long=(`cat ${NETWORK_CONFIG_FILE} | grep -v '^#' | awk -F " " '{print $2}'`)
+    local array_short=(`cat ${NETWORK_CONFIG_FILE} | grep -v '^#' | awk -F " " '{print $3}'`)
+
+    # concatnate these three
+    local size=${#array_ip[*]}
+    local array_whole=()
+    for(( i=0; i<$size; i++ ))
+    do
+        array_whole[$i]="${array_ip[$i]} ${array_long[$i]} ${array_short[$i]}"
+    done
+    
+    # if found ip, change this line with array_whole[i]
+    # if can't find ip, add array_whole[i]
+    local file_hosts=/etc/hosts
+    for(( i=0; i<$size; i++ ))
+    do
+        cat $file_hosts | grep ${array_ip[$i]} >> /dev/null
+        if [ $? = 0 ];then
+            # found ip 
+            local line_num=`grep ${array_ip[$i]} $file_hosts -n | awk -F ":" '{print $1}'`
+            sed -i "${line_num}c ${array_whole[$i]}" $file_hosts
+        else
+            # can't find ip
+            echo ${array_whole[$i]} | tee -a $file_hosts >> /dev/null
+        fi
+    done
+}
+
+
 function config_hosts() {
     local local_user=$1
     local authorize_ip=$2

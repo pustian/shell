@@ -184,7 +184,7 @@ while [ x"${input}" != x"E" ]; do
             ;;
         #TODO
         t)
-            cluster_rpm_install
+            cluster_config_network
             ;;
         #TODO
         E|e|Q|q|exit) 

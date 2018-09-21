@@ -17,7 +17,7 @@ function help_info(){
     echo -e "[$NUM_UPDATE] update parafs"
     echo -e "[$NUM_ADDNODE] add node"
     echo -e "[$NUM_SYNCFILE] synchronize file"
-    echo -e "[$NUM_PSWDLESS] password-less" 
+    echo -e "[$NUM_PSWDLESS] cluster hosts SSH password free login" 
     echo -e "[q] quit the tool"
 }
 
@@ -42,7 +42,7 @@ function handle_input(){
                 return 1
                 ;;
             $NUM_PSWDLESS)
-                case_hint "cluster password-less"
+                case_hint "cluster password-free"
                 tool_pswdless
                 ;;
             q)
@@ -164,7 +164,7 @@ function tool_pswdless(){
 }
 
 function show_cluster_ip(){
-    echo Password-less will be done in the following ip addresses:
+    echo Password free will be done in the following ip addresses:
     for i in $CLUSTER_IPS; do
         echo $i
     done
