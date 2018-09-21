@@ -17,6 +17,7 @@ function help_info(){
     echo -e "[$NUM_UPDATE] update parafs"
     echo -e "[$NUM_ADDNODE] add node"
     echo -e "[$NUM_SYNCFILE] synchronize file"
+    echo -e "[$NUM_PSWDLESS] password-less" 
     echo -e "[q] quit the tool"
 }
 
@@ -39,6 +40,10 @@ function handle_input(){
                 read -p "Pls input file full path (example: /opt/wotung/etc/para.cfg):" full_filepath
                 tool_sync_file $full_filepath
                 return 1
+                ;;
+            $NUM_PSWDLESS)
+                case_hint "cluster password-less"
+                tool_pswdless
                 ;;
             q)
                 echo "quiting"
@@ -148,6 +153,20 @@ function tool_sync_file(){
     fi
 }
 
+function tool_pswdless(){
+    show_cluster_ip
+    local_install_expect
+    cluster_root_authorize
+}
+
+function show_cluster_ip(){
+    echo Password-less will be done in the following ip addresses:
+    for i in $CLUSTER_IPS; do
+        echo $i
+    done
+    sleep 1
+}
+
 ###################################### main ######################################
 . /opt/wotung/parafs-install/variable.sh
 . ${SCRIPT_BASE_DIR}/parafs/parafs_tools.sh
@@ -161,5 +180,6 @@ function tool_sync_file(){
 NUM_UPDATE=1
 NUM_ADDNODE=2
 NUM_SYNCFILE=3
+NUM_PSWDLESS=4
 
 controller
