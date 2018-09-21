@@ -182,11 +182,6 @@ while [ x"${input}" != x"E" ]; do
             cluster_install_clean
             print_bgblack_fgblue "after-check end" $installsh_output_tabs
             ;;
-        #TODO
-        t)
-            cluster_config_network
-            ;;
-        #TODO
         E|e|Q|q|exit) 
             exit 0
             ;;
