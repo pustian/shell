@@ -49,6 +49,10 @@ function handle_input(){
                 echo "quiting"
                 return 0
                 ;;
+            *)
+                echo "Wrong input! Please retry."
+                return 1
+                ;;
         esac
 }
 
