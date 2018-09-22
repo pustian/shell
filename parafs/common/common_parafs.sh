@@ -123,38 +123,38 @@ function __cluster_config_hostname() {
 }
 ###### 免密后修改 hosts
 function __cluster_config_hosts() {
-    print_bgblack_fgwhite "function call ...... __cluster_config_hostname begin ......" $common_parafs_output_tabs
-    local_config_hosts
-    for ip in $CLUSTER_IPS; do
-        if [ $ip != $CLUSTER_LOCAL_IP ]; then
-            file_dist "root" $ip "root" "/etc" "hosts" "/etc"
-        else
-            echo "don't copy to itself" >> /dev/null
-        fi
-    done
-   
-#    local fault_ips=""
-#    for config_ip in $CLUSTER_IPS; do
-#        config_hosts_comment $USER_NAME $config_ip $USER_NAME "#####parafs_config_begin#####"
-#        for cluster_ip in $CLUSTER_IPS; do
-#            local ip_hostname_alias=`grep $cluster_ip $NETWORK_CONFIG_FILE `
-#            local hostname=`echo $ip_hostname_alias | awk '{print $2}'`
-#            local hostalias=`echo $ip_hostname_alias | awk '{print $3}'`
-#            # config_hosts parauser 192.168.138.71 parauser 192.168.138.72 ht1.r2.n73 hia73
-#            #echo "config_hosts $USER_NAME $config_ip $USER_NAME $cluster_ip $hostname $hostalias"
-#            config_hosts $USER_NAME $config_ip $USER_NAME $cluster_ip $hostname $hostalias
-#            if [ $? -ne 0 ] ; then
-#                print_bgblack_fgred "ERROR: failed to config hosts at $config_ip " $common_parafs_output_tabs
-#                fault_ips="$config_ip $fault_ips"
-#                # break;
-#            fi
-#        done 
-#        config_hosts_comment $USER_NAME $config_ip $USER_NAME "#####parafs_config_end#####"
+#    print_bgblack_fgwhite "function call ...... __cluster_config_hostname begin ......" $common_parafs_output_tabs
+#    local_config_hosts
+#    for ip in $CLUSTER_IPS; do
+#        if [ $ip != $CLUSTER_LOCAL_IP ]; then
+#            file_dist "root" $ip "root" "/etc" "hosts" "/etc"
+#        else
+#            echo "don't copy to itself" >> /dev/null
+#        fi
 #    done
-#    if [ ! -z "$fault_ips" ]; then
-#        print_bgblack_fgred "make sure the file /etc/hosts at $fault_ips" $common_parafs_output_tabs
-#        exit 1
-#    fi
+   
+    local fault_ips=""
+    for config_ip in $CLUSTER_IPS; do
+        config_hosts_comment $USER_NAME $config_ip $USER_NAME "#####parafs_config_begin#####"
+        for cluster_ip in $CLUSTER_IPS; do
+            local ip_hostname_alias=`grep $cluster_ip $NETWORK_CONFIG_FILE `
+            local hostname=`echo $ip_hostname_alias | awk '{print $2}'`
+            local hostalias=`echo $ip_hostname_alias | awk '{print $3}'`
+            # config_hosts parauser 192.168.138.71 parauser 192.168.138.72 ht1.r2.n73 hia73
+            #echo "config_hosts $USER_NAME $config_ip $USER_NAME $cluster_ip $hostname $hostalias"
+            config_hosts $USER_NAME $config_ip $USER_NAME $cluster_ip $hostname $hostalias
+            if [ $? -ne 0 ] ; then
+                print_bgblack_fgred "ERROR: failed to config hosts at $config_ip " $common_parafs_output_tabs
+                fault_ips="$config_ip $fault_ips"
+                # break;
+            fi
+        done 
+        config_hosts_comment $USER_NAME $config_ip $USER_NAME "#####parafs_config_end#####"
+    done
+    if [ ! -z "$fault_ips" ]; then
+        print_bgblack_fgred "make sure the file /etc/hosts at $fault_ips" $common_parafs_output_tabs
+        exit 1
+    fi
     print_bgblack_fgwhite "function call ...... __cluster_config_hosts end ......" $common_parafs_output_tabs
 }
 

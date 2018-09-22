@@ -130,3 +130,5 @@ KAFKA_CONF=${HADOOP_PARAFS_HOME}/kafka_2.11-1.0.1/config/server.properties
 SPARK_BENCH_LEGACY_ENV=${HADOOP_PARAFS_HOME}/spark-bench-legacy/conf/env.sh
 YCSB_HBASE12_CONF=${HADOOP_PARAFS_HOME}/ycsb-hbase12/conf/hbase-site.xml
 # echo "====================variable loaded==========="
+
+test ! -d $SCRIPT_BASE_DIR/log && mkdir -p $SCRIPT_BASE_DIR/log
