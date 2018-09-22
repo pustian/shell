@@ -125,7 +125,7 @@ function config_yum_source() {
 
     local cp_command="cp /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo`date +%y%m%d%H%M%S`"
     local curl_command="curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo"
-    local yum_cache="yum makecache"
+    local yum_cache="yum clean all && yum makecache"
     local remote_command="$cp_command && $curl_command && $yum_cache"
     print_msg "sudo su - $local_user -c \"ssh '$authorize_user@$authorize_ip' '$remote_command'\" "
     sudo su - $local_user -c "ssh '$authorize_user@$authorize_ip' '$remote_command'" 
