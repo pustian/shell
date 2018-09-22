@@ -108,17 +108,37 @@ while [ x"${input}" != x"E" ]; do
 
         #此选项没有在提示中显示，执行U选项相当于执行D和I
         U|u) 
-            print_bgblack_fgblue "dist and install begin " $installsh_output_tabs
+            print_bgblack_fgblue "batch install begin" $installsh_output_tabs
+            cluster_root_authorize
+            cluster_config_network
+            cluster_alias_authorize
+            cluster_check_internet
+            cluster_close_firewalld
+            local_script_zip
+            cluster_script_dist
+            
             cluster_dist_rpm
             local_dist_rpm
+            cluster_config_yum_source
             cluster_yum
             cluster_pip
             cluster_rpm_install
 	    ## hadoop-system
             cluster_hadoop_dist
             local_dist_hadoop
-            ## cluster_sudoer_chown
-            print_bgblack_fgblue "dist and install end" $installsh_output_tabs
+            cluster_config_bashrc
+            cluster_chmod
+            check_local_config_file
+            cluster_update_hadoop
+            cluster_update_spark
+            cluster_update_zookeeper
+            cluster_update_hbase
+            cluster_update_hive
+            cluster_update_azkaban
+            cluster_update_kafka
+            cluster_update_ycsb_hbase
+            cluster_update_spark_bench_legacy
+            print_bgblack_fgblue "batch install end" $installsh_output_tabs
             ;;
         I|i)
             print_bgblack_fgblue "installation begin" $installsh_output_tabs
