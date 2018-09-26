@@ -3,12 +3,12 @@
 function controller(){
     help_info
     handle_input
-    if [ $? = 1 ]; then
+    while [ $INDEX_FLAG = 1 ];
+    do
         help_info
         handle_input
-    else
+    done
         exit 0
-    fi
 }
 
 function help_info(){
@@ -27,31 +27,32 @@ function handle_input(){
             $NUM_UPDATE)
                 case_hint "update_parafs"
                 tool_update_parafs
-                return 1
+                INDEX_FLAG=1
                 ;;
             $NUM_ADDNODE)
                 case_hint "add_node"
                 read -p "input parameter,#1 ip:" ip 
                 tool_add_node $ip
-                return 1 
+                INDEX_FLAG=1 
                 ;;
             $NUM_SYNCFILE)
                 case_hint "synchronize file"
                 read -p "Pls input file full path (example: /opt/wotung/etc/para.cfg):" full_filepath
                 tool_sync_file $full_filepath
-                return 1
+                INDEX_FLAG=1
                 ;;
             $NUM_PSWDLESS)
                 case_hint "cluster password-free"
                 tool_pswdless
+                INDEX_FLAG=1
                 ;;
             q)
                 echo "quiting"
-                return 0
+                INDEX_FLAG=0
                 ;;
             *)
                 echo "Wrong input! Please retry."
-                return 1
+                INDEX_FLAG=1
                 ;;
         esac
 }
@@ -186,4 +187,6 @@ NUM_ADDNODE=2
 NUM_SYNCFILE=3
 NUM_PSWDLESS=4
 
+### index_flag to help stop looping, 0 to stop
+INDEX_FLAG=1
 controller

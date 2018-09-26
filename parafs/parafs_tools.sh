@@ -45,7 +45,12 @@ function cluster_sync_file() {
 	local local_user="root"
 	local remote_user="root"
 	for each_ip in $CLUSTER_IPS; do
-		sync_file $local_user $remote_user $each_ip $filename
+        if [ $each_ip != $CLUSTER_LOCAL_IP ]; then 
+	    	sync_file $local_user $remote_user $each_ip $filename
+        else
+            echo "will not copy to local $CLUSTER_LOCAL_IP"
+        fi
+        
 	done
 }
 
